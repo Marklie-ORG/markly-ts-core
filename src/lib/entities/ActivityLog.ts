@@ -1,16 +1,16 @@
 import { Entity, ManyToOne, Property } from '@mikro-orm/core';
 import { BaseEntity } from './BaseEntity.js';
-import {Organization} from "./Organization.js";
-import {User} from "./User.js";
-import {OrganizationClient} from "./OrganizationClient.js";
+import { Organization } from './Organization.js';
+import { User } from './User.js';
+import { OrganizationClient } from './OrganizationClient.js';
 
 @Entity()
 export class ActivityLog extends BaseEntity {
     @Property()
-    action!: string; // e.g., "created_report", "sent_scheduled_report"
+    action!: string;
 
     @Property({ nullable: true })
-    targetType?: string | null; // e.g., "report", "user", "subscription"
+    targetType?: string | null;
 
     @Property({ nullable: true })
     targetUuid?: string | null;
