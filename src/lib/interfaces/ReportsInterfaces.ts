@@ -13,11 +13,11 @@ interface BaseSchedule {
   reviewNeeded: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
-  metrics?: {
-    ads?: string[];
-    kpis?: string[];
-    graphs?: string[];
-    campaigns?: string[];
+  metrics: {
+    ads: AvailableAdMetric[];
+    kpis: AvailableKpiMetric[];
+    graphs: AvailableGraphMetric[];
+    campaigns: AvailableCampaignMetric[];
   };
 }
 
