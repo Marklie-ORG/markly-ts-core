@@ -84,10 +84,10 @@ export interface ReportJobData {
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
   metrics?: {
-    ads?: string[];
-    kpis?: string[];
-    graphs?: string[];
-    campaigns?: string[];
+    ads?: AvailableAdMetric[];
+    kpis?: AvailableKpiMetric[];
+    graphs?: AvailableGraphMetric[];
+    campaigns?: AvailableCampaignMetric[];
   };
 }
 
