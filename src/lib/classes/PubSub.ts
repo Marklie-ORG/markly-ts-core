@@ -49,7 +49,6 @@ export class PubSubWrapper {
                 } catch (err: any) {
                     logger.error(`Error in message handler: ${err.message}`);
                     if (err.response?.body) console.error(err.response.body);
-                    message.nack();
                     onError?.(err);
                 } finally {
                     clearInterval(extender);
