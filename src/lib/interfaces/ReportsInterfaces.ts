@@ -13,11 +13,14 @@ interface BaseSchedule {
   reviewNeeded: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
-  metrics: {
-    ads: AvailableAdMetric[];
-    kpis: AvailableKpiMetric[];
-    graphs: AvailableGraphMetric[];
-    campaigns: AvailableCampaignMetric[];
+  metrics: SchedulingOptionMetrics;
+  messages: {
+    whatsapp: string;
+    slack: string;
+    email: {
+      title: string;
+      body: string;
+    };
   };
 }
 
@@ -83,11 +86,14 @@ export interface ReportJobData {
   accountId: string;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
-  metrics: {
-    ads: AvailableAdMetric[];
-    kpis: AvailableKpiMetric[];
-    graphs: AvailableGraphMetric[];
-    campaigns: AvailableCampaignMetric[];
+  metrics: SchedulingOptionMetrics;
+  messages: {
+    whatsapp: string;
+    slack: string;
+    email: {
+      title: string;
+      body: string;
+    };
   };
 }
 
@@ -295,3 +301,33 @@ export interface AvailableMetrics {
   ads: AvailableAdMetric[];
   campaigns: AvailableCampaignMetric[];
 }
+
+export interface SchedulingOptionKpiMetric {
+  name: AvailableKpiMetric;
+  order: number;
+}
+
+export interface SchedulingOptionGraphMetric {
+  name: AvailableGraphMetric;
+  order: number;
+}
+
+export interface SchedulingOptionAdMetric {
+  name: AvailableAdMetric;
+  order: number;
+}
+
+export interface SchedulingOptionCampaignMetric {
+  name: AvailableCampaignMetric;
+  order: number;
+}
+
+export interface SchedulingOptionMetrics {
+  kpis: SchedulingOptionKpiMetric[];
+  graphs: SchedulingOptionGraphMetric[];
+  ads: SchedulingOptionAdMetric[];
+  campaigns: SchedulingOptionCampaignMetric[];
+}
+
+
+
