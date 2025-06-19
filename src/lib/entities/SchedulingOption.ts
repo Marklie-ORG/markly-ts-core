@@ -15,7 +15,10 @@ export class SchedulingOption extends BaseEntity {
   isActive: boolean = true;
 
   @Property()
-  reportType!: string;
+  reportName!: string;
+
+  @Property()
+  platform!: string;
 
   @Property({ type: "json", nullable: true })
   jobData?: Record<string, any>;
