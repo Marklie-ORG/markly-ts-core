@@ -40,7 +40,7 @@ export const activityLogMap: ActivityLogEntry[] = [
         action: "updated_schedule",
         targetType: "report",
         getTargetUuid: (ctx) => ctx.params?.uuid,
-        getOrganizationUuid: (ctx) => ctx.request.body?.organizationUuid,
+        getOrganizationUuid: (ctx) => ctx.state.user?.organization,
         getClientUuid: (ctx) => ctx.request.body?.clientUuid,
         getMetadata: (ctx) => ctx.request.body,
     },

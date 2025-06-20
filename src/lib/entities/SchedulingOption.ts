@@ -14,10 +14,10 @@ export class SchedulingOption extends BaseEntity {
   @Property({ default: true })
   isActive: boolean = true;
 
-  @Property()
-  reportName!: string;
+  @Property({nullable: true})
+  reportName?: string;
 
-  @Property()
+  @Property({default: "facebook"})
   platform!: string;
 
   @Property({ type: "json", nullable: true })
