@@ -323,10 +323,22 @@ export interface SchedulingOptionCampaignMetric {
 }
 
 export interface SchedulingOptionMetrics {
-  kpis: SchedulingOptionKpiMetric[];
-  graphs: SchedulingOptionGraphMetric[];
-  ads: SchedulingOptionAdMetric[];
-  campaigns: SchedulingOptionCampaignMetric[];
+  kpis: {
+    order: number;
+    metrics: SchedulingOptionKpiMetric[];
+  }
+  graphs: {
+    order: number;
+    metrics: SchedulingOptionGraphMetric[];
+  }
+  ads: {
+    order: number;
+    metrics: SchedulingOptionAdMetric[];
+  }
+  campaigns: {
+    order: number;
+    metrics: SchedulingOptionCampaignMetric[];
+  }
 }
 
 
