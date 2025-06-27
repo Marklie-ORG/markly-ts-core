@@ -178,3 +178,11 @@ export const VerifyPasswordRecoveryRequestSchema = z.object({
   token: z.string(),
   newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
 });
+
+
+export const UpdateReportMetricsSelectionsRequestSchema = z.object({
+  kpis: z.any(),
+  graphs: z.any(),
+  ads: z.any(),
+  campaigns: z.any(),
+});
