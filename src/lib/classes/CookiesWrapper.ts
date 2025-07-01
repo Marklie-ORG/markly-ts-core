@@ -30,8 +30,7 @@ export class CookiesWrapper {
       sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
-      domain:
-        process.env.ENVIRONMENT === "production" ? "agencies-service-10669311980.europe-west4.run.app": undefined,
+      // domain: process.env.ENVIRONMENT === "production" ? "agencies-service-10669311980.europe-west4.run.app": undefined,
     };
   }
 }
