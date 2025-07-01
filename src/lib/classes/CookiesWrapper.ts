@@ -25,12 +25,12 @@ export class CookiesWrapper {
   public static defaultRefreshCookieOptions(): CookieOptions {
     return {
       httpOnly: true,
-      secure: process.env.ENVIRONEMNT === "production",
-      sameSite: process.env.ENVIRONEMNT === "production" ? 'none' : 'lax',
+      secure: process.env.ENVIRONMENT === "production",
+      sameSite: process.env.ENVIRONMENT === "production" ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
       domain:
-        process.env.ENVIRONEMNT === "production" ? "agencies-service-10669311980.europe-west4.run.app" : undefined,
+        process.env.ENVIRONMENT === "production" ? "agencies-service-10669311980.europe-west4.run.app" : undefined,
     };
   }
 }
