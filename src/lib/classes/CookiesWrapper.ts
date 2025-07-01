@@ -30,7 +30,7 @@ export class CookiesWrapper {
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: "/",
       domain:
-        process.env.ENVIRONMENT === "production" ? "agencies-service-10669311980.europe-west4.run.app" : undefined,
+        process.env.ENVIRONMENT === "production" ? "marklie.com": undefined,
     };
   }
 }
