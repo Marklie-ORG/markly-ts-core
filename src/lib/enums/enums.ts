@@ -32,9 +32,7 @@ export enum ClientTokenType {
 }
 
 export enum TokenExpiration {
-  ACCESS = 1,
-  // ACCESS = 60 * 60,
-  // REFRESH = 1,
+  ACCESS = 60 * 60,
   REFRESH = 356 * 24 * 60 * 60,
   EMAIL_CHANGE = 60 * 5,
   PASSWORD_RECOVERY = 60 * 5,

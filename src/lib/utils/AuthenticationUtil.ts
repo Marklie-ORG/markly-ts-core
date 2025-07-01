@@ -205,8 +205,7 @@ export class AuthenticationUtil {
       iat: Math.floor(Date.now() / 1000),
     };
     return jwt.sign(payload, this.ACCESS_SECRET, {
-      expiresIn: TokenExpiration.ACCESS,
-      // expiresIn: '6h',
+      expiresIn: '6h',
     });
   }
 
