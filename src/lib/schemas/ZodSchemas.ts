@@ -83,6 +83,11 @@ export const ReportsQueryParamsSchema = z.object({
     .min(1, { message: "organizationName is required" }),
 });
 
+export const SendReportAfterReview = z.object({
+  reportUuid:  z.string().uuid({ message: "Invalid report UUID" }),
+
+});
+
 export const UrlParamsSchema = z.object({
   uuid: z.string().min(1, { message: "UUID is required" }),
 });
