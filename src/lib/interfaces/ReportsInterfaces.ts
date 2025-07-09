@@ -342,5 +342,8 @@ export interface SchedulingOptionMetrics {
   }
 }
 
+export interface SendAfterReviewRequest {
+  reportUuid: string
+}
 
 

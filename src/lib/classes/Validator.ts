@@ -76,8 +76,8 @@ const schemaMap: SchemaEntry[] = [
     schema: ReportsQueryParamsSchema,
   },
   {
-    pattern: "/api/reports/send-after-review/:uuid",
-    matcher: match("/api/reports/send-after-review/:uuid", {decode: decodeURIComponent}),
+    pattern: "/api/reports/send-after-review",
+    matcher: match("/api/reports/send-after-review", {decode: decodeURIComponent}),
     schema: SendReportAfterReview
   },
   {
