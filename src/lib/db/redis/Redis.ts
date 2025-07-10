@@ -56,4 +56,3 @@ export class RedisClient {
     return client.del(key);
   }
 }
-

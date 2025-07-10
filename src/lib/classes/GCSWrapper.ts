@@ -66,7 +66,10 @@ export class GCSWrapper {
     const cleanedUrl = publicUrlOrPath.split("?")[0];
 
     if (cleanedUrl.startsWith("https://storage.googleapis.com/")) {
-      filePathInBucket = cleanedUrl.replace(`https://storage.googleapis.com/${this.bucketName}/`, "");
+      filePathInBucket = cleanedUrl.replace(
+        `https://storage.googleapis.com/${this.bucketName}/`,
+        "",
+      );
     } else if (cleanedUrl.startsWith("gs://")) {
       filePathInBucket = cleanedUrl.replace(`gs://${this.bucketName}/`, "");
     } else {
@@ -78,5 +81,4 @@ export class GCSWrapper {
     const [fileBuffer] = await file.download();
     return fileBuffer.toString("base64");
   }
-
 }

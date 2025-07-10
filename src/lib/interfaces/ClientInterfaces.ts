@@ -1,33 +1,33 @@
 export interface CreateClientRequest {
-    name: string;
-    facebookAdAccounts: string[];
-    // tiktokAdAccounts: string[];
+  name: string;
+  facebookAdAccounts: string[];
+  // tiktokAdAccounts: string[];
 }
 
 export interface UpdateClientRequest {
-    name?: string;
-    emails?: string[];
-    phoneNumbers?: string[];
+  name?: string;
+  emails?: string[];
+  phoneNumbers?: string[];
 }
 
 export interface CreateClientFacebookAdAccountRequest {
-    adAccountId: string;
+  adAccountId: string;
 }
 
 export interface SetSlackConversationIdRequest {
-    conversationId: string;
+  conversationId: string;
 }
 
 export interface SendMessageToSlackRequest {
-    message: string;
+  message: string;
 }
 
 export interface SetSlackWorkspaceTokenRequest {
-    tokenId: string;
+  tokenId: string;
 }
 
 export interface SendMessageWithFileToSlackRequest {
-    message: string;
-    pdfBuffer: Buffer;
-    fileName: string;
+  message: string;
+  pdfBuffer: Buffer;
+  fileName: string;
 }

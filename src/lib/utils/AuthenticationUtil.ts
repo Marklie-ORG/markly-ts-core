@@ -1,11 +1,15 @@
-import {User} from "../entities/User.js";
-import jwt, {type JwtPayload, type VerifyErrors} from "jsonwebtoken";
-import {TokenExpiration} from "../enums/enums.js";
+import { User } from "../entities/User.js";
+import jwt, { type JwtPayload, type VerifyErrors } from "jsonwebtoken";
+import { TokenExpiration } from "../enums/enums.js";
 import bcrypt from "bcryptjs";
-import {OrganizationMember} from "../entities/OrganizationMember.js";
-import type {Organization} from "../entities/Organization.js";
-import type {CleanedUser, LoginRequestBody, RegistrationRequestBody} from "../interfaces/AuthInterfaces.js";
-import {Database} from "../db/config/DB.js";
+import { OrganizationMember } from "../entities/OrganizationMember.js";
+import type { Organization } from "../entities/Organization.js";
+import type {
+  CleanedUser,
+  LoginRequestBody,
+  RegistrationRequestBody,
+} from "../interfaces/AuthInterfaces.js";
+import { Database } from "../db/config/DB.js";
 
 const database: Database = await Database.getInstance();
 
@@ -99,18 +103,18 @@ export class AuthenticationUtil {
             return;
           }
 
-          if (
-            !decoded || 
-            typeof decoded === "string" ||
-            !decoded.exp 
-          ) {
+          if (!decoded || typeof decoded === "string" || !decoded.exp) {
             resolve(null);
             return;
           }
 
           const isExpired = Date.now() / 1000 > decoded.exp;
 
-          resolve({userUuid: decoded.userUuid, isExpired, newEmail: decoded.newEmail});
+          resolve({
+            userUuid: decoded.userUuid,
+            isExpired,
+            newEmail: decoded.newEmail,
+          });
         },
       );
     });
@@ -136,11 +140,7 @@ export class AuthenticationUtil {
             return;
           }
 
-          if (
-            !decoded || 
-            typeof decoded === "string" ||
-            !decoded.exp 
-          ) {
+          if (!decoded || typeof decoded === "string" || !decoded.exp) {
             resolve(null);
             return;
           }
@@ -148,11 +148,11 @@ export class AuthenticationUtil {
           const isExpired = Date.now() / 1000 > decoded.exp;
 
           resolve({
-            userUuid: decoded.userUuid, 
-            isExpired, 
-            email: decoded.email, 
+            userUuid: decoded.userUuid,
+            isExpired,
+            email: decoded.email,
             toRecoverPassword: decoded.toRecoverPassword,
-            passwordRecoveryToken: passwordRecoveryToken
+            passwordRecoveryToken: passwordRecoveryToken,
           });
         },
       );
@@ -203,7 +203,7 @@ export class AuthenticationUtil {
       iat: Math.floor(Date.now() / 1000),
     };
     return jwt.sign(payload, this.ACCESS_SECRET, {
-      expiresIn: '6h',
+      expiresIn: "6h",
     });
   }
 
@@ -217,7 +217,10 @@ export class AuthenticationUtil {
     });
   }
 
-  public static signEmailChangeToken(cleanedUser: CleanedUser, newEmail: string) {
+  public static signEmailChangeToken(
+    cleanedUser: CleanedUser,
+    newEmail: string,
+  ) {
     const payload = {
       userUuid: cleanedUser.uuid,
       newEmail,

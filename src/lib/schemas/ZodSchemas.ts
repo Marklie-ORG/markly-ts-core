@@ -4,7 +4,7 @@ export const RegistrationRequestSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
 export const LoginRequestSchema = z.object({
@@ -84,8 +84,7 @@ export const ReportsQueryParamsSchema = z.object({
 });
 
 export const SendReportAfterReview = z.object({
-  reportUuid:  z.string().uuid({ message: "Invalid report UUID" }),
-
+  reportUuid: z.string().uuid({ message: "Invalid report UUID" }),
 });
 
 export const UrlParamsSchema = z.object({
@@ -109,16 +108,16 @@ export const SaveAnswerRequestSchema = z.object({
 });
 
 export const CreateOrganizationRequestSchema = z.object({
-  name: z.string()
+  name: z.string(),
 });
 
 export const UseInviteCodeRequestSchema = z.object({
-  code: z.string()
+  code: z.string(),
 });
 
 export const HandleFacebookLoginRequestSchema = z.object({
   code: z.string(),
-  redirectUri: z.string()
+  redirectUri: z.string(),
 });
 
 export const CreateClientRequestSchema = z.object({
@@ -128,51 +127,56 @@ export const CreateClientRequestSchema = z.object({
 });
 
 export const CreateClientFacebookAdAccountRequestSchema = z.object({
-  adAccountId: z.string()
+  adAccountId: z.string(),
 });
 
-export const DeleteClientFacebookAdAccountRequestSchema = z.object({
-});
+export const DeleteClientFacebookAdAccountRequestSchema = z.object({});
 
 export const HandleSlackLoginRequestSchema = z.object({
   code: z.string(),
   redirectUri: z.string(),
-  organizationClientId: z.string()
+  organizationClientId: z.string(),
 });
 
 export const SetSlackConversationIdRequestSchema = z.object({
-  conversationId: z.string()
+  conversationId: z.string(),
 });
 
 export const SendMessageToSlackRequestSchema = z.object({
-  message: z.string()
+  message: z.string(),
 });
 
 export const SetSlackWorkspaceTokenRequestSchema = z.object({
-  tokenId: z.string()
+  tokenId: z.string(),
 });
 
 export const SendMessageWithFileToSlackRequestSchema = z.object({
-  message: z.string()
+  message: z.string(),
 });
 
 export const UpdateClientRequestSchema = z.object({
   name: z.string().optional(),
-  emails: z.array(z.string()).optional()
+  emails: z.array(z.string()).optional(),
 });
 
 export const ChangeEmailRequestSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
 export const VerifyEmailChangeRequestSchema = z.object({
-  token: z.string()
+  token: z.string(),
 });
 
 export const ChangePasswordRequestSchema = z.object({
-  password: z.string().min(8, { message: "Password must be at least 8 characters long" }),
-  newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
+  password: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
+  newPassword: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
 export const SendPasswordRecoveryEmailRequestSchema = z.object({
@@ -181,9 +185,10 @@ export const SendPasswordRecoveryEmailRequestSchema = z.object({
 
 export const VerifyPasswordRecoveryRequestSchema = z.object({
   token: z.string(),
-  newPassword: z.string().min(8, { message: "Password must be at least 8 characters long" }),
+  newPassword: z
+    .string()
+    .min(8, { message: "Password must be at least 8 characters long" }),
 });
-
 
 export const UpdateReportMetricsSelectionsRequestSchema = z.object({
   kpis: z.any(),

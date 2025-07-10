@@ -13,7 +13,9 @@ export class SendGridService {
     sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
   }
 
-  public static getInstance(from: string = "support@marklie.com"): SendGridService {
+  public static getInstance(
+    from: string = "support@marklie.com",
+  ): SendGridService {
     if (!SendGridService.instance) {
       SendGridService.instance = new SendGridService(from);
     }
@@ -34,7 +36,7 @@ export class SendGridService {
       } as MailDataRequired);
 
       logger.info(
-          `Email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
+        `Email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
       );
     } catch (error: any) {
       logger.error("Error sending email:", error?.response?.body || error);
@@ -42,7 +44,10 @@ export class SendGridService {
     }
   }
 
-  public async sendReportEmail(options: SendEmailOptions, pdfBuffer: string): Promise<void> {
+  public async sendReportEmail(
+    options: SendEmailOptions,
+    pdfBuffer: string,
+  ): Promise<void> {
     try {
       await sgMail.send({
         to: options.to,
@@ -52,24 +57,34 @@ export class SendGridService {
         replyTo: options.replyTo,
         cc: options.cc,
         bcc: options.bcc,
-        attachments: [{
-          content: pdfBuffer,
-          filename: "facebook-report.pdf",
-          type: "application/pdf",
-          disposition: "attachment",
-        }],
+        attachments: [
+          {
+            content: pdfBuffer,
+            filename: "facebook-report.pdf",
+            type: "application/pdf",
+            disposition: "attachment",
+          },
+        ],
       } as MailDataRequired);
 
       logger.info(
-          `Report email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
+        `Report email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
       );
     } catch (error: any) {
-      logger.error("Error sending report email:", error?.response?.body || error);
+      logger.error(
+        "Error sending report email:",
+        error?.response?.body || error,
+      );
       throw error;
     }
   }
 
-  public async sendTemplateEmail({to, templateId, dynamicTemplateData, from}: {
+  public async sendTemplateEmail({
+    to,
+    templateId,
+    dynamicTemplateData,
+    from,
+  }: {
     to: string | string[];
     templateId: string;
     dynamicTemplateData: Record<string, any>;

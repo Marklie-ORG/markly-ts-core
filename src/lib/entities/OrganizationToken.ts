@@ -17,16 +17,16 @@ export class OrganizationToken extends BaseEntity {
   @Enum()
   type!: OrganizationTokenType;
 
-  @Property({ type: 'text' })
+  @Property({ type: "text" })
   encryptedToken!: string;
 
   @ManyToOne(() => Organization)
   organization!: Organization;
 
-  @Property({ type: 'varchar', length: 32 })
+  @Property({ type: "varchar", length: 32 })
   iv!: string;
 
-  @Property({ type: 'varchar', length: 32 })
+  @Property({ type: "varchar", length: 32 })
   tag!: string;
 
   @BeforeCreate()
@@ -93,7 +93,8 @@ export function decrypt({
   tag: string;
 }): string {
   const decipher = crypto.createDecipheriv(
-    ALGORITHM, getKey(),
+    ALGORITHM,
+    getKey(),
     Buffer.from(iv, "hex"),
   );
   decipher.setAuthTag(Buffer.from(tag, "hex"));

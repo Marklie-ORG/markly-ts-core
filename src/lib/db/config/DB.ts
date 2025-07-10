@@ -1,5 +1,5 @@
 import { MikroORM, EntityManager } from "@mikro-orm/postgresql";
-import config from '../config/mikro-orm.config.js';
+import config from "../config/mikro-orm.config.js";
 
 export class Database {
   private static instance: Database;
@@ -14,7 +14,7 @@ export class Database {
   public static async getInstance(): Promise<Database> {
     if (!Database.instance) {
       const orm = await MikroORM.init({
-        ...config
+        ...config,
       });
       Database.instance = new Database(orm);
     }

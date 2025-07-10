@@ -13,10 +13,10 @@ export class Log {
 
     const logFormat = format.printf(({ level, message }) => {
       const namespace = isProduction
-          ? this.baseName
-          : level === "error"
-              ? `\x1b[31m${this.baseName}\x1b[39m`
-              : `\x1b[35m${this.baseName}\x1b[39m`;
+        ? this.baseName
+        : level === "error"
+          ? `\x1b[31m${this.baseName}\x1b[39m`
+          : `\x1b[35m${this.baseName}\x1b[39m`;
 
       return `${namespace} ${message}`;
     });
@@ -62,18 +62,27 @@ export class Log {
     const logNamespace = `${this.baseName}:error`;
 
     if (message instanceof Error) {
-      this.logger.error(message.stack || message.message, { namespace: logNamespace });
-    } else {
-      this.logger.error(typeof message === "string" ? message : JSON.stringify(message), {
+      this.logger.error(message.stack || message.message, {
         namespace: logNamespace,
       });
+    } else {
+      this.logger.error(
+        typeof message === "string" ? message : JSON.stringify(message),
+        {
+          namespace: logNamespace,
+        },
+      );
     }
 
     if (error) {
       if (error instanceof Error) {
-        this.logger.error(error.stack || error.message, { namespace: logNamespace });
+        this.logger.error(error.stack || error.message, {
+          namespace: logNamespace,
+        });
       } else if (typeof error === "object") {
-        this.logger.error(JSON.stringify(error, null, 2), { namespace: logNamespace });
+        this.logger.error(JSON.stringify(error, null, 2), {
+          namespace: logNamespace,
+        });
       } else {
         this.logger.error(String(error), { namespace: logNamespace });
       }
@@ -86,16 +95,21 @@ export class Log {
     const logNamespace = `${this.baseName}:error`;
 
     if (isAxiosError(error)) {
-      this.logger.error(JSON.stringify(error.toJSON(), null, 2), { namespace: logNamespace });
+      this.logger.error(JSON.stringify(error.toJSON(), null, 2), {
+        namespace: logNamespace,
+      });
     } else if (error instanceof Error) {
-      this.logger.error(error.stack || error.message, { namespace: logNamespace });
+      this.logger.error(error.stack || error.message, {
+        namespace: logNamespace,
+      });
     } else if (typeof error === "string") {
       this.logger.error(error, { namespace: logNamespace });
     } else {
-      this.logger.error(JSON.stringify(error, null, 2), { namespace: logNamespace });
+      this.logger.error(JSON.stringify(error, null, 2), {
+        namespace: logNamespace,
+      });
     }
   }
-
 
   public catchErrorAndLogUuid(error: unknown): string {
     const uuid: string = crypto.randomUUID();

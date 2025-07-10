@@ -98,7 +98,6 @@ export interface ReportJobData {
   };
 }
 
-
 export interface ReportData {
   ads: Ad[];
   KPIs: KPIs | null;
@@ -197,102 +196,102 @@ export interface Campaign {
 }
 
 export const AVAILABLE_KPI_METRICS: Record<string, string[]> = {
-  spend: ['spend'],
-  impressions: ['impressions'],
-  clicks: ['clicks'],
-  cpc: ['cpc'],
-  ctr: ['ctr'],
-  cpm: ['cpm'],
-  cpp: ['cpp'],
-  reach: ['reach'],
-  purchase_roas: ['purchase_roas'],
+  spend: ["spend"],
+  impressions: ["impressions"],
+  clicks: ["clicks"],
+  cpc: ["cpc"],
+  ctr: ["ctr"],
+  cpm: ["cpm"],
+  cpp: ["cpp"],
+  reach: ["reach"],
+  purchase_roas: ["purchase_roas"],
 
-  conversion_value: ['action_values'],
+  conversion_value: ["action_values"],
 
-  purchases: ['actions'],
-  add_to_cart: ['actions'],
-  initiated_checkouts: ['actions'],
-  engagement: ['actions'],
+  purchases: ["actions"],
+  add_to_cart: ["actions"],
+  initiated_checkouts: ["actions"],
+  engagement: ["actions"],
 
-  cost_per_purchase: ['spend', 'actions'],
-  cost_per_add_to_cart: ['spend', 'actions'],
-  conversion_rate: ['clicks', 'actions'],
-}
+  cost_per_purchase: ["spend", "actions"],
+  cost_per_add_to_cart: ["spend", "actions"],
+  conversion_rate: ["clicks", "actions"],
+};
 
 export type AvailableKpiMetric = keyof typeof AVAILABLE_KPI_METRICS;
 
 export const AVAILABLE_GRAPH_METRICS: Record<string, string[]> = {
-  spend: ['spend'],
-  impressions: ['impressions'],
-  clicks: ['clicks'],
-  cpc: ['cpc'],
-  ctr: ['ctr'],
-  cpm: ['cpm'],
-  cpp: ['cpp'],
-  reach: ['reach'],
-  purchase_roas: ['purchase_roas'],
+  spend: ["spend"],
+  impressions: ["impressions"],
+  clicks: ["clicks"],
+  cpc: ["cpc"],
+  ctr: ["ctr"],
+  cpm: ["cpm"],
+  cpp: ["cpp"],
+  reach: ["reach"],
+  purchase_roas: ["purchase_roas"],
 
-  conversion_value: ['action_values'],
+  conversion_value: ["action_values"],
 
-  purchases: ['actions'],
-  add_to_cart: ['actions'],
-  initiated_checkouts: ['actions'],
-  engagement: ['actions'],
+  purchases: ["actions"],
+  add_to_cart: ["actions"],
+  initiated_checkouts: ["actions"],
+  engagement: ["actions"],
 
-  cost_per_purchase: ['spend', 'actions'],
-  cost_per_add_to_cart: ['spend', 'actions'],
-  conversion_rate: ['clicks', 'actions']
-}
+  cost_per_purchase: ["spend", "actions"],
+  cost_per_add_to_cart: ["spend", "actions"],
+  conversion_rate: ["clicks", "actions"],
+};
 
 export type AvailableGraphMetric = keyof typeof AVAILABLE_GRAPH_METRICS;
 
 export const AVAILABLE_ADS_METRICS: Record<string, string[]> = {
-  spend: ['spend'],
-  impressions: ['impressions'],
-  clicks: ['clicks'],
-  cpc: ['cpc'],
-  ctr: ['ctr'],
-  cpm: ['cpm'],
-  cpp: ['cpp'],
-  reach: ['reach'],
-  purchase_roas: ['purchase_roas'],
+  spend: ["spend"],
+  impressions: ["impressions"],
+  clicks: ["clicks"],
+  cpc: ["cpc"],
+  ctr: ["ctr"],
+  cpm: ["cpm"],
+  cpp: ["cpp"],
+  reach: ["reach"],
+  purchase_roas: ["purchase_roas"],
 
-  conversion_value: ['action_values'],
+  conversion_value: ["action_values"],
 
-  purchases: ['actions'],
-  add_to_cart: ['actions'],
-  initiated_checkouts: ['actions'],
-  engagement: ['actions'],
+  purchases: ["actions"],
+  add_to_cart: ["actions"],
+  initiated_checkouts: ["actions"],
+  engagement: ["actions"],
 
-  cost_per_purchase: ['spend', 'actions'],
-  cost_per_add_to_cart: ['spend', 'actions'],
-  conversion_rate: ['clicks', 'actions']
-}
+  cost_per_purchase: ["spend", "actions"],
+  cost_per_add_to_cart: ["spend", "actions"],
+  conversion_rate: ["clicks", "actions"],
+};
 
 export type AvailableAdMetric = keyof typeof AVAILABLE_ADS_METRICS;
 
 export const AVAILABLE_CAMPAIGN_METRICS: Record<string, string[]> = {
-  spend: ['spend'],
-  impressions: ['impressions'],
-  clicks: ['clicks'],
-  cpc: ['cpc'],
-  ctr: ['ctr'],
-  cpm: ['cpm'],
-  cpp: ['cpp'],
-  reach: ['reach'],
-  purchase_roas: ['purchase_roas'],
+  spend: ["spend"],
+  impressions: ["impressions"],
+  clicks: ["clicks"],
+  cpc: ["cpc"],
+  ctr: ["ctr"],
+  cpm: ["cpm"],
+  cpp: ["cpp"],
+  reach: ["reach"],
+  purchase_roas: ["purchase_roas"],
 
-  conversion_value: ['action_values'],
+  conversion_value: ["action_values"],
 
-  purchases: ['actions'],
-  add_to_cart: ['actions'],
-  initiated_checkouts: ['actions'],
-  engagement: ['actions'],
+  purchases: ["actions"],
+  add_to_cart: ["actions"],
+  initiated_checkouts: ["actions"],
+  engagement: ["actions"],
 
-  cost_per_purchase: ['spend', 'actions'],
-  cost_per_add_to_cart: ['spend', 'actions'],
-  conversion_rate: ['clicks', 'actions']
-}
+  cost_per_purchase: ["spend", "actions"],
+  cost_per_add_to_cart: ["spend", "actions"],
+  conversion_rate: ["clicks", "actions"],
+};
 
 export type AvailableCampaignMetric = keyof typeof AVAILABLE_CAMPAIGN_METRICS;
 
@@ -327,23 +326,21 @@ export interface SchedulingOptionMetrics {
   kpis: {
     order: number;
     metrics: SchedulingOptionKpiMetric[];
-  }
+  };
   graphs: {
     order: number;
     metrics: SchedulingOptionGraphMetric[];
-  }
+  };
   ads: {
     order: number;
     metrics: SchedulingOptionAdMetric[];
-  }
+  };
   campaigns: {
     order: number;
     metrics: SchedulingOptionCampaignMetric[];
-  }
+  };
 }
 
 export interface SendAfterReviewRequest {
-  reportUuid: string
+  reportUuid: string;
 }
-
-

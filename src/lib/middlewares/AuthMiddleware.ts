@@ -7,15 +7,18 @@ import type { User } from "../entities/User.js";
 type ExcludedEndpoint = string | RegExp;
 
 export const AuthMiddleware = (
-    excludedEndpoints: ExcludedEndpoint[] = [
-      "/login", 
-      "/register", 
-      "/refresh", 
-      "/send-password-recovery-email",
-      "/verify-password-recovery",
-      /^\/api\/reports\/[0-9a-fA-F-]{36}$/
-    ]
-): Application.Middleware<Application.DefaultState, Application.DefaultContext> => {
+  excludedEndpoints: ExcludedEndpoint[] = [
+    "/login",
+    "/register",
+    "/refresh",
+    "/send-password-recovery-email",
+    "/verify-password-recovery",
+    /^\/api\/reports\/[0-9a-fA-F-]{36}$/,
+  ],
+): Application.Middleware<
+  Application.DefaultState,
+  Application.DefaultContext
+> => {
   return async (ctx: Context, next: Next) => {
     const isExcluded = excludedEndpoints.some((endpoint) => {
       if (endpoint instanceof RegExp) {
@@ -36,7 +39,8 @@ export const AuthMiddleware = (
     }
 
     try {
-      const user: User | null = await AuthenticationUtil.fetchUserWithTokenInfo(token);
+      const user: User | null =
+        await AuthenticationUtil.fetchUserWithTokenInfo(token);
       if (!user) {
         ctx.throw(401, "Unauthorized");
       } else {

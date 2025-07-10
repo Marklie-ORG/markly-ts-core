@@ -10,13 +10,12 @@ export class SlackApi {
     this.api = axios.create({
       baseURL: `https://slack.com/api`,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
       },
     });
   }
 
   public async handleSlackLogin(code: string, redirectUri: string) {
-    
     const response = await this.api.get("/oauth.v2.access", {
       params: {
         client_id: process.env.SLACK_CLIENT_ID,
@@ -38,7 +37,7 @@ export class SlackApi {
         types: "public_channel,private_channel,mpim",
       },
       headers: {
-        Authorization: `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
     });
 
@@ -50,37 +49,41 @@ export class SlackApi {
     text: string,
     report_file_id?: string,
   ) {
-    const response = await this.api.post("/chat.postMessage", {
-      channel: channel,
-      text: text,
-      blocks: [
-        {
-          type: "markdown",
-          text: text,
-          block_id: "text",
-        },
-        report_file_id
-          ? {
-              type: "file",
-              block_id: "report",
-              file_id: report_file_id,
-              source: "remote",
-            }
-          : null,
-      ].filter(Boolean),
-    }, {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
+    const response = await this.api.post(
+      "/chat.postMessage",
+      {
+        channel: channel,
+        text: text,
+        blocks: [
+          {
+            type: "markdown",
+            text: text,
+            block_id: "text",
+          },
+          report_file_id
+            ? {
+                type: "file",
+                block_id: "report",
+                file_id: report_file_id,
+                source: "remote",
+              }
+            : null,
+        ].filter(Boolean),
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      },
+    );
 
     return response.data;
   }
 
   public async getUsersList() {
-    const response = await this.api.get<UsersList>("/users.list", { 
+    const response = await this.api.get<UsersList>("/users.list", {
       headers: {
-        Authorization: `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
     });
 
@@ -88,13 +91,17 @@ export class SlackApi {
   }
 
   public async joinChannel(channelId: string) {
-    const response = await this.api.post("/conversations.join", {
-      channel: channelId,
-    }, {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
+    const response = await this.api.post(
+      "/conversations.join",
+      {
+        channel: channelId,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      },
+    );
 
     return response.data;
   }
@@ -102,7 +109,7 @@ export class SlackApi {
   public async getTeamInfo() {
     const response = await this.api.get("/team.info", {
       headers: {
-        Authorization: `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
     });
 
@@ -120,7 +127,7 @@ export class SlackApi {
         length: length,
       },
       headers: {
-        Authorization: `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
     });
 
@@ -142,13 +149,17 @@ export class SlackApi {
   }
 
   public async completeUpload(files: { id: string; title: string }[]) {
-    const response = await this.api.post("/files.completeUploadExternal", {
-      files: files,
-    }, {
-      headers: {
-        Authorization: `Bearer ${this.accessToken}`
+    const response = await this.api.post(
+      "/files.completeUploadExternal",
+      {
+        files: files,
       },
-    });
+      {
+        headers: {
+          Authorization: `Bearer ${this.accessToken}`,
+        },
+      },
+    );
 
     return response.data;
   }

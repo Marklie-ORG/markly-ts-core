@@ -28,7 +28,7 @@ export enum OrganizationTokenType {
 }
 
 export enum ClientTokenType {
-  SLACK = "slack"
+  SLACK = "slack",
 }
 
 export enum TokenExpiration {

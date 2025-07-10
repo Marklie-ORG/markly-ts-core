@@ -30,7 +30,8 @@ import {
   VerifyPasswordRecoveryRequestSchema,
   SendPasswordRecoveryEmailRequestSchema,
   UpdateSchedulingOptionRequestSchema,
-  UpdateReportMetricsSelectionsRequestSchema, SendReportAfterReview,
+  UpdateReportMetricsSelectionsRequestSchema,
+  SendReportAfterReview,
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -62,12 +63,16 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/reports/scheduling-option/:uuid",
-    matcher: match("/api/reports/scheduling-option/:uuid", { decode: decodeURIComponent }),
+    matcher: match("/api/reports/scheduling-option/:uuid", {
+      decode: decodeURIComponent,
+    }),
     schema: UpdateSchedulingOptionRequestSchema,
   },
   {
     pattern: "/api/reports/report-metrics-selections/:uuid",
-    matcher: match("/api/reports/report-metrics-selections/:uuid", { decode: decodeURIComponent }),
+    matcher: match("/api/reports/report-metrics-selections/:uuid", {
+      decode: decodeURIComponent,
+    }),
     schema: UpdateReportMetricsSelectionsRequestSchema,
   },
   {
@@ -77,17 +82,23 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/reports/send-after-review",
-    matcher: match("/api/reports/send-after-review", {decode: decodeURIComponent}),
-    schema: SendReportAfterReview
+    matcher: match("/api/reports/send-after-review", {
+      decode: decodeURIComponent,
+    }),
+    schema: SendReportAfterReview,
   },
   {
     pattern: "/api/ad-accounts/businesses",
-    matcher: match("/api/ad-accounts/businesses", { decode: decodeURIComponent }),
+    matcher: match("/api/ad-accounts/businesses", {
+      decode: decodeURIComponent,
+    }),
     schema: AdAccountsBusinessesRequestSchema,
   },
   {
     pattern: "/api/user/active-organization",
-    matcher: match("/api/user/active-organization", { decode: decodeURIComponent }),
+    matcher: match("/api/user/active-organization", {
+      decode: decodeURIComponent,
+    }),
     schema: SetActiveOrganizationSchema,
   },
   {
@@ -97,12 +108,16 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/user/handle-facebook-login",
-    matcher: match("/api/user/handle-facebook-login", { decode: decodeURIComponent }),
+    matcher: match("/api/user/handle-facebook-login", {
+      decode: decodeURIComponent,
+    }),
     schema: HandleFacebookLoginRequestSchema,
   },
   {
     pattern: "/api/user/handle-slack-login",
-    matcher: match("/api/user/handle-slack-login", { decode: decodeURIComponent }),
+    matcher: match("/api/user/handle-slack-login", {
+      decode: decodeURIComponent,
+    }),
     schema: HandleSlackLoginRequestSchema,
   },
   {
@@ -117,7 +132,9 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/organizations/invite-code",
-    matcher: match("/api/organizations/invite-code", { decode: decodeURIComponent }),
+    matcher: match("/api/organizations/invite-code", {
+      decode: decodeURIComponent,
+    }),
     schema: UseInviteCodeRequestSchema,
   },
   {
@@ -132,42 +149,58 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/clients/:clientUuid/ad-accounts",
-    matcher: match("/api/clients/:clientUuid/ad-accounts", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/ad-accounts", {
+      decode: decodeURIComponent,
+    }),
     schema: CreateClientFacebookAdAccountRequestSchema,
   },
   {
     pattern: "/api/clients/:clientUuid/ad-accounts/:adAccountId",
-    matcher: match("/api/clients/:clientUuid/ad-accounts/:adAccountId", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/ad-accounts/:adAccountId", {
+      decode: decodeURIComponent,
+    }),
     schema: DeleteClientFacebookAdAccountRequestSchema,
   },
   {
     pattern: "/api/clients/:clientUuid/slack/conversation-id",
-    matcher: match("/api/clients/:clientUuid/slack/conversation-id", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/slack/conversation-id", {
+      decode: decodeURIComponent,
+    }),
     schema: SetSlackConversationIdRequestSchema,
   },
   {
     pattern: "/api/clients/:clientUuid/slack/send-message",
-    matcher: match("/api/clients/:clientUuid/slack/send-message", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/slack/send-message", {
+      decode: decodeURIComponent,
+    }),
     schema: SendMessageToSlackRequestSchema,
   },
   {
     pattern: "/api/clients/:clientUuid/slack/workspace-token",
-    matcher: match("/api/clients/:clientUuid/slack/workspace-token", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/slack/workspace-token", {
+      decode: decodeURIComponent,
+    }),
     schema: SetSlackWorkspaceTokenRequestSchema,
   },
   {
     pattern: "/api/clients/:clientUuid/slack/send-message-with-file",
-    matcher: match("/api/clients/:clientUuid/slack/send-message-with-file", { decode: decodeURIComponent }),
+    matcher: match("/api/clients/:clientUuid/slack/send-message-with-file", {
+      decode: decodeURIComponent,
+    }),
     schema: SendMessageWithFileToSlackRequestSchema,
   },
   {
     pattern: "/api/user/send-change-email-email",
-    matcher: match("/api/user/send-change-email-email", { decode: decodeURIComponent }),
+    matcher: match("/api/user/send-change-email-email", {
+      decode: decodeURIComponent,
+    }),
     schema: ChangeEmailRequestSchema,
   },
   {
     pattern: "/api/user/verify-email-change",
-    matcher: match("/api/user/verify-email-change", { decode: decodeURIComponent }),
+    matcher: match("/api/user/verify-email-change", {
+      decode: decodeURIComponent,
+    }),
     schema: VerifyEmailChangeRequestSchema,
   },
   {
@@ -177,12 +210,16 @@ const schemaMap: SchemaEntry[] = [
   },
   {
     pattern: "/api/user/send-password-recovery-email",
-    matcher: match("/api/user/send-password-recovery-email", { decode: decodeURIComponent }),
+    matcher: match("/api/user/send-password-recovery-email", {
+      decode: decodeURIComponent,
+    }),
     schema: SendPasswordRecoveryEmailRequestSchema,
   },
   {
     pattern: "/api/user/verify-password-recovery",
-    matcher: match("/api/user/verify-password-recovery", { decode: decodeURIComponent }),
+    matcher: match("/api/user/verify-password-recovery", {
+      decode: decodeURIComponent,
+    }),
     schema: VerifyPasswordRecoveryRequestSchema,
   },
 ];
