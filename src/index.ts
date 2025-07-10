@@ -8,7 +8,7 @@ export { GCPSecretsManager } from "lib/classes/SecretsManager.js";
 export { GCSWrapper } from "lib/classes/GCSWrapper.js";
 export { PubSubWrapper } from "lib/classes/PubSub.js";
 
-//database
+//database singleton
 export {Database} from "lib/db/config/DB.js"
 
 //redis
@@ -63,4 +63,6 @@ export {SlackApi} from "./lib/apis/SlackApi.js"
 //services
 export {TokenService} from "./lib/services/TokenService.js"
 export {SlackService} from "./lib/services/SlackService.js"
+export {SendGridService} from "./lib/services/SendgridService.js"
+export {WhapiService} from "./lib/services/WhapiService.js"
 
