@@ -1,11 +1,11 @@
-import { User } from "../entities/User.js";
-import jwt, { type JwtPayload, type VerifyErrors } from "jsonwebtoken";
-import { TokenExpiration } from "../enums/enums.js";
+import {User} from "../entities/User.js";
+import jwt, {type JwtPayload, type VerifyErrors} from "jsonwebtoken";
+import {TokenExpiration} from "../enums/enums.js";
 import bcrypt from "bcryptjs";
-import { OrganizationMember } from "../entities/OrganizationMember.js";
-import type { Organization } from "../entities/Organization.js";
+import {OrganizationMember} from "../entities/OrganizationMember.js";
+import type {Organization} from "../entities/Organization.js";
 import type {CleanedUser, LoginRequestBody, RegistrationRequestBody} from "../interfaces/AuthInterfaces.js";
-import { Database } from "../db/config/DB.js";
+import {Database} from "../db/config/DB.js";
 
 const database: Database = await Database.getInstance();
 
@@ -190,13 +190,11 @@ export class AuthenticationUtil {
   }
 
   public static async convertPersistedToUser(user: User): Promise<CleanedUser> {
-    const cleanedUser: CleanedUser = {
+    return {
       uuid: user.uuid,
       email: user.email,
       roles: await this.getUserRoleInOrganization(user),
     };
-
-    return cleanedUser;
   }
 
   public static signAccessToken(cleanedUser: CleanedUser) {

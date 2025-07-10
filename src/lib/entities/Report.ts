@@ -7,6 +7,7 @@ import {
 import { Organization } from './Organization.js';
 import {BaseEntity} from "./BaseEntity.js";
 import {OrganizationClient} from "./OrganizationClient.js";
+import {SchedulingOption} from "./SchedulingOption.js";
 
 @Entity()
 export class Report extends BaseEntity{
@@ -19,13 +20,21 @@ export class Report extends BaseEntity{
     @Property()
     reportType!: string;
 
+    @Property({ default: false })
+    reviewRequired?: boolean;
+
+    @Property({ nullable: true })
+    reviewedAt?: Date;
+
     @Property({ type: 'text' })
     gcsUrl!: string;
+
+    @ManyToOne(() => SchedulingOption, { nullable: true })
+    schedulingOption?: SchedulingOption;
 
     @Property({ type: 'jsonb' })
     data!: Record<string, any>;
 
     @Property({ type: 'jsonb', nullable: true })
     metadata?: Record<string, any>;
-
 }
