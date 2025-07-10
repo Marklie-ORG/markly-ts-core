@@ -5,6 +5,12 @@
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,
+        "sourceRoot": "./src",
+        "paths": {
+            "@src/*": ["./*"],
+            "@lib/*": ["lib/*"],
+            "@controllers/*": ["controllers/*"]
+        },
         "baseUrl": "src",
         "outDir": "dist",
         "types": ["node"],
