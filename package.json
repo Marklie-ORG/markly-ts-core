@@ -1,6 +1,6 @@
 {
   "name": "marklie-ts-core",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -9,7 +9,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "npx swc --config-file .swcrc ./src -d dist && npm run generate:dts",
+    "build": "npx swc --strip-leading-paths --config-file .swcrc ./src -d dist && npm run generate:dts",
     "generate:dts": "tsc --emitDeclarationOnly --declaration --declarationMap --outDir dist",
     "prettier:format": "pnpm exec prettier . --write",
     "prettier:check": "npx prettier . --check\n",

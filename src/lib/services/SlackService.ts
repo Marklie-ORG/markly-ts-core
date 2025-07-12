@@ -1,7 +1,7 @@
 import { SlackApi } from "../apis/SlackApi.js";
 import { Database } from "../db/config/DB.js";
 import { OrganizationClient } from "../entities/OrganizationClient.js";
-import {SlackChannel} from "@lib/entities/ClientCommunicationChannel.js";
+import {SlackChannel} from "../entities/ClientCommunicationChannel.js";
 
 const database = await Database.getInstance();
 
