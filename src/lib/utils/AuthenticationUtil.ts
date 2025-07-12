@@ -13,16 +13,16 @@ import { Database } from "../db/config/DB.js";
 
 export class AuthenticationUtil {
   public static readonly ACCESS_SECRET = process.env
-      .ACCESS_TOKEN_SECRET as string;
+    .ACCESS_TOKEN_SECRET as string;
 
   public static readonly REFRESH_SECRET = process.env
-      .REFRESH_TOKEN_SECRET as string;
+    .REFRESH_TOKEN_SECRET as string;
 
   public static readonly EMAIL_CHANGE_SECRET = process.env
-      .EMAIL_CHANGE_TOKEN_SECRET as string;
+    .EMAIL_CHANGE_TOKEN_SECRET as string;
 
   public static readonly PASSWORD_RECOVERY_SECRET = process.env
-      .PASSWORD_RECOVERY_TOKEN_SECRET as string;
+    .PASSWORD_RECOVERY_TOKEN_SECRET as string;
 
   public static async register(body: RegistrationRequestBody) {
     const db = await Database.getInstance();
@@ -46,32 +46,28 @@ export class AuthenticationUtil {
 
   public static verifyRefreshToken(refreshToken: string) {
     return new Promise<string | null | false>(async (resolve, reject) => {
-      jwt.verify(
-          refreshToken,
-          this.REFRESH_SECRET,
-          async (err, decoded) => {
-            if (err || !decoded || typeof decoded === "string") {
-              reject(err || "Invalid token");
-              return;
-            }
+      jwt.verify(refreshToken, this.REFRESH_SECRET, async (err, decoded) => {
+        if (err || !decoded || typeof decoded === "string") {
+          reject(err || "Invalid token");
+          return;
+        }
 
-            const db = await Database.getInstance();
-            const user = await db.em.findOne(User, { uuid: decoded.uuid });
+        const db = await Database.getInstance();
+        const user = await db.em.findOne(User, { uuid: decoded.uuid });
 
-            if (!user) {
-              resolve(null);
-              return;
-            }
+        if (!user) {
+          resolve(null);
+          return;
+        }
 
-            const newAccessToken = this.signAccessToken({
-              uuid: decoded.uuid,
-              email: user.email,
-              roles: decoded.roles,
-            });
+        const newAccessToken = this.signAccessToken({
+          uuid: decoded.uuid,
+          email: user.email,
+          roles: decoded.roles,
+        });
 
-            resolve(newAccessToken);
-          },
-      );
+        resolve(newAccessToken);
+      });
     });
   }
 
@@ -81,24 +77,20 @@ export class AuthenticationUtil {
       isExpired: boolean;
       newEmail: string;
     } | null>((resolve, reject) => {
-      jwt.verify(
-          emailChangeToken,
-          this.EMAIL_CHANGE_SECRET,
-          (err, decoded) => {
-            if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
-              reject(err || "Invalid token");
-              return;
-            }
+      jwt.verify(emailChangeToken, this.EMAIL_CHANGE_SECRET, (err, decoded) => {
+        if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
+          reject(err || "Invalid token");
+          return;
+        }
 
-            const isExpired = Date.now() / 1000 > decoded.exp;
+        const isExpired = Date.now() / 1000 > decoded.exp;
 
-            resolve({
-              userUuid: decoded.userUuid,
-              isExpired,
-              newEmail: decoded.newEmail,
-            });
-          },
-      );
+        resolve({
+          userUuid: decoded.userUuid,
+          isExpired,
+          newEmail: decoded.newEmail,
+        });
+      });
     });
   }
 
@@ -111,24 +103,24 @@ export class AuthenticationUtil {
       passwordRecoveryToken: string;
     } | null>((resolve, reject) => {
       jwt.verify(
-          passwordRecoveryToken,
-          this.PASSWORD_RECOVERY_SECRET,
-          (err, decoded) => {
-            if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
-              reject(err || "Invalid token");
-              return;
-            }
+        passwordRecoveryToken,
+        this.PASSWORD_RECOVERY_SECRET,
+        (err, decoded) => {
+          if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
+            reject(err || "Invalid token");
+            return;
+          }
 
-            const isExpired = Date.now() / 1000 > decoded.exp;
+          const isExpired = Date.now() / 1000 > decoded.exp;
 
-            resolve({
-              userUuid: decoded.userUuid,
-              isExpired,
-              email: decoded.email,
-              toRecoverPassword: decoded.toRecoverPassword,
-              passwordRecoveryToken,
-            });
-          },
+          resolve({
+            userUuid: decoded.userUuid,
+            isExpired,
+            email: decoded.email,
+            toRecoverPassword: decoded.toRecoverPassword,
+            passwordRecoveryToken,
+          });
+        },
       );
     });
   }
@@ -145,8 +137,8 @@ export class AuthenticationUtil {
     }
 
     const passwordMatch = await this.comparePasswords(
-        body.password,
-        existingUser.password,
+      body.password,
+      existingUser.password,
     );
 
     if (!passwordMatch) {
@@ -156,13 +148,15 @@ export class AuthenticationUtil {
     return this.buildTokens(existingUser);
   }
 
-  public static async getUserOrganizations(user: User): Promise<Organization[]> {
+  public static async getUserOrganizations(
+    user: User,
+  ): Promise<Organization[]> {
     const db = await Database.getInstance();
 
     const memberships = await db.em.find(
-        OrganizationMember,
-        { user },
-        { populate: ["organization"] },
+      OrganizationMember,
+      { user },
+      { populate: ["organization"] },
     );
 
     return memberships.map((m) => m.organization);
@@ -194,7 +188,10 @@ export class AuthenticationUtil {
     });
   }
 
-  public static signEmailChangeToken(cleanedUser: CleanedUser, newEmail: string) {
+  public static signEmailChangeToken(
+    cleanedUser: CleanedUser,
+    newEmail: string,
+  ) {
     const payload = {
       userUuid: cleanedUser.uuid,
       newEmail,
@@ -238,42 +235,42 @@ export class AuthenticationUtil {
     const organizations = await this.getUserOrganizations(user);
 
     return await Promise.all(
-        organizations.map(async (org) => {
-          const db = await Database.getInstance();
-          const membership = await db.em.findOne(OrganizationMember, {
-            user,
-            organization: org,
-          });
+      organizations.map(async (org) => {
+        const db = await Database.getInstance();
+        const membership = await db.em.findOne(OrganizationMember, {
+          user,
+          organization: org,
+        });
 
-          return {
-            role: membership?.role,
-            organizationUuid: org.uuid,
-          };
-        }),
+        return {
+          role: membership?.role,
+          organizationUuid: org.uuid,
+        };
+      }),
     );
   }
 
-  public static async fetchUserWithTokenInfo(token: string): Promise<User | null> {
+  public static async fetchUserWithTokenInfo(
+    token: string,
+  ): Promise<User | null> {
     return await this.verifyTokenAndFetchUser(token);
   }
 
-  public static async verifyTokenAndFetchUser(token: string): Promise<User | null> {
+  public static async verifyTokenAndFetchUser(
+    token: string,
+  ): Promise<User | null> {
     return new Promise((resolve, reject) => {
-      jwt.verify(
-          token,
-          this.ACCESS_SECRET,
-          async (err, decoded) => {
-            if (err || typeof decoded === "string" || !decoded?.uuid) {
-              reject(err || "Invalid token");
-              return;
-            }
+      jwt.verify(token, this.ACCESS_SECRET, async (err, decoded) => {
+        if (err || typeof decoded === "string" || !decoded?.uuid) {
+          reject(err || "Invalid token");
+          return;
+        }
 
-            const db = await Database.getInstance();
-            const user = await db.em.findOne(User, { uuid: decoded.uuid });
+        const db = await Database.getInstance();
+        const user = await db.em.findOne(User, { uuid: decoded.uuid });
 
-            resolve(user || null);
-          },
-      );
+        resolve(user || null);
+      });
     });
   }
 }

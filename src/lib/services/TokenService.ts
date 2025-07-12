@@ -14,9 +14,9 @@ export class TokenService {
   }
 
   async createOrUpdateToken(
-      client: OrganizationClient,
-      token: string,
-      type: ClientTokenType,
+    client: OrganizationClient,
+    token: string,
+    type: ClientTokenType,
   ) {
     const db = await this.getDatabase();
 

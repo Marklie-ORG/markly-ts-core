@@ -25,8 +25,8 @@ export abstract class CommunicationChannel extends BaseEntity {
   client!: OrganizationClient;
 
   abstract send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void>;
 }
 
@@ -36,16 +36,16 @@ export class EmailChannel extends CommunicationChannel {
   emailAddress!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     await sendGridService.sendReportEmail(
-        {
-          to: this.emailAddress,
-          subject: "Your Report Is Ready!",
-          text: "We’ve completed your report and it is now ready for review.",
-        },
-        report,
+      {
+        to: this.emailAddress,
+        subject: "Your Report Is Ready!",
+        text: "We’ve completed your report and it is now ready for review.",
+      },
+      report,
     );
 
     const db = await Database.getInstance();
@@ -70,16 +70,16 @@ export class SlackChannel extends CommunicationChannel {
   webhookUrl!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const slackService = new SlackService(new TokenService());
 
     await slackService.sendSlackMessageWithFile(
-        this.client.uuid,
-        "Your report is ready!",
-        Buffer.from(report, "base64"),
-        "report.pdf",
+      this.client.uuid,
+      "Your report is ready!",
+      Buffer.from(report, "base64"),
+      "report.pdf",
     );
 
     const db = await Database.getInstance();
@@ -104,8 +104,8 @@ export class WhatsAppChannel extends CommunicationChannel {
   phoneNumber!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const whapi = new WhapiService();
 

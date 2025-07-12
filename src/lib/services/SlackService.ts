@@ -23,8 +23,8 @@ export class SlackService {
 
     return {
       channels: channels.channels
-          .filter((c: { is_channel: any }) => c.is_channel)
-          .map((c: { id: any; name: any }) => ({ id: c.id, name: c.name })),
+        .filter((c: { is_channel: any }) => c.is_channel)
+        .map((c: { id: any; name: any }) => ({ id: c.id, name: c.name })),
       ims: users.members.map((u) => ({
         id: u.id,
         name: u.profile.real_name,
@@ -34,10 +34,10 @@ export class SlackService {
   }
 
   async sendSlackMessageWithFile(
-      clientId: string,
-      message: string,
-      pdfBuffer: Buffer,
-      fileName: string,
+    clientId: string,
+    message: string,
+    pdfBuffer: Buffer,
+    fileName: string,
   ) {
     const db = await this.getDatabase();
 
@@ -64,12 +64,11 @@ export class SlackService {
     ]);
 
     return await slackApi.sendMessage(
-        slackChannel.webhookUrl,
-        message,
-        uploadMeta.file_id,
+      slackChannel.webhookUrl,
+      message,
+      uploadMeta.file_id,
     );
   }
-
 
   async setSlackConversation(clientId: string, conversationId: string) {
     const db = await this.getDatabase();
@@ -116,12 +115,12 @@ export class SlackService {
       active: true,
     });
 
-    if (!slackChannel) throw new Error("No active Slack channel for this client");
+    if (!slackChannel)
+      throw new Error("No active Slack channel for this client");
 
     const token = await this.tokenService.getSlackToken(clientId);
     const slackApi = new SlackApi(token);
 
     return slackApi.sendMessage(slackChannel.webhookUrl, message);
   }
-
 }

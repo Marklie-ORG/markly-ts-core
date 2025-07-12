@@ -4,13 +4,14 @@ import {
   ManyToOne,
   Enum,
   Collection,
-  OneToMany, OneToOne,
+  OneToMany,
+  OneToOne,
 } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { OrganizationClient } from "./OrganizationClient.js";
 import { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import { Report } from "./Report.js";
-import {ScheduledJob} from "./ScheduledJob.js";
+import { ScheduledJob } from "./ScheduledJob.js";
 
 @Entity()
 export class SchedulingOption extends BaseEntity {
@@ -47,9 +48,7 @@ export class SchedulingOption extends BaseEntity {
   @OneToMany(() => Report, (report) => report.schedulingOption)
   reports = new Collection<Report>(this);
 
-  @OneToOne(() => ScheduledJob, job => job.schedulingOption, {
-    nullable: true,
-  })
+  @OneToOne(() => ScheduledJob, (job) => job.schedulingOption, { owner: true, nullable: true })
   scheduledJob?: ScheduledJob;
 
   @ManyToOne(() => OrganizationClient)

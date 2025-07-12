@@ -1,4 +1,4 @@
-import {Entity, OneToOne, Property} from "@mikro-orm/core";
+import { Entity, OneToOne, Property } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { SchedulingOption } from "./SchedulingOption.js";
 
@@ -7,8 +7,9 @@ export class ScheduledJob extends BaseEntity {
   @Property()
   bullJobId!: string;
 
-  @OneToOne(() => SchedulingOption, option => option.scheduledJob, {
-    mappedBy: 'scheduledJob',
+  @OneToOne(() => SchedulingOption, (option) => option.scheduledJob, {
+    orphanRemoval: true,
+    mappedBy: 'scheduledJob'
   })
   schedulingOption!: SchedulingOption;
 
