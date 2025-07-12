@@ -68,7 +68,7 @@ export interface CronSchedule extends ScheduleModifiers, TimeBasedSchedule {
   frequency: "cron";
   cronExpression: string;
   clientUuid: string;
-  reviewNeeded: boolean;
+  reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
 }
@@ -83,7 +83,7 @@ export type ReportScheduleRequest =
 export interface ReportJobData {
   clientUuid: string;
   organizationUuid: string;
-  reviewNeeded: boolean;
+  reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
   metrics: SchedulingOptionMetrics;
