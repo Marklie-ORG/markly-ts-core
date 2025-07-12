@@ -9,6 +9,7 @@ import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
 import { SchedulingOption } from "./SchedulingOption.js";
 import { ClientFacebookAdAccount } from "./ClientFacebookAdAccount.js";
+import {CommunicationChannel} from "./ClientCommunicationChannel.js";
 
 @Entity()
 export class OrganizationClient extends BaseEntity {
@@ -17,9 +18,6 @@ export class OrganizationClient extends BaseEntity {
 
   @ManyToOne(() => Organization)
   organization!: Organization;
-
-  @Property({ nullable: true })
-  slackConversationId?: string;
 
   @OneToMany(
     () => ClientFacebookAdAccount,
@@ -33,9 +31,6 @@ export class OrganizationClient extends BaseEntity {
   )
   schedulingOption? = new Collection<SchedulingOption>(this);
 
-  @Property({ type: "array", nullable: true })
-  emails?: string[];
-
-  @Property({ type: "array", nullable: true })
-  phoneNumbers?: string[];
+  @OneToMany(() => CommunicationChannel, (channel) => channel.client)
+  communicationChannels = new Collection<CommunicationChannel>(this);
 }
