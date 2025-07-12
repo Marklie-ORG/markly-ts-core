@@ -10,7 +10,7 @@ export type ScheduleFrequency =
 interface BaseSchedule {
   frequency: string;
   clientUuid: string;
-  reportName?: string;
+  reportName: string;
   reviewNeeded: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;

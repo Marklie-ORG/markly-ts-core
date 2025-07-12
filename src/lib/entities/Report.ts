@@ -16,7 +16,7 @@ export class Report extends BaseEntity {
   reportType!: string;
 
   @Property({ default: false })
-  reviewRequired?: boolean;
+  reviewRequired!: boolean;
 
   @Property({ nullable: true })
   reviewedAt?: Date;
