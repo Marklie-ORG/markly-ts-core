@@ -8,7 +8,7 @@ export class OrganizationInvite extends BaseEntity {
   organization!: Organization;
 
   @Property()
-  code!: string; // Random generated code
+  code!: string;
 
   @Property()
   expiresAt!: Date;
@@ -17,5 +17,5 @@ export class OrganizationInvite extends BaseEntity {
   usedAt?: Date;
 
   @Property()
-  usedBy?: string; // UUID of the user who used the invite
+  usedBy?: string;
 }
