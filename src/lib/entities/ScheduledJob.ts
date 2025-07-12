@@ -7,7 +7,9 @@ export class ScheduledJob extends BaseEntity {
   @Property()
   bullJobId!: string;
 
-  @OneToOne(() => SchedulingOption, option => option.scheduledJob)
+  @OneToOne(() => SchedulingOption, option => option.scheduledJob, {
+    mappedBy: 'scheduledJob',
+  })
   schedulingOption!: SchedulingOption;
 
   @Property({ nullable: true })
