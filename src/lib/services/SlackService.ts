@@ -40,25 +40,36 @@ export class SlackService {
       fileName: string,
   ) {
     const db = await this.getDatabase();
+
     const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
-    if (!client || !client.slackConversationId)
-      throw new Error("Missing Slack channel ID");
+
+    if (!client) throw new Error("Client not found");
+
+    const slackChannel = await db.em.findOne(SlackChannel, {
+      client: client,
+      active: true,
+    });
+
+    if (!slackChannel) throw new Error("Slack channel not set for client");
 
     const token = await this.tokenService.getSlackToken(clientId);
     const slackApi = new SlackApi(token);
 
     const uploadMeta = await slackApi.getUploadUrl(fileName, pdfBuffer.length);
     await slackApi.uploadFile(uploadMeta.upload_url, pdfBuffer);
-    await slackApi.completeUpload([{ id: uploadMeta.file_id, title: fileName }]);
+    await slackApi.completeUpload([
+      { id: uploadMeta.file_id, title: fileName },
+    ]);
 
     return await slackApi.sendMessage(
-        client.slackConversationId,
+        slackChannel.webhookUrl,
         message,
         uploadMeta.file_id,
     );
   }
+
 
   async setSlackConversation(clientId: string, conversationId: string) {
     const db = await this.getDatabase();
@@ -93,15 +104,24 @@ export class SlackService {
 
   async sendSlackMessage(clientId: string, message: string) {
     const db = await this.getDatabase();
+
     const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
-    if (!client || !client.slackConversationId)
-      throw new Error("Invalid Slack configuration");
+
+    if (!client) throw new Error("Client not found");
+
+    const slackChannel = await db.em.findOne(SlackChannel, {
+      client,
+      active: true,
+    });
+
+    if (!slackChannel) throw new Error("No active Slack channel for this client");
 
     const token = await this.tokenService.getSlackToken(clientId);
     const slackApi = new SlackApi(token);
 
-    return slackApi.sendMessage(client.slackConversationId, message);
+    return slackApi.sendMessage(slackChannel.webhookUrl, message);
   }
+
 }
