@@ -1,12 +1,19 @@
 import { SlackApi } from "../apis/SlackApi.js";
 import { Database } from "../db/config/DB.js";
 import { OrganizationClient } from "../entities/OrganizationClient.js";
-import {SlackChannel} from "../entities/ClientCommunicationChannel.js";
-
-const database = await Database.getInstance();
+import { SlackChannel } from "../entities/ClientCommunicationChannel.js";
 
 export class SlackService {
+  private static database: Database;
+
   constructor(private tokenService: any) {}
+
+  private async getDatabase(): Promise<Database> {
+    if (!SlackService.database) {
+      SlackService.database = await Database.getInstance();
+    }
+    return SlackService.database;
+  }
 
   async getSlackConversations(clientUuid: string) {
     const token = await this.tokenService.getSlackToken(clientUuid);
@@ -16,8 +23,8 @@ export class SlackService {
 
     return {
       channels: channels.channels
-        .filter((c: { is_channel: any }) => c.is_channel)
-        .map((c: { id: any; name: any }) => ({ id: c.id, name: c.name })),
+          .filter((c: { is_channel: any }) => c.is_channel)
+          .map((c: { id: any; name: any }) => ({ id: c.id, name: c.name })),
       ims: users.members.map((u) => ({
         id: u.id,
         name: u.profile.real_name,
@@ -27,12 +34,13 @@ export class SlackService {
   }
 
   async sendSlackMessageWithFile(
-    clientId: string,
-    message: string,
-    pdfBuffer: Buffer,
-    fileName: string,
+      clientId: string,
+      message: string,
+      pdfBuffer: Buffer,
+      fileName: string,
   ) {
-    const client = await database.em.findOne(OrganizationClient, {
+    const db = await this.getDatabase();
+    const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
     if (!client || !client.slackConversationId)
@@ -43,19 +51,18 @@ export class SlackService {
 
     const uploadMeta = await slackApi.getUploadUrl(fileName, pdfBuffer.length);
     await slackApi.uploadFile(uploadMeta.upload_url, pdfBuffer);
-    await slackApi.completeUpload([
-      { id: uploadMeta.file_id, title: fileName },
-    ]);
+    await slackApi.completeUpload([{ id: uploadMeta.file_id, title: fileName }]);
 
     return await slackApi.sendMessage(
-      client.slackConversationId,
-      message,
-      uploadMeta.file_id,
+        client.slackConversationId,
+        message,
+        uploadMeta.file_id,
     );
   }
 
   async setSlackConversation(clientId: string, conversationId: string) {
-    const client = await database.em.findOne(OrganizationClient, {
+    const db = await this.getDatabase();
+    const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
     if (!client) throw new Error("Client not found");
@@ -67,7 +74,7 @@ export class SlackService {
       await slackApi.joinChannel(conversationId);
     }
 
-    let slackChannel = await database.em.findOne(SlackChannel, {
+    let slackChannel = await db.em.findOne(SlackChannel, {
       client,
       webhookUrl: conversationId,
     });
@@ -76,16 +83,17 @@ export class SlackService {
       slackChannel = new SlackChannel();
       slackChannel.client = client;
       slackChannel.webhookUrl = conversationId;
-      database.em.persist(slackChannel);
+      db.em.persist(slackChannel);
     }
 
     slackChannel.active = true;
 
-    await database.em.flush();
+    await db.em.flush();
   }
 
   async sendSlackMessage(clientId: string, message: string) {
-    const client = await database.em.findOne(OrganizationClient, {
+    const db = await this.getDatabase();
+    const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
     if (!client || !client.slackConversationId)
