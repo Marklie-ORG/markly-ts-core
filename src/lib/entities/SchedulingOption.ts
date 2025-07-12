@@ -49,7 +49,6 @@ export class SchedulingOption extends BaseEntity {
 
   @OneToOne(() => ScheduledJob, job => job.schedulingOption, {
     nullable: true,
-    owner: true
   })
   scheduledJob?: ScheduledJob;
 
