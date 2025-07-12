@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, Property } from "@mikro-orm/core";
+import {Entity, ManyToOne, Property, type Rel} from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { OrganizationClient } from "./OrganizationClient.js";
 import { ActivityLog } from "./ActivityLog.js";
@@ -22,7 +22,7 @@ export abstract class CommunicationChannel extends BaseEntity {
   active: boolean = true;
 
   @ManyToOne(() => OrganizationClient)
-  client!: OrganizationClient;
+  client!: Rel<OrganizationClient>;
 
   abstract send(
     report: string,

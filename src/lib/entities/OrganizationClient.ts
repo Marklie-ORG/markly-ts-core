@@ -3,7 +3,7 @@ import {
   Property,
   ManyToOne,
   OneToMany,
-  Collection,
+  Collection, type Rel,
 } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
@@ -20,20 +20,20 @@ export class OrganizationClient extends BaseEntity {
   organization!: Organization;
 
   @OneToMany(
-    () => ClientFacebookAdAccount,
-    (adAccounts: ClientFacebookAdAccount) => adAccounts.client,
+      () => ClientFacebookAdAccount,
+      (adAccounts: ClientFacebookAdAccount) => adAccounts.client,
   )
   adAccounts? = new Collection<ClientFacebookAdAccount>(this);
 
   @OneToMany(
-    () => SchedulingOption,
-    (schedulingOption: SchedulingOption) => schedulingOption.client,
+      () => SchedulingOption,
+      (schedulingOption: SchedulingOption) => schedulingOption.client,
   )
   schedulingOption? = new Collection<SchedulingOption>(this);
 
   @OneToMany(
-    () => "CommunicationChannel",
-    (channel: CommunicationChannel) => channel.client,
+      () => CommunicationChannel,
+      (channel) => channel.client,
   )
-  communicationChannels? = new Collection<CommunicationChannel>(this);
+  communicationChannels = new Collection<Rel<CommunicationChannel>>(this)
 }
