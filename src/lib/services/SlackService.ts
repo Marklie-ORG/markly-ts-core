@@ -1,6 +1,7 @@
 import { SlackApi } from "../apis/SlackApi.js";
 import { Database } from "../db/config/DB.js";
 import { OrganizationClient } from "../entities/OrganizationClient.js";
+import {SlackChannel} from "@lib/entities/ClientCommunicationChannel.js";
 
 const database = await Database.getInstance();
 
@@ -66,8 +67,21 @@ export class SlackService {
       await slackApi.joinChannel(conversationId);
     }
 
-    client.slackConversationId = conversationId;
-    await database.em.persistAndFlush(client);
+    let slackChannel = await database.em.findOne(SlackChannel, {
+      client,
+      webhookUrl: conversationId,
+    });
+
+    if (!slackChannel) {
+      slackChannel = new SlackChannel();
+      slackChannel.client = client;
+      slackChannel.webhookUrl = conversationId;
+      database.em.persist(slackChannel);
+    }
+
+    slackChannel.active = true;
+
+    await database.em.flush();
   }
 
   async sendSlackMessage(clientId: string, message: string) {
