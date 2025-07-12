@@ -24,7 +24,7 @@ export class User extends BaseEntity {
   @Property()
   password!: string;
 
-  @ManyToOne(() => Organization, { nullable: true })
+  @ManyToOne({ entity: () => Organization, nullable: true })
   activeOrganization?: Organization;
 
   @BeforeCreate()

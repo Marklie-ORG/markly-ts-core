@@ -6,8 +6,6 @@ import { match, type MatchFunction } from "path-to-regexp";
 
 const logger = Log.getInstance().extend("activity-log");
 
-const database: Database = await Database.getInstance();
-
 type ActivityLogEntry = {
   pattern: string;
   matcher: MatchFunction<Record<string, string>>;
@@ -67,6 +65,8 @@ export const ActivityLogMiddleware = () => {
       if (!matched) return;
 
       const responseBody = ctx.body;
+
+      const database: Database = await Database.getInstance();
 
       const log = database.em.create(ActivityLog, {
         organization: matched.getOrganizationUuid?.(ctx) || organization.uuid,
