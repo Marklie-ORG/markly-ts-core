@@ -8,8 +8,6 @@ import { Database } from "../db/config/DB.js";
 import { sendGridService } from "../services/SendgridService.js";
 import { WhapiService } from "../services/WhapiService.js";
 
-const database = await Database.getInstance();
-
 @Entity({
   discriminatorColumn: "type",
   discriminatorMap: {
@@ -27,8 +25,8 @@ export abstract class CommunicationChannel extends BaseEntity {
   client!: OrganizationClient;
 
   abstract send(
-    report: string,
-    context: { reportUuid: string; organizationUuid: string },
+      report: string,
+      context: { reportUuid: string; organizationUuid: string },
   ): Promise<void>;
 }
 
@@ -38,19 +36,21 @@ export class EmailChannel extends CommunicationChannel {
   emailAddress!: string;
 
   async send(
-    report: string,
-    context: { reportUuid: string; organizationUuid: string },
+      report: string,
+      context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     await sendGridService.sendReportEmail(
-      {
-        to: this.emailAddress,
-        subject: "Your Report Is Ready!",
-        text: "We’ve completed your report and it is now ready for review.",
-      },
-      report,
+        {
+          to: this.emailAddress,
+          subject: "Your Report Is Ready!",
+          text: "We’ve completed your report and it is now ready for review.",
+        },
+        report,
     );
 
-    const log = database.em.create(ActivityLog, {
+    const db = await Database.getInstance();
+
+    const log = db.em.create(ActivityLog, {
       organization: context.organizationUuid,
       action: "report_sent",
       targetType: "report",
@@ -60,7 +60,7 @@ export class EmailChannel extends CommunicationChannel {
       metadata: { email: this.emailAddress },
     });
 
-    await database.em.persistAndFlush(log);
+    await db.em.persistAndFlush(log);
   }
 }
 
@@ -70,19 +70,21 @@ export class SlackChannel extends CommunicationChannel {
   webhookUrl!: string;
 
   async send(
-    report: string,
-    context: { reportUuid: string; organizationUuid: string },
+      report: string,
+      context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const slackService = new SlackService(new TokenService());
 
     await slackService.sendSlackMessageWithFile(
-      this.client.uuid,
-      "Your report is ready!",
-      Buffer.from(report, "base64"),
-      "report.pdf",
+        this.client.uuid,
+        "Your report is ready!",
+        Buffer.from(report, "base64"),
+        "report.pdf",
     );
 
-    const log = database.em.create(ActivityLog, {
+    const db = await Database.getInstance();
+
+    const log = db.em.create(ActivityLog, {
       organization: context.organizationUuid,
       action: "report_sent",
       targetType: "report",
@@ -92,7 +94,7 @@ export class SlackChannel extends CommunicationChannel {
       metadata: { slackConversationId: this.webhookUrl },
     });
 
-    await database.em.persistAndFlush(log);
+    await db.em.persistAndFlush(log);
   }
 }
 
@@ -102,14 +104,16 @@ export class WhatsAppChannel extends CommunicationChannel {
   phoneNumber!: string;
 
   async send(
-    report: string,
-    context: { reportUuid: string; organizationUuid: string },
+      report: string,
+      context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const whapi = new WhapiService();
 
     await whapi.sendReportWhatsapp(report, this.phoneNumber);
 
-    const log = database.em.create(ActivityLog, {
+    const db = await Database.getInstance();
+
+    const log = db.em.create(ActivityLog, {
       organization: context.organizationUuid,
       action: "report_sent",
       targetType: "report",
@@ -119,6 +123,6 @@ export class WhatsAppChannel extends CommunicationChannel {
       metadata: { phoneNumber: this.phoneNumber },
     });
 
-    await database.em.persistAndFlush(log);
+    await db.em.persistAndFlush(log);
   }
 }
