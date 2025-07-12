@@ -11,5 +11,5 @@ export class ScheduledJob extends BaseEntity {
   schedulingOption!: SchedulingOption;
 
   @Property({ nullable: true })
-  lastRunAt?: Date;
+  lastRunAt: Date | null = null;
 }

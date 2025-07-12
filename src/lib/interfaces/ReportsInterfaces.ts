@@ -11,7 +11,7 @@ interface BaseSchedule {
   frequency: string;
   clientUuid: string;
   reportName: string;
-  reviewNeeded: boolean;
+  reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
   metrics: SchedulingOptionMetrics;
@@ -84,7 +84,6 @@ export interface ReportJobData {
   clientUuid: string;
   organizationUuid: string;
   reviewNeeded: boolean;
-  accountId: string;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
   metrics: SchedulingOptionMetrics;
