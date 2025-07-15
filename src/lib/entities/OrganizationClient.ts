@@ -3,7 +3,7 @@ import {
   Property,
   ManyToOne,
   OneToMany,
-  Collection, type Rel,
+  Collection,
 } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
@@ -32,8 +32,8 @@ export class OrganizationClient extends BaseEntity {
   schedulingOption? = new Collection<SchedulingOption>(this);
 
   @OneToMany(
-      () => CommunicationChannel,
-      (channel) => channel.client,
+      () => "CommunicationChannel",
+      (channel: CommunicationChannel) => channel.client,
   )
-  communicationChannels = new Collection<Rel<CommunicationChannel>>(this)
+  communicationChannels? = new Collection<CommunicationChannel>(this);
 }

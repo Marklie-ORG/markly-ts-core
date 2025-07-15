@@ -58,9 +58,17 @@ export const ActivityLogMiddleware = () => {
 
       if (!user || !organization) return;
 
-      const matched = activityLogMap.find(
-        (entry) => entry.method === method && entry.matcher(path),
-      );
+      const normalizedPath = path.replace(/\/+$/, "");
+      
+      const matched = activityLogMap.find((entry) => {
+        if (entry.method !== method) return false;
+        const matchResult = entry.matcher(normalizedPath);
+        if (matchResult) {
+          ctx.params = matchResult.params;
+          return true;
+        }
+        return false;
+      });
 
       if (!matched) return;
 
