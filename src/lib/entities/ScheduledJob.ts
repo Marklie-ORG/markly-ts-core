@@ -9,7 +9,7 @@ export class ScheduledJob extends BaseEntity {
 
   @OneToOne(() => SchedulingOption, (option) => option.scheduledJob, {
     orphanRemoval: true,
-    mappedBy: 'scheduledJob'
+    mappedBy: "scheduledJob",
   })
   schedulingOption!: SchedulingOption;
 

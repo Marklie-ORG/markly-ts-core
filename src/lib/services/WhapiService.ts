@@ -1,10 +1,21 @@
 import { Log } from "../classes/Logger.js";
-import { WhapiApi } from "../apis/WhapiApi.js";
+import axios, { type AxiosInstance } from "axios";
 
 const logger: Log = Log.getInstance().extend("service");
 
 export class WhapiService {
-  constructor() {}
+  private api: AxiosInstance;
+  private accessToken: string = process.env.WHAPI_API_KEY || "";
+
+  constructor() {
+    this.api = axios.create({
+      baseURL: `https://gate.whapi.cloud`,
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${this.accessToken}`,
+      },
+    });
+  }
 
   public async sendReportWhatsapp(
     reportBase64: string,
@@ -13,8 +24,7 @@ export class WhapiService {
     try {
       const media = `data:application/pdf;name=file.pdf;base64,${reportBase64}`;
 
-      const whapiApi = new WhapiApi();
-      await whapiApi.sendDocument({
+      await this.sendDocument({
         to: phoneNumber,
         media: media,
         mime_type: "application/pdf",
@@ -27,5 +37,23 @@ export class WhapiService {
       logger.error("Error sending whatsapp:", error?.response?.body || error);
       throw error;
     }
+  }
+
+  public async sendDocument(params: {
+    to: string;
+    quoted?: string;
+    ephemeral?: number;
+    edit?: string;
+    media: string;
+    mime_type?: string;
+    no_encode?: boolean;
+    no_cache?: boolean;
+    caption?: string;
+    filename?: string;
+    view_once?: boolean;
+  }) {
+    const response = await this.api.post("/messages/document", params);
+
+    return response.data;
   }
 }

@@ -20,20 +20,20 @@ export class OrganizationClient extends BaseEntity {
   organization!: Organization;
 
   @OneToMany(
-      () => ClientFacebookAdAccount,
-      (adAccounts: ClientFacebookAdAccount) => adAccounts.client,
+    () => ClientFacebookAdAccount,
+    (adAccounts: ClientFacebookAdAccount) => adAccounts.client,
   )
   adAccounts? = new Collection<ClientFacebookAdAccount>(this);
 
   @OneToMany(
-      () => SchedulingOption,
-      (schedulingOption: SchedulingOption) => schedulingOption.client,
+    () => SchedulingOption,
+    (schedulingOption: SchedulingOption) => schedulingOption.client,
   )
   schedulingOption? = new Collection<SchedulingOption>(this);
 
   @OneToMany(
-      () => "CommunicationChannel",
-      (channel: CommunicationChannel) => channel.client,
+    () => "CommunicationChannel",
+    (channel: CommunicationChannel) => channel.client,
   )
   communicationChannels? = new Collection<CommunicationChannel>(this);
 }

@@ -1,5 +1,33 @@
 import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
+import type { Report } from "../entities/Report.js";
+import type { ScheduledJob } from "../entities/ScheduledJob.js";
+import type { OrganizationClient } from "../entities/OrganizationClient.js";
 
+export interface ISchedulingOption {
+  uuid: string;
+  createdAt: Date;
+  updatedAt: Date;
+  cronExpression: string;
+  datePreset: FACEBOOK_DATE_PRESETS;
+  isActive: boolean;
+  reportName?: string;
+  platform: string;
+  jobData?: Record<string, any>;
+  timezone?: string;
+  reviewNeeded: boolean;
+  lastRun?: Date;
+  nextRun?: Date;
+  reports?: Report[];
+  scheduledJob?: ScheduledJob;
+  client: OrganizationClient;
+}
+
+export interface SchedulingOptionWithImages extends ISchedulingOption {
+  images?: {
+    clientLogo: string;
+    agencyLogo: string;
+  };
+}
 export type ScheduleFrequency =
   | "weekly"
   | "biweekly"
@@ -26,7 +54,7 @@ interface BaseSchedule {
   images: {
     clientLogo: string;
     agencyLogo: string;
-  }
+  };
 }
 
 interface TimeBasedSchedule extends BaseSchedule {
@@ -103,7 +131,7 @@ export interface ReportJobData {
   images: {
     clientLogo: string;
     agencyLogo: string;
-  }
+  };
 }
 
 export interface ReportData {
@@ -113,7 +141,7 @@ export interface ReportData {
   graphs: Graph[];
 }
 
-export interface KPIs {
+export interface Metrics {
   spend?: number;
   impressions?: number;
   clicks?: number;
@@ -133,74 +161,23 @@ export interface KPIs {
   engagement?: number;
 }
 
-export interface Graph {
-  spend?: number;
-  impressions?: number;
-  clicks?: number;
-  cpc?: number;
-  ctr?: number;
-  cpm?: number;
-  cpp?: number;
-  reach?: number;
-  purchase_roas?: number;
-  purchases?: number;
-  add_to_cart?: number;
-  initiated_checkouts?: number;
-  conversion_value?: number;
-  cost_per_purchase?: number;
-  cost_per_add_to_cart?: number;
-  conversion_rate?: number;
-  engagement?: number;
+export interface KPIs extends Metrics {}
+
+export interface Graph extends Metrics {
   date_start: string;
   date_stop: string;
 }
 
-export interface Ad {
+export interface Ad extends Metrics {
   adId: string;
   adCreativeId: string;
   thumbnailUrl: string;
   sourceUrl: string;
-
-  spend?: number;
-  impressions?: number;
-  clicks?: number;
-  cpc?: number;
-  ctr?: number;
-  cpm?: number;
-  cpp?: number;
-  reach?: number;
-  purchase_roas?: number;
-  purchases?: number;
-  add_to_cart?: number;
-  initiated_checkouts?: number;
-  conversion_value?: number;
-  cost_per_purchase?: number;
-  cost_per_add_to_cart?: number;
-  conversion_rate?: number;
-  engagement?: number;
 }
 
-export interface Campaign {
+export interface Campaign extends Metrics {
   index: number;
   campaign_name: string;
-
-  spend?: number;
-  impressions?: number;
-  clicks?: number;
-  cpc?: number;
-  ctr?: number;
-  cpm?: number;
-  cpp?: number;
-  reach?: number;
-  purchase_roas?: number;
-  purchases?: number;
-  add_to_cart?: number;
-  initiated_checkouts?: number;
-  conversion_value?: number;
-  cost_per_purchase?: number;
-  cost_per_add_to_cart?: number;
-  conversion_rate?: number;
-  engagement?: number;
 }
 
 export const AVAILABLE_KPI_METRICS: Record<string, string[]> = {
@@ -310,25 +287,16 @@ export interface AvailableMetrics {
   campaigns: AvailableCampaignMetric[];
 }
 
-export interface SchedulingOptionKpiMetric {
-  name: AvailableKpiMetric;
+export interface SchedulingOptionMetric<T extends string> {
+  name: T;
   order: number;
 }
 
-export interface SchedulingOptionGraphMetric {
-  name: AvailableGraphMetric;
-  order: number;
-}
-
-export interface SchedulingOptionAdMetric {
-  name: AvailableAdMetric;
-  order: number;
-}
-
-export interface SchedulingOptionCampaignMetric {
-  name: AvailableCampaignMetric;
-  order: number;
-}
+type SchedulingOptionKpiMetric = SchedulingOptionMetric<AvailableKpiMetric>;
+type SchedulingOptionGraphMetric = SchedulingOptionMetric<AvailableGraphMetric>;
+type SchedulingOptionAdMetric = SchedulingOptionMetric<AvailableAdMetric>;
+type SchedulingOptionCampaignMetric =
+  SchedulingOptionMetric<AvailableCampaignMetric>;
 
 export interface SchedulingOptionMetrics {
   kpis: {

@@ -6,7 +6,7 @@ import { SlackChannel } from "../entities/ClientCommunicationChannel.js";
 export class SlackService {
   private static database: Database;
 
-  constructor(private tokenService: any) {}
+  constructor(public tokenService: any) {}
 
   private async getDatabase(): Promise<Database> {
     if (!SlackService.database) {
@@ -34,27 +34,12 @@ export class SlackService {
   }
 
   async sendSlackMessageWithFile(
-    clientId: string,
+    token: string,
+    conversationId: string,
     message: string,
     pdfBuffer: Buffer,
     fileName: string,
-  ) {
-    const db = await this.getDatabase();
-
-    const client = await db.em.findOne(OrganizationClient, {
-      uuid: clientId,
-    });
-
-    if (!client) throw new Error("Client not found");
-
-    const slackChannel = await db.em.findOne(SlackChannel, {
-      client: client,
-      active: true,
-    });
-
-    if (!slackChannel) throw new Error("Slack channel not set for client");
-
-    const token = await this.tokenService.getSlackToken(clientId);
+  ): Promise<void> {
     const slackApi = new SlackApi(token);
 
     const uploadMeta = await slackApi.getUploadUrl(fileName, pdfBuffer.length);
@@ -63,15 +48,12 @@ export class SlackService {
       { id: uploadMeta.file_id, title: fileName },
     ]);
 
-    return await slackApi.sendMessage(
-      slackChannel.webhookUrl,
-      message,
-      uploadMeta.file_id,
-    );
+    await slackApi.sendMessage(conversationId, message, uploadMeta.file_id);
   }
 
   async setSlackConversation(clientId: string, conversationId: string) {
     const db = await this.getDatabase();
+
     const client = await db.em.findOne(OrganizationClient, {
       uuid: clientId,
     });
@@ -84,15 +66,17 @@ export class SlackService {
       await slackApi.joinChannel(conversationId);
     }
 
+    await db.em.nativeDelete(SlackChannel, { client: client });
+
     let slackChannel = await db.em.findOne(SlackChannel, {
       client,
-      webhookUrl: conversationId,
+      conversationId,
     });
 
     if (!slackChannel) {
       slackChannel = new SlackChannel();
       slackChannel.client = client;
-      slackChannel.webhookUrl = conversationId;
+      slackChannel.conversationId = conversationId;
       db.em.persist(slackChannel);
     }
 
@@ -121,6 +105,6 @@ export class SlackService {
     const token = await this.tokenService.getSlackToken(clientId);
     const slackApi = new SlackApi(token);
 
-    return slackApi.sendMessage(slackChannel.webhookUrl, message);
+    return slackApi.sendMessage(slackChannel.conversationId, message);
   }
 }

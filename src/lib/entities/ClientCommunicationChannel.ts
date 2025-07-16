@@ -25,8 +25,8 @@ export abstract class CommunicationChannel extends BaseEntity {
   client!: OrganizationClient;
 
   abstract send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void>;
 }
 
@@ -36,16 +36,16 @@ export class EmailChannel extends CommunicationChannel {
   emailAddress!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     await sendGridService.sendReportEmail(
-        {
-          to: this.emailAddress,
-          subject: "Your Report Is Ready!",
-          text: "We’ve completed your report and it is now ready for review.",
-        },
-        report,
+      {
+        to: this.emailAddress,
+        subject: "Your Report Is Ready!",
+        text: "We’ve completed your report and it is now ready for review.",
+      },
+      report,
     );
 
     const db = await Database.getInstance();
@@ -67,19 +67,23 @@ export class EmailChannel extends CommunicationChannel {
 @Entity({ discriminatorValue: "slack" })
 export class SlackChannel extends CommunicationChannel {
   @Property()
-  webhookUrl!: string;
+  conversationId!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const slackService = new SlackService(new TokenService());
+    const token = await slackService.tokenService.getSlackToken(
+      this.client.uuid,
+    );
 
     await slackService.sendSlackMessageWithFile(
-        this.client.uuid,
-        "Your report is ready!",
-        Buffer.from(report, "base64"),
-        "report.pdf",
+      token,
+      this.conversationId,
+      "Your report is ready!",
+      Buffer.from(report, "base64"),
+      "report.pdf",
     );
 
     const db = await Database.getInstance();
@@ -91,7 +95,7 @@ export class SlackChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { slackConversationId: this.webhookUrl },
+      metadata: { slackConversationId: this.conversationId },
     });
 
     await db.em.persistAndFlush(log);
@@ -104,8 +108,8 @@ export class WhatsAppChannel extends CommunicationChannel {
   phoneNumber!: string;
 
   async send(
-      report: string,
-      context: { reportUuid: string; organizationUuid: string },
+    report: string,
+    context: { reportUuid: string; organizationUuid: string },
   ): Promise<void> {
     const whapi = new WhapiService();
 

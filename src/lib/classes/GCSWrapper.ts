@@ -49,7 +49,6 @@ export class GCSWrapper {
   }
 
   public async uploadImage(fileData: any, buffer: Buffer, destination: string) {
-
     const file = this.storage.bucket(this.bucketName).file(destination);
 
     const stream = file.createWriteStream({

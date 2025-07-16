@@ -4,12 +4,12 @@ import { Organization } from "./Organization.js";
 
 @Entity()
 export class Image extends BaseEntity {
-    @ManyToOne(() => Organization)
-    organization!: Organization;
+  @ManyToOne(() => Organization)
+  organization!: Organization;
 
-    @Property()
-    imageName!: string;
+  @Property()
+  imageName!: string;
 
-    @Property({ type: 'text' })
-    gsUri!: string;
-}   
+  @Property({ type: "text" })
+  gsUri!: string;
+}

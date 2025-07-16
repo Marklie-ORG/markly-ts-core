@@ -59,7 +59,7 @@ export const ActivityLogMiddleware = () => {
       if (!user || !organization) return;
 
       const normalizedPath = path.replace(/\/+$/, "");
-      
+
       const matched = activityLogMap.find((entry) => {
         if (entry.method !== method) return false;
         const matchResult = entry.matcher(normalizedPath);

@@ -61,7 +61,7 @@ export default defineConfig({
     PasswordRecoveryToken,
     ActivityLog,
     ScheduledJob,
-    Image
+    Image,
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,
