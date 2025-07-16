@@ -22,6 +22,7 @@ import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 import { PasswordRecoveryToken } from "lib/entities/PasswordRecoveryToken.js";
 import { ActivityLog } from "../../entities/ActivityLog.js";
 import { ScheduledJob } from "../../entities/ScheduledJob.js";
+import { Image } from "lib/entities/Image.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -60,6 +61,7 @@ export default defineConfig({
     PasswordRecoveryToken,
     ActivityLog,
     ScheduledJob,
+    Image
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,

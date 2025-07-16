@@ -23,6 +23,10 @@ interface BaseSchedule {
       body: string;
     };
   };
+  images: {
+    clientLogo: string;
+    agencyLogo: string;
+  }
 }
 
 interface TimeBasedSchedule extends BaseSchedule {
@@ -96,6 +100,10 @@ export interface ReportJobData {
       body: string;
     };
   };
+  images: {
+    clientLogo: string;
+    agencyLogo: string;
+  }
 }
 
 export interface ReportData {

@@ -196,3 +196,7 @@ export const UpdateReportMetricsSelectionsRequestSchema = z.object({
   ads: z.any(),
   campaigns: z.any(),
 });
+
+export const UploadImageRequestSchema = z.any();
+
+export const DeleteImageRequestSchema = z.object({});

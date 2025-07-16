@@ -1,4 +1,4 @@
-import { Storage } from "@google-cloud/storage";
+import { Storage, File } from "@google-cloud/storage";
 
 export class GCSWrapper {
   private static instance: GCSWrapper;
@@ -46,6 +46,33 @@ export class GCSWrapper {
     }
 
     return `gs://${this.bucketName}/${destination}`;
+  }
+
+  public async uploadImage(fileData: any, buffer: Buffer, destination: string) {
+
+    const file = this.storage.bucket(this.bucketName).file(destination);
+
+    const stream = file.createWriteStream({
+      resumable: false,
+      contentType: fileData.mimetype,
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      stream.on("error", reject);
+      stream.on("finish", resolve);
+      stream.end(buffer);
+    });
+
+    return `gs://${this.bucketName}/${destination}`;
+  }
+
+  public async getSignedUrl(gsUri: string) {
+    const file = File.from(gsUri, this.storage);
+    const [url] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 3600 * 1000,
+    });
+    return url;
   }
 
   public async deleteFile(destination: string): Promise<void> {

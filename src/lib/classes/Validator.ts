@@ -32,6 +32,8 @@ import {
   UpdateSchedulingOptionRequestSchema,
   UpdateReportMetricsSelectionsRequestSchema,
   SendReportAfterReview,
+  UploadImageRequestSchema,
+  DeleteImageRequestSchema,
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -221,6 +223,16 @@ const schemaMap: SchemaEntry[] = [
       decode: decodeURIComponent,
     }),
     schema: VerifyPasswordRecoveryRequestSchema,
+  },
+  {
+    pattern: "/api/images/upload",
+    matcher: match("/api/images/upload", { decode: decodeURIComponent }),
+    schema: UploadImageRequestSchema,
+  },
+  {
+    pattern: "/api/images/:uuid",
+    matcher: match("/api/images/:uuid", { decode: decodeURIComponent }),
+    schema: DeleteImageRequestSchema,
   },
 ];
 
