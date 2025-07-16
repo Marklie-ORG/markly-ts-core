@@ -2,6 +2,7 @@ import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import type { Report } from "../entities/Report.js";
 import type { ScheduledJob } from "../entities/ScheduledJob.js";
 import type { OrganizationClient } from "../entities/OrganizationClient.js";
+import type {SchedulingOption} from "../entities/SchedulingOption.js";
 
 export interface ISchedulingOption {
   uuid: string;
@@ -22,10 +23,18 @@ export interface ISchedulingOption {
   client: OrganizationClient;
 }
 
+export type SchedulingOptionWithExtras = Omit<SchedulingOption, 'nextRun' | 'lastRun'> & {
+  nextRun: string;
+  lastRun: string;
+  frequency: string;
+  images?: { clientLogo: string; agencyLogo: string };
+};
+
+
 export interface SchedulingOptionWithImages extends ISchedulingOption {
   images?: {
     clientLogo: string;
-    agencyLogo: string;
+    organizationLogo: string;
   };
 }
 export type ScheduleFrequency =
@@ -53,7 +62,7 @@ interface BaseSchedule {
   };
   images: {
     clientLogo: string;
-    agencyLogo: string;
+    organizationLogo: string;
   };
 }
 
@@ -128,9 +137,9 @@ export interface ReportJobData {
       body: string;
     };
   };
-  images: {
+  images?: {
     clientLogo: string;
-    agencyLogo: string;
+    organizationLogo: string;
   };
 }
 

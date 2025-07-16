@@ -1,3 +1,5 @@
+import type { Image } from "lib/entities/Image";
+
 export interface CreateOrganizationRequest {
   name: string;
 }
@@ -20,4 +22,8 @@ export interface IM {
   id: string;
   name: string;
   image: string;
+}
+
+export interface ImageWithUrl extends Image {
+  imageUrl: string;
 }
