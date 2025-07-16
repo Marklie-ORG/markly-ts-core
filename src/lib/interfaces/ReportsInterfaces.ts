@@ -83,6 +83,7 @@ export type ReportScheduleRequest =
 export interface ReportJobData {
   clientUuid: string;
   organizationUuid: string;
+  scheduleUuid: string;
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
