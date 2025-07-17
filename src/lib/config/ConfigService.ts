@@ -1,122 +1,164 @@
 import { z } from "zod";
 import { Log } from "../classes/Logger.js";
 
-const logger = Log.getInstance().extend("config");
+const logger = Log.getInstance().extend("config-service");
 
+// Base schema
 const baseEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  PORT: z.string().default("3000").pipe(z.coerce.number()),
+  PORT: z.coerce.number().int().min(1).max(65535).default(3000),
 
-  // Database
-  DATABASE_NAME: z.string().default("saas"),
-  DATABASE_HOST: z.string().default("localhost"),
-  DATABASE_PORT: z.string().default("5432").pipe(z.coerce.number()),
-  DATABASE_USER: z.string().default("postgres"),
-  DATABASE_PASSWORD: z.string().default("password"),
+  DATABASE_HOST: z.string().min(1),
+  DATABASE_PORT: z.coerce.number().int().min(1).max(65535).default(5432),
+  DATABASE_NAME: z.string().min(1),
+  DATABASE_USER: z.string().min(1),
+  DATABASE_PASSWORD: z.string().min(1),
+  DATABASE_SSL: z.coerce.boolean().default(false),
+  DATABASE_MAX_CONNECTIONS: z.coerce.number().int().min(1).default(10),
+  DATABASE_QUERY_TIMEOUT: z.coerce.number().int().min(1000).default(30000),
 
-  // Redis
-  REDISHOST: z.string().default("localhost"),
-  REDISPORT: z.string().default("6379").pipe(z.coerce.number()),
+  REDIS_HOST: z.string().default("localhost"),
+  REDIS_PORT: z.coerce.number().int().min(1).max(65535).default(6379),
+  REDIS_PASSWORD: z.string().optional(),
+  REDIS_DB: z.coerce.number().int().min(0).max(15).default(0),
 
-  // Security
-  ACCESS_TOKEN_SECRET: z.string().min(16),
-  REFRESH_TOKEN_SECRET: z.string().min(16),
-  ORG_TOKEN_SECRET_KEY: z.string(),
+  ACCESS_TOKEN_SECRET: z.string().min(32),
+  REFRESH_TOKEN_SECRET: z.string().min(32),
+  ORG_TOKEN_SECRET_KEY: z.string().length(64),
 
-  // CORS
-  ALLOWED_ORIGINS: z
-    .string()
-    .transform((str) => str.split(","))
-    .default("http://localhost:3000,http://localhost:4200"),
+  FACEBOOK_APP_ID: z.string().min(1),
+  FACEBOOK_APP_SECRET: z.string().min(1),
 
-  // Rate Limiting
-  RATE_LIMIT_WINDOW_MS: z.string().default("900000").pipe(z.coerce.number()),
-  RATE_LIMIT_MAX_REQUESTS: z.string().default("100").pipe(z.coerce.number()),
-
-  // GCP
-  GCP_PROJECT_ID: z.string().default("saas-452909"),
-
-  // Logging
-  LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
+  ALLOWED_ORIGINS: z.string()
+      .transform(str => str.split(",").map(origin => origin.trim()))
+      .pipe(z.array(z.string().url()).min(1))
 });
 
-export type BaseEnvironment = z.infer<typeof baseEnvSchema>;
+const reportsEnvSchema = baseEnvSchema.extend({
+  FACEBOOK_API_VERSION: z.string().regex(/^v\d+\.\d+$/).default("v22.0"),
+  FACEBOOK_API_TIMEOUT: z.coerce.number().int().min(5000).max(300000).default(30000),
+  FACEBOOK_API_MAX_RETRIES: z.coerce.number().int().min(1).max(10).default(3),
 
-export abstract class ConfigService<
-  T extends BaseEnvironment = BaseEnvironment,
-> {
+  REPORT_GENERATION_TIMEOUT: z.coerce.number().int().min(30000).max(600000).default(120000),
+  MAX_CONCURRENT_REPORTS: z.coerce.number().int().min(1).max(50).default(5),
+
+  PUPPETEER_EXECUTABLE_PATH: z.string().optional(),
+  PUPPETEER_TIMEOUT: z.coerce.number().int().min(30000).max(300000).default(120000),
+
+  GCS_REPORTS_BUCKET: z.string().min(1),
+  GCS_PROJECT_ID: z.string().min(1),
+
+  BULLMQ_REDIS_URL: z.string().url().optional(),
+  QUEUE_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(3),
+  QUEUE_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(3),
+  QUEUE_BACKOFF_DELAY: z.coerce.number().int().min(1000).max(300000).default(30000),
+});
+
+export type ReportsEnvironment = z.infer<typeof reportsEnvSchema>;
+
+export abstract class ConfigService<T> {
   protected config: T;
-  private static instances = new Map<string, ConfigService>();
+  protected serviceName: string;
 
-  constructor(schema: z.AnyZodObject, serviceName: string = "default") {
-    const existingInstance = ConfigService.instances.get(serviceName);
-    if (existingInstance) {
-      this.config = (existingInstance as ConfigService<T>).config;
-      return;
-    }
+  protected constructor(schema: z.ZodTypeAny, serviceName: string) {
+    this.serviceName = serviceName;
+    this.config = this.parseAndValidate(schema);
+  }
 
+  private parseAndValidate(schema: z.ZodTypeAny): T {
     try {
-      this.config = schema.parse(process.env) as T;
-      logger.info(`Configuration validated for service: ${serviceName}`);
-      ConfigService.instances.set(serviceName, this);
-    } catch (error) {
-      logger.error(`Environment validation failed for ${serviceName}:`, error);
-      process.exit(1);
+      const parsed = schema.parse(process.env) as T;
+      logger.info(`Configuration validated successfully for ${this.serviceName}`);
+      return parsed;
+    } catch (error: unknown) {
+      if (error instanceof z.ZodError) {
+        logger.error(`Configuration validation failed for ${this.serviceName}:`);
+        error.issues.forEach(err => {
+          logger.error(`  - ${err.path.join('.')}: ${err.message}`);
+        });
+      }
+      throw new Error(`Invalid configuration for ${this.serviceName}`);
     }
   }
+
 
   public get<K extends keyof T>(key: K): T[K] {
     return this.config[key];
   }
 
-  public getAll(): T {
-    return { ...this.config };
+  public getAll(): Readonly<T> {
+    return Object.freeze({ ...this.config });
   }
 
   public isDevelopment(): boolean {
-    return this.config.NODE_ENV === "development";
+    return (this.config as any).NODE_ENV === "development";
   }
 
   public isProduction(): boolean {
-    return this.config.NODE_ENV === "production";
-  }
-
-  public validateSection(section: keyof T): boolean {
-    const value = this.config[section];
-    return value !== undefined && value !== null && value !== "";
-  }
-
-  public getDatabaseConfig() {
-    return {
-      dbName: this.config.DATABASE_NAME,
-      host: this.config.DATABASE_HOST,
-      port: this.config.DATABASE_PORT,
-      user: this.config.DATABASE_USER,
-      password: this.config.DATABASE_PASSWORD,
-    };
-  }
-
-  public getRedisConfig() {
-    return {
-      host: this.config.REDISHOST,
-      port: this.config.REDISPORT,
-    };
+    return (this.config as any).NODE_ENV === "production";
   }
 }
 
-export class DefaultConfigService extends ConfigService<BaseEnvironment> {
-  private static instance: DefaultConfigService;
+export class ReportsConfigService extends ConfigService<ReportsEnvironment> {
+  private static instance: ReportsConfigService;
 
   private constructor() {
-    super(baseEnvSchema as z.AnyZodObject, "core");
+    super(reportsEnvSchema, "reports-service");
   }
 
-  public static getInstance(): DefaultConfigService {
-    if (!DefaultConfigService.instance) {
-      DefaultConfigService.instance = new DefaultConfigService();
+  public static getInstance(): ReportsConfigService {
+    if (!ReportsConfigService.instance) {
+      ReportsConfigService.instance = new ReportsConfigService();
     }
-    return DefaultConfigService.instance;
+    return ReportsConfigService.instance;
+  }
+
+  public getFacebookApiUrl(): string {
+    return `https://graph.facebook.com/${this.get("FACEBOOK_API_VERSION")}/`;
+  }
+
+  public getFacebookApiConfig() {
+    return {
+      baseURL: this.getFacebookApiUrl(),
+      timeout: this.get("FACEBOOK_API_TIMEOUT"),
+      maxRetries: this.get("FACEBOOK_API_MAX_RETRIES"),
+    };
+  }
+
+  public getReportGenerationConfig() {
+    return {
+      timeout: this.get("REPORT_GENERATION_TIMEOUT"),
+      maxConcurrent: this.get("MAX_CONCURRENT_REPORTS"),
+      bucketName: this.get("GCS_REPORTS_BUCKET"),
+      puppeteerPath: this.get("PUPPETEER_EXECUTABLE_PATH"),
+    };
+  }
+
+  public getPuppeteerConfig() {
+    const executablePath = this.get("PUPPETEER_EXECUTABLE_PATH");
+    const timeout = this.get("PUPPETEER_TIMEOUT");
+    return {
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      defaultViewport: { width: 1600, height: 1000 },
+      timeout,
+      ...(executablePath && { executablePath }),
+    };
+  }
+
+  public getQueueConfig() {
+    return {
+      concurrency: this.get("QUEUE_CONCURRENCY"),
+      maxAttempts: this.get("QUEUE_MAX_ATTEMPTS"),
+      backoffDelay: this.get("QUEUE_BACKOFF_DELAY"),
+      redisUrl: this.get("BULLMQ_REDIS_URL"),
+    };
+  }
+
+  public getStorageConfig() {
+    return {
+      bucketName: this.get("GCS_REPORTS_BUCKET"),
+      projectId: this.get("GCS_PROJECT_ID"),
+    };
   }
 }
-
-export { baseEnvSchema };
