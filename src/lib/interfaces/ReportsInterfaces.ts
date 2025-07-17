@@ -2,7 +2,7 @@ import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import type { Report } from "../entities/Report.js";
 import type { ScheduledJob } from "../entities/ScheduledJob.js";
 import type { OrganizationClient } from "../entities/OrganizationClient.js";
-import type {SchedulingOption} from "../entities/SchedulingOption.js";
+import type { SchedulingOption } from "../entities/SchedulingOption.js";
 
 export interface ISchedulingOption {
   uuid: string;
@@ -23,13 +23,15 @@ export interface ISchedulingOption {
   client: OrganizationClient;
 }
 
-export type SchedulingOptionWithExtras = Omit<SchedulingOption, 'nextRun' | 'lastRun'> & {
+export type SchedulingOptionWithExtras = Omit<
+  SchedulingOption,
+  "nextRun" | "lastRun"
+> & {
   nextRun: string;
   lastRun: string;
   frequency: string;
   images?: { clientLogo: string; agencyLogo: string };
 };
-
 
 export interface SchedulingOptionWithImages extends ISchedulingOption {
   images?: {
@@ -44,6 +46,15 @@ export type ScheduleFrequency =
   | "custom"
   | "cron";
 
+export interface Messages {
+  whatsapp: string;
+  slack: string;
+  email: {
+    title: string;
+    body: string;
+  };
+}
+
 interface BaseSchedule {
   frequency: string;
   clientUuid: string;
@@ -52,14 +63,7 @@ interface BaseSchedule {
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
   metrics: SchedulingOptionMetrics;
-  messages: {
-    whatsapp: string;
-    slack: string;
-    email: {
-      title: string;
-      body: string;
-    };
-  };
+  messages: Messages;
   images: {
     clientLogo: string;
     organizationLogo: string;
@@ -129,14 +133,7 @@ export interface ReportJobData {
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
   metrics: SchedulingOptionMetrics;
-  messages: {
-    whatsapp: string;
-    slack: string;
-    email: {
-      title: string;
-      body: string;
-    };
-  };
+  messages: Messages;
   images?: {
     clientLogo: string;
     organizationLogo: string;

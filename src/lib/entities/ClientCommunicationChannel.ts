@@ -7,6 +7,7 @@ import { TokenService } from "lib/services/TokenService.js";
 import { Database } from "../db/config/DB.js";
 import { sendGridService } from "../services/SendgridService.js";
 import { WhapiService } from "../services/WhapiService.js";
+import type { Messages } from "../interfaces/ReportsInterfaces.js";
 
 @Entity({
   discriminatorColumn: "type",
@@ -27,6 +28,7 @@ export abstract class CommunicationChannel extends BaseEntity {
   abstract send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
+    messages: Messages,
   ): Promise<void>;
 }
 
@@ -38,12 +40,13 @@ export class EmailChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
+    messages: Messages,
   ): Promise<void> {
     await sendGridService.sendReportEmail(
       {
         to: this.emailAddress,
-        subject: "Your Report Is Ready!",
-        text: "We’ve completed your report and it is now ready for review.",
+        subject: messages.email.title,
+        text: messages.email.body,
       },
       report,
     );
@@ -72,6 +75,7 @@ export class SlackChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
+    messages: Messages,
   ): Promise<void> {
     const slackService = new SlackService(new TokenService());
     const token = await slackService.tokenService.getSlackToken(
@@ -81,7 +85,7 @@ export class SlackChannel extends CommunicationChannel {
     await slackService.sendSlackMessageWithFile(
       token,
       this.conversationId,
-      "Your report is ready!",
+      messages.slack,
       Buffer.from(report, "base64"),
       "report.pdf",
     );
@@ -110,10 +114,11 @@ export class WhatsAppChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
+    messages: Messages,
   ): Promise<void> {
     const whapi = new WhapiService();
 
-    await whapi.sendReportWhatsapp(report, this.phoneNumber);
+    await whapi.sendReportWhatsapp(report, this.phoneNumber, messages.whatsapp);
 
     const db = await Database.getInstance();
 
