@@ -50,72 +50,90 @@ export class Log {
     this.logger.debug(message, { namespace: this.baseName });
   }
 
-  public info(message: string): void {
-    this.logger.info(message, { namespace: this.baseName });
+  public info(message: string, metadata?: any): void {
+    this.logger.info(message, {
+      namespace: this.baseName,
+      ...metadata
+    });
   }
 
-  public warn(message: string): void {
-    this.logger.warn(message, { namespace: `${this.baseName}:warning` });
+  public warn(message: string, metadata?: any): void {
+    this.logger.warn(message, {
+      namespace: `${this.baseName}:warning`,
+      ...metadata
+    });
   }
 
-  public error(message: unknown, error?: unknown): void {
+  public error(message: unknown, errorContext?: any): void {
+    const errorId = errorContext?.errorId || crypto.randomUUID();
     const logNamespace = `${this.baseName}:error`;
+
+    let logMessage: string;
+    let errorMeta: any = {
+      namespace: logNamespace,
+      errorId,
+      ...errorContext
+    };
 
     if (message instanceof Error) {
-      this.logger.error(message.stack || message.message, {
-        namespace: logNamespace,
-      });
+      logMessage = message.message;
+      errorMeta.stack = message.stack;
+      errorMeta.name = message.name;
     } else {
-      this.logger.error(
-        typeof message === "string" ? message : JSON.stringify(message),
-        {
-          namespace: logNamespace,
-        },
-      );
+      logMessage = typeof message === "string" ? message : JSON.stringify(message);
     }
 
-    if (error) {
-      if (error instanceof Error) {
-        this.logger.error(error.stack || error.message, {
-          namespace: logNamespace,
-        });
-      } else if (typeof error === "object") {
-        this.logger.error(JSON.stringify(error, null, 2), {
-          namespace: logNamespace,
-        });
-      } else {
-        this.logger.error(String(error), { namespace: logNamespace });
-      }
-    }
+    this.logger.error(logMessage, errorMeta);
   }
 
-  public catchError(error: unknown): void {
-    if (!error) return;
+  public catchError(error: unknown, context?: any): string {
+    if (!error) return '';
 
+    const errorId = crypto.randomUUID();
     const logNamespace = `${this.baseName}:error`;
 
+    let errorDetails: any = {
+      namespace: logNamespace,
+      errorId,
+      ...context
+    };
+
     if (isAxiosError(error)) {
-      this.logger.error(JSON.stringify(error.toJSON(), null, 2), {
-        namespace: logNamespace,
-      });
+      errorDetails = {
+        ...errorDetails,
+        type: 'AxiosError',
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        code: error.code,
+        message: error.message
+      };
     } else if (error instanceof Error) {
-      this.logger.error(error.stack || error.message, {
-        namespace: logNamespace,
-      });
+      errorDetails = {
+        ...errorDetails,
+        type: error.constructor.name,
+        message: error.message,
+        stack: error.stack,
+        ...(error as any).code && { code: (error as any).code },
+        ...(error as any).statusCode && { statusCode: (error as any).statusCode },
+        ...(error as any).context && { context: (error as any).context }
+      };
     } else if (typeof error === "string") {
-      this.logger.error(error, { namespace: logNamespace });
+      errorDetails.message = error;
+      errorDetails.type = 'String';
     } else {
-      this.logger.error(JSON.stringify(error, null, 2), {
-        namespace: logNamespace,
-      });
+      errorDetails.message = JSON.stringify(error, null, 2);
+      errorDetails.type = 'Unknown';
     }
+
+    this.logger.error('Caught error', errorDetails);
+    return errorId;
   }
 
   public catchErrorAndLogUuid(error: unknown): string {
-    const uuid: string = crypto.randomUUID();
-    this.error(`ERROR UUID: ${uuid}`);
-    this.catchError(error);
-    return uuid;
+    return this.catchError(error);
   }
 
   public extend(extensionName: string): Log {

@@ -74,21 +74,21 @@ export {
     DefaultConfigService,
     baseEnvSchema,
     type BaseEnvironment
-} from 'lib/config/ConfigService.js';
+} from './lib/config/ConfigService.js';
 
 //Errors
 export {
     MarklieError,
     ErrorCode
-} from 'lib/errors/Errors.js';
+} from './lib/errors/Errors.js';
 
-//Resilience patterns
+//Resilience pattern
 export {
     CircuitBreaker,
     CircuitBreakerManager,
-} from 'lib/resilience/CircuitBreaker.js';
+} from './lib/resilience/CircuitBreaker.js';
 export {
     CircuitBreakerState,
     type CircuitBreakerOptions,
     type CircuitBreakerMetrics
-} from 'lib/interfaces/CircutBreakerIntrefaces.js';
+} from './lib/interfaces/CircutBreakerIntrefaces.js';

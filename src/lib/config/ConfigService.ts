@@ -27,7 +27,7 @@ const baseEnvSchema = z.object({
     ALLOWED_ORIGINS: z.string().transform(str => str.split(',')).default('http://localhost:3000,http://localhost:4200'),
 
     // Rate Limiting
-    RATE_LIMIT_WINDOW_MS: z.string().default('900000').pipe(z.coerce.number()), //15 minutos
+    RATE_LIMIT_WINDOW_MS: z.string().default('900000').pipe(z.coerce.number()),
     RATE_LIMIT_MAX_REQUESTS: z.string().default('100').pipe(z.coerce.number()),
 
     // GCP
@@ -40,16 +40,18 @@ const baseEnvSchema = z.object({
 export type BaseEnvironment = z.infer<typeof baseEnvSchema>;
 
 export abstract class ConfigService<T extends BaseEnvironment = BaseEnvironment> {
-    protected config!: T;
+    protected config: T;
     private static instances = new Map<string, ConfigService>();
 
-    protected constructor(schema: z.ZodType<T, any, any>, serviceName: string = 'default'){
-        if (ConfigService.instances.has(serviceName)) {
-            return ConfigService.instances.get(serviceName) as this;
+    constructor(schema: z.AnyZodObject, serviceName: string = 'default') {
+        const existingInstance = ConfigService.instances.get(serviceName);
+        if (existingInstance) {
+            this.config = (existingInstance as ConfigService<T>).config;
+            return;
         }
 
         try {
-            this.config = schema.parse(process.env);
+            this.config = schema.parse(process.env) as T;
             logger.info(`Configuration validated for service: ${serviceName}`);
             ConfigService.instances.set(serviceName, this);
         } catch (error) {
@@ -101,7 +103,7 @@ export class DefaultConfigService extends ConfigService<BaseEnvironment> {
     private static instance: DefaultConfigService;
 
     private constructor() {
-        super(baseEnvSchema, 'core');
+        super(baseEnvSchema as z.AnyZodObject, 'core');
     }
 
     public static getInstance(): DefaultConfigService {
