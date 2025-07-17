@@ -22,12 +22,9 @@ const baseEnvSchema = z.object({
   REDIS_PASSWORD: z.string().optional(),
   REDIS_DB: z.coerce.number().int().min(0).max(15).default(0),
 
-  ACCESS_TOKEN_SECRET: z.string().min(32),
-  REFRESH_TOKEN_SECRET: z.string().min(32),
+  ACCESS_TOKEN_SECRET: z.string().min(16),
+  REFRESH_TOKEN_SECRET: z.string().min(16),
   ORG_TOKEN_SECRET_KEY: z.string().length(64),
-
-  FACEBOOK_APP_ID: z.string().min(1),
-  FACEBOOK_APP_SECRET: z.string().min(1),
 
   ALLOWED_ORIGINS: z.string()
       .transform(str => str.split(",").map(origin => origin.trim()))
@@ -46,7 +43,6 @@ const reportsEnvSchema = baseEnvSchema.extend({
   PUPPETEER_TIMEOUT: z.coerce.number().int().min(30000).max(300000).default(120000),
 
   GCS_REPORTS_BUCKET: z.string().min(1),
-  GCS_PROJECT_ID: z.string().min(1),
 
   BULLMQ_REDIS_URL: z.string().url().optional(),
   QUEUE_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(3),
@@ -54,7 +50,33 @@ const reportsEnvSchema = baseEnvSchema.extend({
   QUEUE_BACKOFF_DELAY: z.coerce.number().int().min(1000).max(300000).default(30000),
 });
 
+const authEnvSchema = baseEnvSchema.extend({
+  // Session configuration
+  SESSION_TIMEOUT: z.coerce.number().int().min(300).max(86400).default(3600), // 5 min to 24 hours
+  REFRESH_TOKEN_EXPIRY: z.coerce.number().int().min(86400).default(30 * 24 * 60 * 60), // 30 days default
+
+  // Rate limiting
+  RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(1000).default(15 * 60 * 1000), // 15 minutes
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().min(1).default(100),
+
+  // Image upload
+  MAX_IMAGE_SIZE_MB: z.coerce.number().min(1).max(50).default(10),
+  ALLOWED_IMAGE_TYPES: z
+      .string()
+      .default("image/jpeg,image/png,image/gif,image/webp")
+      .transform(str => str.split(",").map(type => type.trim())),
+});
+
+const notificationEnvSchema = baseEnvSchema.extend({
+  // Email service
+  SENDGRID_API_KEY: z.string().min(1, "SendGrid API key is required"),
+  EMAIL_FROM: z.email().default("noreply@marklie.com"),
+});
+
+export type BaseEnvironment = z.infer<typeof baseEnvSchema>;
 export type ReportsEnvironment = z.infer<typeof reportsEnvSchema>;
+export type AuthEnvironment = z.infer<typeof authEnvSchema>;
+export type NotificationEnvironment = z.infer<typeof notificationEnvSchema>;
 
 export abstract class ConfigService<T> {
   protected config: T;
@@ -158,7 +180,73 @@ export class ReportsConfigService extends ConfigService<ReportsEnvironment> {
   public getStorageConfig() {
     return {
       bucketName: this.get("GCS_REPORTS_BUCKET"),
-      projectId: this.get("GCS_PROJECT_ID"),
     };
   }
 }
+
+export class AgencyServiceConfig extends ConfigService<AuthEnvironment> {
+  private static instance: AgencyServiceConfig;
+
+  private constructor() {
+    super(authEnvSchema, "auth-service");
+  }
+
+  public static getInstance(): AgencyServiceConfig {
+    if (!AgencyServiceConfig.instance) {
+      AgencyServiceConfig.instance = new AgencyServiceConfig();
+    }
+    return AgencyServiceConfig.instance;
+  }
+
+  public getSessionConfig() {
+    return {
+      timeout: this.get("SESSION_TIMEOUT"),
+      refreshTokenExpiry: this.get("REFRESH_TOKEN_EXPIRY"),
+    };
+  }
+
+  public getRateLimitConfig() {
+    return {
+      windowMs: this.get("RATE_LIMIT_WINDOW_MS"),
+      maxRequests: this.get("RATE_LIMIT_MAX_REQUESTS"),
+    };
+  }
+
+  public getImageUploadConfig() {
+    return {
+      maxSizeMB: this.get("MAX_IMAGE_SIZE_MB"),
+      allowedTypes: this.get("ALLOWED_IMAGE_TYPES"),
+    };
+  }
+}
+
+export class NotificationConfigService extends ConfigService<NotificationEnvironment> {
+  private static instance: NotificationConfigService;
+
+  private constructor() {
+    super(notificationEnvSchema, "notification-service");
+  }
+
+  public static getInstance(): NotificationConfigService {
+    if (!NotificationConfigService.instance) {
+      NotificationConfigService.instance = new NotificationConfigService();
+    }
+    return NotificationConfigService.instance;
+  }
+
+  public getEmailConfig() {
+    return {
+      apiKey: this.get("SENDGRID_API_KEY"),
+      from: this.get("EMAIL_FROM"),
+    };
+  }
+}
+
+
+
+export {
+  baseEnvSchema,
+  reportsEnvSchema,
+  authEnvSchema,
+  notificationEnvSchema,
+};

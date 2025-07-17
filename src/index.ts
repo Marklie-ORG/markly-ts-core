@@ -70,10 +70,12 @@ export { WhapiService } from "./lib/services/WhapiService.js";
 
 //Configuration management
 export {
-  ConfigService,
-  DefaultConfigService,
   baseEnvSchema,
-  type BaseEnvironment,
+  reportsEnvSchema,
+  notificationEnvSchema,
+  authEnvSchema,
+  ConfigService,
+  ReportsConfigService,
 } from "./lib/config/ConfigService.js";
 
 //Errors

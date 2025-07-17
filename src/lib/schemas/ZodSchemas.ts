@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const RegistrationRequestSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z.email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
 export const LoginRequestSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z.email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" }),
@@ -16,17 +16,14 @@ export const LoginRequestSchema = z.object({
 
 export const SetActiveOrganizationSchema = z.object({
   activeOrganizationUuid: z
-    .string()
     .uuid({ message: "Invalid organization UUID." }),
 });
 
 export const RefreshRequestSchema = z.object({});
 
 export const ScheduleReportsRequestSchema = z.object({
-  frequency: z.enum(["weekly", "biweekly", "monthly", "custom", "cron"], {
-    errorMap: () => ({ message: "Invalid frequency type" }),
-  }),
-  clientUuid: z.string().uuid({ message: "Invalid client UUID" }),
+  frequency: z.enum(["weekly", "biweekly", "monthly", "custom", "cron"]),
+  clientUuid: z.uuid({ message: "Invalid client UUID" }),
   time: z.string().optional(),
   dayOfWeek: z
     .enum([
@@ -50,10 +47,7 @@ export const ScheduleReportsRequestSchema = z.object({
 });
 
 export const UpdateSchedulingOptionRequestSchema = z.object({
-  frequency: z.enum(["weekly", "biweekly", "monthly", "custom", "cron"], {
-    errorMap: () => ({ message: "Invalid frequency type" }),
-  }),
-  // clientUuid: z.string().uuid({ message: "Invalid client UUID" }),
+  frequency: z.enum(["weekly", "biweekly", "monthly", "custom", "cron"]),
   time: z.string().optional(),
   dayOfWeek: z
     .enum([
@@ -84,7 +78,7 @@ export const ReportsQueryParamsSchema = z.object({
 });
 
 export const SendReportAfterReview = z.object({
-  reportUuid: z.string().uuid({ message: "Invalid report UUID" }),
+  reportUuid: z.uuid({ message: "Invalid report UUID" }),
 });
 
 export const UrlParamsSchema = z.object({
@@ -123,7 +117,6 @@ export const HandleFacebookLoginRequestSchema = z.object({
 export const CreateClientRequestSchema = z.object({
   name: z.string(),
   facebookAdAccounts: z.array(z.string()),
-  // tiktokAdAccounts: z.array(z.string())
 });
 
 export const CreateClientFacebookAdAccountRequestSchema = z.object({
@@ -160,7 +153,7 @@ export const UpdateClientRequestSchema = z.object({
 });
 
 export const ChangeEmailRequestSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z.email({ message: "Invalid email address" }),
   password: z
     .string()
     .min(8, { message: "Password must be at least 8 characters long" }),
@@ -180,7 +173,7 @@ export const ChangePasswordRequestSchema = z.object({
 });
 
 export const SendPasswordRecoveryEmailRequestSchema = z.object({
-  email: z.string().email({ message: "Invalid email address" }),
+  email: z.email({ message: "Invalid email address" }),
 });
 
 export const VerifyPasswordRecoveryRequestSchema = z.object({

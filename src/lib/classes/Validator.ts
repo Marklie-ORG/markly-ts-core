@@ -1,7 +1,7 @@
 import { match } from "path-to-regexp";
 import type { Context } from "koa";
 import type { MatchFunction } from "path-to-regexp";
-import { ZodSchema } from "zod";
+import {z} from "zod";
 import {
   AdAccountsBusinessesRequestSchema,
   LoginRequestSchema,
@@ -39,7 +39,7 @@ import {
 type SchemaEntry = {
   pattern: string;
   matcher: MatchFunction<Record<string, string>>;
-  schema: ZodSchema<any>;
+  schema: z.ZodType<any>;
 };
 
 const schemaMap: SchemaEntry[] = [
