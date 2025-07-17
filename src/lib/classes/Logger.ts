@@ -1,5 +1,4 @@
 import { isAxiosError } from "axios";
-import * as crypto from "crypto";
 import { createLogger, format, transports, Logger } from "winston";
 
 export class Log {
@@ -128,10 +127,6 @@ export class Log {
     }
 
     this.logger.error('Caught error', errorDetails);
-  }
-
-  public catchErrorAndLogUuid(error: unknown): string {
-    return this.catchError(error);
   }
 
   public extend(extensionName: string): Log {
