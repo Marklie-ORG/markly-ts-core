@@ -11,15 +11,21 @@ export class Log {
     this.baseName = baseName;
     const isProduction = process.env.ENVIRONMENT === "production";
 
-    const logFormat = format.printf(({ level, message }) => {
+    const logFormat = format.printf(({ level, message, ...meta }) => {
       const namespace = isProduction
-        ? this.baseName
-        : level === "error"
-          ? `\x1b[31m${this.baseName}\x1b[39m`
-          : `\x1b[35m${this.baseName}\x1b[39m`;
+          ? this.baseName
+          : level === "error"
+              ? `\x1b[31m${this.baseName}\x1b[39m`
+              : `\x1b[35m${this.baseName}\x1b[39m`;
 
-      return `${namespace} ${message}`;
+      const metaString =
+          meta && Object.keys(meta).length
+              ? "\n" + JSON.stringify(meta, null, 2)
+              : "";
+
+      return `${namespace} ${message}${metaString}`;
     });
+
 
     this.logger = createLogger({
       level: "debug",

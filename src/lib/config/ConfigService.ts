@@ -19,8 +19,8 @@ const baseEnvSchema = z.object({
     REDISPORT: z.string().default('6379').pipe(z.coerce.number()),
 
     // Security
-    ACCESS_TOKEN_SECRET: z.string().min(32),
-    REFRESH_TOKEN_SECRET: z.string().min(32),
+    ACCESS_TOKEN_SECRET: z.string().min(16),
+    REFRESH_TOKEN_SECRET: z.string().min(16),
     ORG_TOKEN_SECRET_KEY: z.string(),
 
     // CORS
