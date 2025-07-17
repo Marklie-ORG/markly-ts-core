@@ -10,26 +10,34 @@ export class Log {
     this.baseName = baseName;
     const isProduction = process.env.ENVIRONMENT === "production";
 
-    const logFormat = format.printf(({ level, message, timestamp, ...meta }) => {
-      const namespace = isProduction
+    const logFormat = format.printf(
+      ({ level, message, timestamp, ...meta }) => {
+        const namespace = isProduction
           ? this.baseName
-          : level === 'error'
-              ? `\x1b[31m${this.baseName}\x1b[39m`
-              : `\x1b[35m${this.baseName}\x1b[39m`;
+          : level === "error"
+            ? `\x1b[31m${this.baseName}\x1b[39m`
+            : `\x1b[35m${this.baseName}\x1b[39m`;
 
-      const { namespace: _, level: __, message: ___, timestamp: ____, ...rest } = meta;
+        const {
+          namespace: _,
+          level: __,
+          message: ___,
+          timestamp: ____,
+          ...rest
+        } = meta;
 
-      const metaString = Object.keys(rest).length > 0 ? ` ${JSON.stringify(rest)}` : '';
+        const metaString =
+          Object.keys(rest).length > 0 ? ` ${JSON.stringify(rest)}` : "";
 
-      return `${timestamp ? `[${timestamp}] ` : ''}${namespace} ${message}${metaString}`;
-    });
-
+        return `${timestamp ? `[${timestamp}] ` : ""}${namespace} ${message}${metaString}`;
+      },
+    );
 
     this.logger = createLogger({
-      level: 'debug',
+      level: "debug",
       format: format.combine(
-          format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-          logFormat
+        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        logFormat,
       ),
       transports: [new transports.Console()],
     });
@@ -56,14 +64,14 @@ export class Log {
   public info(message: string, metadata?: any): void {
     this.logger.info(message, {
       namespace: this.baseName,
-      ...metadata
+      ...metadata,
     });
   }
 
   public warn(message: string, metadata?: any): void {
     this.logger.warn(message, {
       namespace: `${this.baseName}:warning`,
-      ...metadata
+      ...metadata,
     });
   }
 
@@ -73,7 +81,7 @@ export class Log {
     let logMessage: string;
     let errorMeta: any = {
       namespace: logNamespace,
-      ...errorContext
+      ...errorContext,
     };
 
     if (message instanceof Error) {
@@ -81,32 +89,32 @@ export class Log {
       errorMeta.stack = message.stack;
       errorMeta.name = message.name;
     } else {
-      logMessage = typeof message === "string" ? message : JSON.stringify(message);
+      logMessage =
+        typeof message === "string" ? message : JSON.stringify(message);
     }
 
     this.logger.error(logMessage, errorMeta);
   }
 
   public catchError(error: unknown, context?: any): void {
-
     const logNamespace = `${this.baseName}:error`;
 
     let errorDetails: any = {
       namespace: logNamespace,
-      ...context
+      ...context,
     };
 
     if (isAxiosError(error)) {
       errorDetails = {
         ...errorDetails,
-        type: 'AxiosError',
+        type: "AxiosError",
         url: error.config?.url,
         method: error.config?.method,
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
         code: error.code,
-        message: error.message
+        message: error.message,
       };
     } else if (error instanceof Error) {
       errorDetails = {
@@ -114,19 +122,21 @@ export class Log {
         type: error.constructor.name,
         message: error.message,
         stack: error.stack,
-        ...(error as any).code && { code: (error as any).code },
-        ...(error as any).statusCode && { statusCode: (error as any).statusCode },
-        ...(error as any).context && { context: (error as any).context }
+        ...((error as any).code && { code: (error as any).code }),
+        ...((error as any).statusCode && {
+          statusCode: (error as any).statusCode,
+        }),
+        ...((error as any).context && { context: (error as any).context }),
       };
     } else if (typeof error === "string") {
       errorDetails.message = error;
-      errorDetails.type = 'String';
+      errorDetails.type = "String";
     } else {
       errorDetails.message = JSON.stringify(error, null, 2);
-      errorDetails.type = 'Unknown';
+      errorDetails.type = "Unknown";
     }
 
-    this.logger.error('Caught error', errorDetails);
+    this.logger.error("Caught error", errorDetails);
   }
 
   public extend(extensionName: string): Log {

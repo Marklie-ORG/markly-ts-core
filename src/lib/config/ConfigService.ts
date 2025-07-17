@@ -1,117 +1,122 @@
-import { z } from 'zod';
-import { Log } from '../classes/Logger.js';
+import { z } from "zod";
+import { Log } from "../classes/Logger.js";
 
-const logger = Log.getInstance().extend('config');
+const logger = Log.getInstance().extend("config");
 
 const baseEnvSchema = z.object({
-    NODE_ENV: z.enum(['development', 'production']).default('development'),
-    PORT: z.string().default('3000').pipe(z.coerce.number()),
+  NODE_ENV: z.enum(["development", "production"]).default("development"),
+  PORT: z.string().default("3000").pipe(z.coerce.number()),
 
-    // Database
-    DATABASE_NAME: z.string().default('saas'),
-    DATABASE_HOST: z.string().default('localhost'),
-    DATABASE_PORT: z.string().default('5432').pipe(z.coerce.number()),
-    DATABASE_USER: z.string().default('postgres'),
-    DATABASE_PASSWORD: z.string().default('password'),
+  // Database
+  DATABASE_NAME: z.string().default("saas"),
+  DATABASE_HOST: z.string().default("localhost"),
+  DATABASE_PORT: z.string().default("5432").pipe(z.coerce.number()),
+  DATABASE_USER: z.string().default("postgres"),
+  DATABASE_PASSWORD: z.string().default("password"),
 
-    // Redis
-    REDISHOST: z.string().default('localhost'),
-    REDISPORT: z.string().default('6379').pipe(z.coerce.number()),
+  // Redis
+  REDISHOST: z.string().default("localhost"),
+  REDISPORT: z.string().default("6379").pipe(z.coerce.number()),
 
-    // Security
-    ACCESS_TOKEN_SECRET: z.string().min(16),
-    REFRESH_TOKEN_SECRET: z.string().min(16),
-    ORG_TOKEN_SECRET_KEY: z.string(),
+  // Security
+  ACCESS_TOKEN_SECRET: z.string().min(16),
+  REFRESH_TOKEN_SECRET: z.string().min(16),
+  ORG_TOKEN_SECRET_KEY: z.string(),
 
-    // CORS
-    ALLOWED_ORIGINS: z.string().transform(str => str.split(',')).default('http://localhost:3000,http://localhost:4200'),
+  // CORS
+  ALLOWED_ORIGINS: z
+    .string()
+    .transform((str) => str.split(","))
+    .default("http://localhost:3000,http://localhost:4200"),
 
-    // Rate Limiting
-    RATE_LIMIT_WINDOW_MS: z.string().default('900000').pipe(z.coerce.number()),
-    RATE_LIMIT_MAX_REQUESTS: z.string().default('100').pipe(z.coerce.number()),
+  // Rate Limiting
+  RATE_LIMIT_WINDOW_MS: z.string().default("900000").pipe(z.coerce.number()),
+  RATE_LIMIT_MAX_REQUESTS: z.string().default("100").pipe(z.coerce.number()),
 
-    // GCP
-    GCP_PROJECT_ID: z.string().default('saas-452909'),
+  // GCP
+  GCP_PROJECT_ID: z.string().default("saas-452909"),
 
-    // Logging
-    LOG_LEVEL: z.enum(['error', 'warn', 'info', 'debug']).default('info'),
+  // Logging
+  LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
 });
 
 export type BaseEnvironment = z.infer<typeof baseEnvSchema>;
 
-export abstract class ConfigService<T extends BaseEnvironment = BaseEnvironment> {
-    protected config: T;
-    private static instances = new Map<string, ConfigService>();
+export abstract class ConfigService<
+  T extends BaseEnvironment = BaseEnvironment,
+> {
+  protected config: T;
+  private static instances = new Map<string, ConfigService>();
 
-    constructor(schema: z.AnyZodObject, serviceName: string = 'default') {
-        const existingInstance = ConfigService.instances.get(serviceName);
-        if (existingInstance) {
-            this.config = (existingInstance as ConfigService<T>).config;
-            return;
-        }
-
-        try {
-            this.config = schema.parse(process.env) as T;
-            logger.info(`Configuration validated for service: ${serviceName}`);
-            ConfigService.instances.set(serviceName, this);
-        } catch (error) {
-            logger.error(`Environment validation failed for ${serviceName}:`, error);
-            process.exit(1);
-        }
+  constructor(schema: z.AnyZodObject, serviceName: string = "default") {
+    const existingInstance = ConfigService.instances.get(serviceName);
+    if (existingInstance) {
+      this.config = (existingInstance as ConfigService<T>).config;
+      return;
     }
 
-    public get<K extends keyof T>(key: K): T[K] {
-        return this.config[key];
+    try {
+      this.config = schema.parse(process.env) as T;
+      logger.info(`Configuration validated for service: ${serviceName}`);
+      ConfigService.instances.set(serviceName, this);
+    } catch (error) {
+      logger.error(`Environment validation failed for ${serviceName}:`, error);
+      process.exit(1);
     }
+  }
 
-    public getAll(): T {
-        return { ...this.config };
-    }
+  public get<K extends keyof T>(key: K): T[K] {
+    return this.config[key];
+  }
 
-    public isDevelopment(): boolean {
-        return this.config.NODE_ENV === 'development';
-    }
+  public getAll(): T {
+    return { ...this.config };
+  }
 
-    public isProduction(): boolean {
-        return this.config.NODE_ENV === 'production';
-    }
+  public isDevelopment(): boolean {
+    return this.config.NODE_ENV === "development";
+  }
 
-    public validateSection(section: keyof T): boolean {
-        const value = this.config[section];
-        return value !== undefined && value !== null && value !== '';
-    }
+  public isProduction(): boolean {
+    return this.config.NODE_ENV === "production";
+  }
 
-    public getDatabaseConfig() {
-        return {
-            dbName: this.config.DATABASE_NAME,
-            host: this.config.DATABASE_HOST,
-            port: this.config.DATABASE_PORT,
-            user: this.config.DATABASE_USER,
-            password: this.config.DATABASE_PASSWORD,
-        };
-    }
+  public validateSection(section: keyof T): boolean {
+    const value = this.config[section];
+    return value !== undefined && value !== null && value !== "";
+  }
 
-    public getRedisConfig() {
-        return {
-            host: this.config.REDISHOST,
-            port: this.config.REDISPORT,
-        };
-    }
+  public getDatabaseConfig() {
+    return {
+      dbName: this.config.DATABASE_NAME,
+      host: this.config.DATABASE_HOST,
+      port: this.config.DATABASE_PORT,
+      user: this.config.DATABASE_USER,
+      password: this.config.DATABASE_PASSWORD,
+    };
+  }
+
+  public getRedisConfig() {
+    return {
+      host: this.config.REDISHOST,
+      port: this.config.REDISPORT,
+    };
+  }
 }
 
 export class DefaultConfigService extends ConfigService<BaseEnvironment> {
-    private static instance: DefaultConfigService;
+  private static instance: DefaultConfigService;
 
-    private constructor() {
-        super(baseEnvSchema as z.AnyZodObject, 'core');
-    }
+  private constructor() {
+    super(baseEnvSchema as z.AnyZodObject, "core");
+  }
 
-    public static getInstance(): DefaultConfigService {
-        if (!DefaultConfigService.instance) {
-            DefaultConfigService.instance = new DefaultConfigService();
-        }
-        return DefaultConfigService.instance;
+  public static getInstance(): DefaultConfigService {
+    if (!DefaultConfigService.instance) {
+      DefaultConfigService.instance = new DefaultConfigService();
     }
+    return DefaultConfigService.instance;
+  }
 }
 
 export { baseEnvSchema };

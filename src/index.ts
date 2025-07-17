@@ -70,25 +70,22 @@ export { WhapiService } from "./lib/services/WhapiService.js";
 
 //Configuration management
 export {
-    ConfigService,
-    DefaultConfigService,
-    baseEnvSchema,
-    type BaseEnvironment
-} from './lib/config/ConfigService.js';
+  ConfigService,
+  DefaultConfigService,
+  baseEnvSchema,
+  type BaseEnvironment,
+} from "./lib/config/ConfigService.js";
 
 //Errors
-export {
-    MarklieError,
-    ErrorCode
-} from './lib/errors/Errors.js';
+export { MarklieError, ErrorCode } from "./lib/errors/Errors.js";
 
 //Resilience pattern
 export {
-    CircuitBreaker,
-    CircuitBreakerManager,
-} from './lib/resilience/CircuitBreaker.js';
+  CircuitBreaker,
+  CircuitBreakerManager,
+} from "./lib/resilience/CircuitBreaker.js";
 export {
-    CircuitBreakerState,
-    type CircuitBreakerOptions,
-    type CircuitBreakerMetrics
-} from './lib/interfaces/CircutBreakerIntrefaces.js';
+  CircuitBreakerState,
+  type CircuitBreakerOptions,
+  type CircuitBreakerMetrics,
+} from "./lib/interfaces/CircutBreakerIntrefaces.js";
