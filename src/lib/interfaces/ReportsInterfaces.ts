@@ -30,7 +30,7 @@ export type SchedulingOptionWithExtras = Omit<
   nextRun: string;
   lastRun: string;
   frequency: string;
-  images?: { clientLogo: string; agencyLogo: string };
+  images?: { clientLogo: string; organizationLogo: string };
 };
 
 export interface SchedulingOptionWithImages extends ISchedulingOption {
@@ -167,7 +167,9 @@ export interface Metrics {
   engagement?: number;
 }
 
-export interface KPIs extends Metrics {}
+export interface KPIs extends Metrics {
+  leads?: number;
+}
 
 export interface Graph extends Metrics {
   date_start: string;
@@ -184,6 +186,7 @@ export interface Ad extends Metrics {
 export interface Campaign extends Metrics {
   index: number;
   campaign_name: string;
+  leads?: number;
 }
 
 export const AVAILABLE_KPI_METRICS: Record<string, string[]> = {
@@ -203,6 +206,8 @@ export const AVAILABLE_KPI_METRICS: Record<string, string[]> = {
   add_to_cart: ["actions"],
   initiated_checkouts: ["actions"],
   engagement: ["actions"],
+  leads: ["actions"],
+  cost_per_lead: ["actions"],
 
   cost_per_purchase: ["spend", "actions"],
   cost_per_add_to_cart: ["spend", "actions"],
@@ -228,6 +233,8 @@ export const AVAILABLE_GRAPH_METRICS: Record<string, string[]> = {
   add_to_cart: ["actions"],
   initiated_checkouts: ["actions"],
   engagement: ["actions"],
+  leads: ["actions"],
+  cost_per_lead: ["actions"],
 
   cost_per_purchase: ["spend", "actions"],
   cost_per_add_to_cart: ["spend", "actions"],
@@ -253,6 +260,8 @@ export const AVAILABLE_ADS_METRICS: Record<string, string[]> = {
   add_to_cart: ["actions"],
   initiated_checkouts: ["actions"],
   engagement: ["actions"],
+  leads: ["actions"],
+  cost_per_lead: ["actions"],
 
   cost_per_purchase: ["spend", "actions"],
   cost_per_add_to_cart: ["spend", "actions"],
@@ -278,6 +287,8 @@ export const AVAILABLE_CAMPAIGN_METRICS: Record<string, string[]> = {
   add_to_cart: ["actions"],
   initiated_checkouts: ["actions"],
   engagement: ["actions"],
+  leads: ["actions"],
+  cost_per_lead: ["actions"],
 
   cost_per_purchase: ["spend", "actions"],
   cost_per_add_to_cart: ["spend", "actions"],

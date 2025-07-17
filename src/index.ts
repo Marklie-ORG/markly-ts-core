@@ -67,3 +67,28 @@ export { TokenService } from "./lib/services/TokenService.js";
 export { SlackService } from "./lib/services/SlackService.js";
 export { SendGridService } from "./lib/services/SendgridService.js";
 export { WhapiService } from "./lib/services/WhapiService.js";
+
+//Configuration management
+export {
+    ConfigService,
+    DefaultConfigService,
+    baseEnvSchema,
+    type BaseEnvironment
+} from 'lib/config/ConfigService.js';
+
+//Errors
+export {
+    MarklieError,
+    ErrorCode
+} from 'lib/errors/Errors.js';
+
+//Resilience patterns
+export {
+    CircuitBreaker,
+    CircuitBreakerManager,
+} from 'lib/resilience/CircuitBreaker.js';
+export {
+    CircuitBreakerState,
+    type CircuitBreakerOptions,
+    type CircuitBreakerMetrics
+} from 'lib/interfaces/CircutBreakerIntrefaces.js';
