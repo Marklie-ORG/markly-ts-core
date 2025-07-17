@@ -11,30 +11,28 @@ export class Log {
     this.baseName = baseName;
     const isProduction = process.env.ENVIRONMENT === "production";
 
-    const logFormat = format.printf(({ level, message, ...meta }) => {
+    const logFormat = format.printf(({ level, message, timestamp, ...meta }) => {
       const namespace = isProduction
           ? this.baseName
-          : level === "error"
+          : level === 'error'
               ? `\x1b[31m${this.baseName}\x1b[39m`
               : `\x1b[35m${this.baseName}\x1b[39m`;
 
-      const metaString =
-          meta && Object.keys(meta).length
-              ? "\n" + JSON.stringify(meta, null, 2)
-              : "";
+      const { namespace: _, level: __, message: ___, timestamp: ____, ...rest } = meta;
 
-      return `${namespace} ${message}${metaString}`;
+      const metaString = Object.keys(rest).length > 0 ? ` ${JSON.stringify(rest)}` : '';
+
+      return `${timestamp ? `[${timestamp}] ` : ''}${namespace} ${message}${metaString}`;
     });
 
 
     this.logger = createLogger({
-      level: "debug",
-      format: format.combine(logFormat),
-      transports: [
-        new transports.Console({
-          format: format.combine(logFormat),
-        }),
-      ],
+      level: 'debug',
+      format: format.combine(
+          format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+          logFormat
+      ),
+      transports: [new transports.Console()],
     });
   }
 
@@ -71,13 +69,11 @@ export class Log {
   }
 
   public error(message: unknown, errorContext?: any): void {
-    const errorId = errorContext?.errorId || crypto.randomUUID();
     const logNamespace = `${this.baseName}:error`;
 
     let logMessage: string;
     let errorMeta: any = {
       namespace: logNamespace,
-      errorId,
       ...errorContext
     };
 
@@ -92,15 +88,12 @@ export class Log {
     this.logger.error(logMessage, errorMeta);
   }
 
-  public catchError(error: unknown, context?: any): string {
-    if (!error) return '';
+  public catchError(error: unknown, context?: any): void {
 
-    const errorId = crypto.randomUUID();
     const logNamespace = `${this.baseName}:error`;
 
     let errorDetails: any = {
       namespace: logNamespace,
-      errorId,
       ...context
     };
 
@@ -135,7 +128,6 @@ export class Log {
     }
 
     this.logger.error('Caught error', errorDetails);
-    return errorId;
   }
 
   public catchErrorAndLogUuid(error: unknown): string {
