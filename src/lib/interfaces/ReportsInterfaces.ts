@@ -347,5 +347,5 @@ export interface ReportWithImages extends IReport {
 
 export interface ReportImages {
   clientLogo: string;
-  agencyLogo: string;
+  organizationLogo: string;
 }
