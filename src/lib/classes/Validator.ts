@@ -65,8 +65,8 @@ const schemaMap: SchemaEntry[] = [
     schema: ScheduleReportsRequestSchema,
   },
   {
-    pattern: "/api/scheduling-option/:uuid",
-    matcher: match("/api/scheduling-option/:uuid", {
+    pattern: "/api/scheduling-options/:uuid",
+    matcher: match("/api/scheduling-options/:uuid", {
       decode: decodeURIComponent,
     }),
     schema: UpdateSchedulingOptionRequestSchema,
