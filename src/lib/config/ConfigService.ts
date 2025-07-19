@@ -59,7 +59,6 @@ const authEnvSchema = baseEnvSchema.extend({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(1000).default(15 * 60 * 1000), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().min(1).default(100),
 
-  // Image upload
   MAX_IMAGE_SIZE_MB: z.coerce.number().min(1).max(50).default(10),
   ALLOWED_IMAGE_TYPES: z
       .string()
@@ -71,9 +70,10 @@ const notificationEnvSchema = baseEnvSchema.extend({
   // Email service
   SENDGRID_API_KEY: z.string().min(1, "SendGrid API key is required"),
   EMAIL_FROM: z.email().default("noreply@marklie.com"),
+
+  GCS_REPORTS_BUCKET: z.string().min(1),
 });
 
-export type BaseEnvironment = z.infer<typeof baseEnvSchema>;
 export type ReportsEnvironment = z.infer<typeof reportsEnvSchema>;
 export type AuthEnvironment = z.infer<typeof authEnvSchema>;
 export type NotificationEnvironment = z.infer<typeof notificationEnvSchema>;
