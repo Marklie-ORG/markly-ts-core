@@ -193,3 +193,8 @@ export const UpdateReportMetricsSelectionsRequestSchema = z.object({
 export const UploadImageRequestSchema = z.any();
 
 export const DeleteImageRequestSchema = z.object({});
+
+export const UpdateReportImagesRequestSchema = z.object({
+  clientLogo: z.string(),
+  agencyLogo: z.string(),
+});

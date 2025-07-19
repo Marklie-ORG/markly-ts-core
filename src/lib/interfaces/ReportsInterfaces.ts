@@ -2,7 +2,8 @@ import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import type { Report } from "../entities/Report.js";
 import type { ScheduledJob } from "../entities/ScheduledJob.js";
 import type { OrganizationClient } from "../entities/OrganizationClient.js";
-import type { SchedulingOption } from "../entities/SchedulingOption.js";
+import type {SchedulingOption} from "../entities/SchedulingOption.js";
+import type { Organization } from "lib/entities/Organization.js";
 
 export interface ISchedulingOption {
   uuid: string;
@@ -23,21 +24,29 @@ export interface ISchedulingOption {
   client: OrganizationClient;
 }
 
-export type SchedulingOptionWithExtras = Omit<
-  SchedulingOption,
-  "nextRun" | "lastRun"
-> & {
+
+
+export interface IReport {
+  organization: Organization;
+  client: OrganizationClient;
+  reportType: string;
+  reviewRequired: boolean;
+  reviewedAt?: Date;
+  gcsUrl: string;
+  schedulingOption?: SchedulingOption;
+  data: Record<string, any>;
+  metadata?: Record<string, any>;
+}
+
+export type SchedulingOptionWithExtras = Omit<SchedulingOption, 'nextRun' | 'lastRun'> & {
   nextRun: string;
   lastRun: string;
   frequency: string;
-  images?: { clientLogo: string; organizationLogo: string };
+  images?: ReportImages;
 };
 
 export interface SchedulingOptionWithImages extends ISchedulingOption {
-  images?: {
-    clientLogo: string;
-    organizationLogo: string;
-  };
+  images?: ReportImages;
 }
 export type ScheduleFrequency =
   | "weekly"
@@ -64,10 +73,7 @@ interface BaseSchedule {
   organizationUuid: string;
   metrics: SchedulingOptionMetrics;
   messages: Messages;
-  images: {
-    clientLogo: string;
-    organizationLogo: string;
-  };
+  images?: ReportImages;
 }
 
 interface TimeBasedSchedule extends BaseSchedule {
@@ -134,10 +140,7 @@ export interface ReportJobData {
   timeZone: string;
   metrics: SchedulingOptionMetrics;
   messages: Messages;
-  images?: {
-    clientLogo: string;
-    organizationLogo: string;
-  };
+  images?: ReportImages;
 }
 
 export interface ReportData {
@@ -336,4 +339,13 @@ export interface SchedulingOptionMetrics {
 
 export interface SendAfterReviewRequest {
   reportUuid: string;
+}
+
+export interface ReportWithImages extends IReport {
+  images?: ReportImages;
+}
+
+export interface ReportImages {
+  clientLogo: string;
+  agencyLogo: string;
 }
