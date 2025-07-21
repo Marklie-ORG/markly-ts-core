@@ -184,6 +184,7 @@ export interface Ad extends Metrics {
   adCreativeId: string;
   thumbnailUrl: string;
   sourceUrl: string;
+  ad_name: string;
 }
 
 export interface Campaign extends Metrics {
@@ -256,6 +257,7 @@ export const AVAILABLE_ADS_METRICS: Record<string, string[]> = {
   cpp: ["cpp"],
   reach: ["reach"],
   purchase_roas: ["purchase_roas"],
+  ad_name: ["ad_name"],
 
   conversion_value: ["action_values"],
 
