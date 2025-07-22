@@ -63,6 +63,8 @@ export class AuthenticationUtil {
         const newAccessToken = this.signAccessToken({
           uuid: decoded.uuid,
           email: user.email,
+          firstName: user.firstName,
+          lastName: user.firstName,
           roles: decoded.roles,
         });
 

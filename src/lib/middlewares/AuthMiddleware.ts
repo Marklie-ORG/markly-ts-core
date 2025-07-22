@@ -24,7 +24,7 @@ export const AuthMiddleware = (
       if (endpoint instanceof RegExp) {
         return endpoint.test(ctx.path) && ctx.method === "GET";
       }
-      return ctx.path.includes(endpoint);
+      return ctx.path === endpoint || ctx.path.startsWith(`${endpoint}/`);
     });
 
     if (isExcluded) {

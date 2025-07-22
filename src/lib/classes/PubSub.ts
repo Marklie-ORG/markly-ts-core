@@ -6,6 +6,33 @@ const logger = Log.getInstance().extend("pub/sub");
 export class PubSubWrapper {
   private static pubsub = new PubSub({ projectId: "saas-452909" });
 
+  static async scheduleMessage(
+      topicName: string,
+      payload: any,
+      options?: {
+        delay: number;
+      }
+  ): Promise<void> {
+    const delay = options?.delay ?? 0;
+
+    if (delay <= 0) {
+      await this.publishMessage(topicName, payload);
+      return;
+    }
+
+    const scheduledTime = Date.now() + delay;
+
+    const messageWithMetadata = {
+      payload,
+      _meta: {
+        scheduledAt: new Date(scheduledTime).toISOString(),
+        delay,
+      },
+    };
+
+    await this.publishMessage(topicName, messageWithMetadata);
+  }
+
   static async publishMessage<T = any>(
     topicName: string,
     message: T,

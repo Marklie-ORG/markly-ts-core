@@ -141,6 +141,7 @@ export interface ReportJobData {
   metrics: SchedulingOptionMetrics;
   messages: Messages;
   images?: ReportImages;
+  reportName?: string;
 }
 
 export interface ReportData {
@@ -341,6 +342,7 @@ export interface SchedulingOptionMetrics {
 
 export interface SendAfterReviewRequest {
   reportUuid: string;
+  sendAt?: string;
 }
 
 export interface ReportWithImages extends IReport {
