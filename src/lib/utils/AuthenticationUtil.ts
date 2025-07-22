@@ -224,6 +224,8 @@ export class AuthenticationUtil {
     const cleanedUser: CleanedUser = {
       uuid: user.uuid,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.firstName,
       roles: await this.getUserRoleInOrganization(user),
     };
 
