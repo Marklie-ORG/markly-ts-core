@@ -71,7 +71,7 @@ interface BaseSchedule {
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
-  metrics: SchedulingOptionMetrics;
+  adAccountMetrics: Record<string, SchedulingOptionMetrics>;
   messages: Messages;
   images?: ReportImages;
 }
@@ -142,6 +142,16 @@ export interface ReportJobData {
   messages: Messages;
   images?: ReportImages;
   reportName?: string;
+}
+
+export interface AdAccountWithMetrics {
+  adAccountId: string;
+  availableMetrics: {
+    kpis: string[];
+    graphs: string[];
+    ads: string[];
+    campaigns: string[];
+  };
 }
 
 export interface ReportData {
@@ -338,6 +348,7 @@ export interface SchedulingOptionMetrics {
     order: number;
     metrics: SchedulingOptionCampaignMetric[];
   };
+  customMetrics: CustomMetric[];
 }
 
 export interface SendAfterReviewRequest {
@@ -352,4 +363,10 @@ export interface ReportWithImages extends IReport {
 export interface ReportImages {
   clientLogo: string;
   organizationLogo: string;
+}
+
+export interface CustomMetric {
+  id: string;
+  name: string;
+  order: number;
 }

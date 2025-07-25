@@ -52,8 +52,8 @@ export class SendGridService {
       await sgMail.send({
         to: options.to,
         from: options.from || this.defaultFrom,
-        subject: options.subject,
-        text: options.text || "",
+        subject: options.subject || "Your report.",
+        text: options.text || "Your report is ready!",
         replyTo: options.replyTo,
         cc: options.cc,
         bcc: options.bcc,
