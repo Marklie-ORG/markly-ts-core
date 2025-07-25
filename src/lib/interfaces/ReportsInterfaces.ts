@@ -71,9 +71,23 @@ interface BaseSchedule {
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   organizationUuid: string;
-  adAccountMetrics: Record<string, SchedulingOptionMetrics>;
+  adAccountMetrics: AdAccountMetricConfig[];
   messages: Messages;
   images?: ReportImages;
+}
+
+export interface AdAccountMetricConfig {
+  adAccountId: string;
+  kpis: AdAccountMetricGroup<AvailableKpiMetric>;
+  graphs: AdAccountMetricGroup<AvailableGraphMetric>;
+  ads: AdAccountMetricGroup<AvailableAdMetric>;
+  campaigns: AdAccountMetricGroup<AvailableCampaignMetric>;
+  customMetrics: CustomMetric[];
+}
+
+interface AdAccountMetricGroup<T extends string> {
+  order: number;
+  metrics: SchedulingOptionMetric<T>[];
 }
 
 interface TimeBasedSchedule extends BaseSchedule {
@@ -138,7 +152,7 @@ export interface ReportJobData {
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
-  metrics: SchedulingOptionMetrics;
+  adAccountMetrics: AdAccountMetricConfig[];
   messages: Messages;
   images?: ReportImages;
   reportName?: string;
