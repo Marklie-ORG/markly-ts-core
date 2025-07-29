@@ -71,9 +71,7 @@ export const UpdateSchedulingOptionRequestSchema = z.object({
 });
 
 export const ScheduleBulkActionSchema = z.object({
-  uuids: z.array(
-      z.enum(['weekly', 'biweekly', 'monthly', 'custom', 'cron'])
-  )
+  uuids: z.array(z.uuid()),
 });
 
 export const ReportsQueryParamsSchema = z.object({
