@@ -65,13 +65,6 @@ const schemaMap: SchemaEntry[] = [
     schema: ScheduleReportsRequestSchema,
   },
   {
-    pattern: "/api/scheduling-options/:uuid",
-    matcher: match("/api/scheduling-options/:uuid", {
-      decode: decodeURIComponent,
-    }),
-    schema: UpdateSchedulingOptionRequestSchema,
-  },
-  {
     pattern: "/api/scheduling-options/delete",
     matcher: match("/api/scheduling-options/delete", {
       decode: decodeURIComponent,
@@ -91,6 +84,13 @@ const schemaMap: SchemaEntry[] = [
       decode: decodeURIComponent,
     }),
     schema: ScheduleBulkActionSchema,
+  },
+  {
+    pattern: "/api/scheduling-options/:uuid",
+    matcher: match("/api/scheduling-options/:uuid", {
+      decode: decodeURIComponent,
+    }),
+    schema: UpdateSchedulingOptionRequestSchema,
   },
   {
     pattern: "/api/reports/report-metrics-selections/:uuid",
