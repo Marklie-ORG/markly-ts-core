@@ -384,3 +384,7 @@ export interface CustomMetric {
   name: string;
   order: number;
 }
+
+export interface ScheduleBulkActionRequest {
+  uuids: string[];
+}

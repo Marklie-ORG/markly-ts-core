@@ -70,6 +70,12 @@ export const UpdateSchedulingOptionRequestSchema = z.object({
   conditions: z.string().optional(),
 });
 
+export const ScheduleBulkActionSchema = z.object({
+  uuids: z.array(
+      z.enum(['weekly', 'biweekly', 'monthly', 'custom', 'cron'])
+  )
+});
+
 export const ReportsQueryParamsSchema = z.object({
   datePreset: z.string().min(1, { message: "datePreset is required" }),
   organizationName: z

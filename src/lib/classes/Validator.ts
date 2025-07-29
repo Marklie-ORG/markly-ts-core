@@ -34,7 +34,7 @@ import {
   SendReportAfterReview,
   UploadImageRequestSchema,
   DeleteImageRequestSchema,
-  UpdateReportImagesRequestSchema,
+  UpdateReportImagesRequestSchema, ScheduleBulkActionSchema,
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -70,6 +70,27 @@ const schemaMap: SchemaEntry[] = [
       decode: decodeURIComponent,
     }),
     schema: UpdateSchedulingOptionRequestSchema,
+  },
+  {
+    pattern: "/api/scheduling-options/delete",
+    matcher: match("/api/scheduling-options/delete", {
+      decode: decodeURIComponent,
+    }),
+    schema: ScheduleBulkActionSchema,
+  },
+  {
+    pattern: "/api/scheduling-options/stop",
+    matcher: match("/api/scheduling-options/stop", {
+      decode: decodeURIComponent,
+    }),
+    schema: ScheduleBulkActionSchema,
+  },
+  {
+    pattern: "/api/scheduling-options/activate",
+    matcher: match("/api/scheduling-options/activate", {
+      decode: decodeURIComponent,
+    }),
+    schema: ScheduleBulkActionSchema,
   },
   {
     pattern: "/api/reports/report-metrics-selections/:uuid",
