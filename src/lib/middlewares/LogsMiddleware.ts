@@ -75,12 +75,12 @@ export const activityLogMap: ActivityLogEntry[] = [
       decode: decodeURIComponent,
     }),
     method: "POST",
-    action: "created_client",
+    action: "client_created",
     targetType: "client",
     getTargetUuid: (ctx) => ctx.params?.uuid,
     getOrganizationUuid: (ctx) => ctx.state.user?.organization,
     getClientUuid: (ctx) => ctx.request.body?.clientUuid,
-    getMetadata: (ctx) => ctx.request.body,
+    getMetadata: (ctx) => ctx.request.body.name,
   },
 ];
 
