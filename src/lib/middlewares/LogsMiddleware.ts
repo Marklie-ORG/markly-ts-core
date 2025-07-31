@@ -14,7 +14,7 @@ type ActivityLogEntry = {
   targetType?: string;
   getTargetUuid?: (ctx: any, responseBody: any) => string | undefined;
   getOrganizationUuid?: (ctx: any) => string | undefined;
-  getClientUuid?: (ctx: any) => string | undefined;
+  getClientUuid?: (ctx: any, responseBody?: any) => string | undefined;
   getMetadata?: (ctx: any) => any;
 };
 
@@ -77,12 +77,11 @@ export const activityLogMap: ActivityLogEntry[] = [
     method: "POST",
     action: "client_created",
     targetType: "client",
-    getTargetUuid: (ctx) => ctx.params?.uuid,
-    getOrganizationUuid: (ctx) => ctx.state.user?.organization,
-    getClientUuid: (ctx) => ctx.request.body?.clientUuid,
-    getMetadata: (ctx) => ctx.request.body
-
-  },
+    getTargetUuid: (_ctx, resBody) => resBody?.clientUuid,
+    getOrganizationUuid: (ctx) => ctx.state.user?.activeOrganization?.uuid,
+    getClientUuid: (_ctx, resBody) => resBody?.clientUuid,
+    getMetadata: (ctx) => ctx.request.body,
+  }
 ];
 
 export const ActivityLogMiddleware = () => {
