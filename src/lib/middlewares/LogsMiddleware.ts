@@ -20,8 +20,8 @@ type ActivityLogEntry = {
 
 export const activityLogMap: ActivityLogEntry[] = [
   {
-    pattern: "/api/reports/schedule",
-    matcher: match("/api/reports/schedule", { decode: decodeURIComponent }),
+    pattern: "/api/scheduling-option/schedule",
+    matcher: match("/api/scheduling-option/schedule", { decode: decodeURIComponent }),
     method: "POST",
     action: "created_schedule",
     targetType: "report",
@@ -31,13 +31,52 @@ export const activityLogMap: ActivityLogEntry[] = [
     getMetadata: (ctx) => ctx.request.body,
   },
   {
-    pattern: "/api/reports/scheduling-option/:uuid",
-    matcher: match("/api/reports/scheduling-option/:uuid", {
+    pattern: "/api/scheduling-option/:uuid",
+    matcher: match("/api/scheduling-option/:uuid", {
       decode: decodeURIComponent,
     }),
     method: "PUT",
     action: "updated_schedule",
     targetType: "report",
+    getTargetUuid: (ctx) => ctx.params?.uuid,
+    getOrganizationUuid: (ctx) => ctx.state.user?.organization,
+    getClientUuid: (ctx) => ctx.request.body?.clientUuid,
+    getMetadata: (ctx) => ctx.request.body,
+  },
+  {
+    pattern: "/api/scheduling-option/stop",
+    matcher: match("/api/scheduling-option/stop", {
+      decode: decodeURIComponent,
+    }),
+    method: "PUT",
+    action: "paused_schedule",
+    targetType: "report",
+    getTargetUuid: (ctx) => ctx.params?.uuid,
+    getOrganizationUuid: (ctx) => ctx.state.user?.organization,
+    getClientUuid: (ctx) => ctx.request.body?.clientUuid,
+    getMetadata: (ctx) => ctx.request.body,
+  },
+  {
+    pattern: "/api/scheduling-option/delete",
+    matcher: match("/api/scheduling-option/delete", {
+      decode: decodeURIComponent,
+    }),
+    method: "PUT",
+    action: "deleted_schedule",
+    targetType: "report",
+    getTargetUuid: (ctx) => ctx.params?.uuid,
+    getOrganizationUuid: (ctx) => ctx.state.user?.organization,
+    getClientUuid: (ctx) => ctx.request.body?.clientUuid,
+    getMetadata: (ctx) => ctx.request.body,
+  },
+  {
+    pattern: "/api/clients",
+    matcher: match("/api/clients", {
+      decode: decodeURIComponent,
+    }),
+    method: "POST",
+    action: "created_client",
+    targetType: "client",
     getTargetUuid: (ctx) => ctx.params?.uuid,
     getOrganizationUuid: (ctx) => ctx.state.user?.organization,
     getClientUuid: (ctx) => ctx.request.body?.clientUuid,
