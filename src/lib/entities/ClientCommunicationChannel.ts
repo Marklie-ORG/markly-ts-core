@@ -7,7 +7,7 @@ import { TokenService } from "lib/services/TokenService.js";
 import { Database } from "../db/config/DB.js";
 import { sendGridService } from "../services/SendgridService.js";
 import { WhapiService } from "../services/WhapiService.js";
-import type { Messages } from "../interfaces/ReportsInterfaces.js";
+import type {Report} from "./Report.js";
 
 @Entity({
   discriminatorColumn: "type",
@@ -28,7 +28,7 @@ export abstract class CommunicationChannel extends BaseEntity {
   abstract send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
-    messages: Messages,
+    dbReport: Report,
   ): Promise<void>;
 }
 
@@ -40,13 +40,13 @@ export class EmailChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
-    messages: Messages,
+    dbReport: Report,
   ): Promise<void> {
     await sendGridService.sendReportEmail(
       {
         to: this.emailAddress,
-        subject: messages.email.title,
-        text: messages.email.body,
+        subject: dbReport!.metadata!.messages.email.title,
+        text: dbReport!.metadata!.messages.email.body,
       },
       report,
     );
@@ -60,7 +60,7 @@ export class EmailChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { email: this.emailAddress },
+      metadata: { email: this.emailAddress, reportName: dbReport!.metadata!.reportName },
     });
 
     await db.em.persistAndFlush(log);
@@ -75,7 +75,7 @@ export class SlackChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
-    messages: Messages,
+    dbReport: Report,
   ): Promise<void> {
     const slackService = new SlackService(new TokenService());
     const token = await slackService.tokenService.getSlackToken(
@@ -85,7 +85,7 @@ export class SlackChannel extends CommunicationChannel {
     await slackService.sendSlackMessageWithFile(
       token,
       this.conversationId,
-      messages.slack,
+        dbReport!.metadata!.messages.slack,
       Buffer.from(report, "base64"),
       "report.pdf",
     );
@@ -99,7 +99,7 @@ export class SlackChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { slackConversationId: this.conversationId },
+      metadata: { slackConversationId: this.conversationId, reportName: dbReport!.metadata!.reportName },
     });
 
     await db.em.persistAndFlush(log);
@@ -114,11 +114,11 @@ export class WhatsAppChannel extends CommunicationChannel {
   async send(
     report: string,
     context: { reportUuid: string; organizationUuid: string },
-    messages: Messages,
+    dbReport: Report,
   ): Promise<void> {
     const whapi = new WhapiService();
 
-    await whapi.sendReportWhatsapp(report, this.phoneNumber, messages.whatsapp);
+    await whapi.sendReportWhatsapp(report, this.phoneNumber, dbReport!.metadata!.messages.whatsapp);
 
     const db = await Database.getInstance();
 
@@ -129,7 +129,7 @@ export class WhatsAppChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { phoneNumber: this.phoneNumber },
+      metadata: { phoneNumber: this.phoneNumber, reportName: dbReport!.metadata!.reportName },
     });
 
     await db.em.persistAndFlush(log);
