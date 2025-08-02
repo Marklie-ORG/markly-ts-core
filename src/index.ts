@@ -25,7 +25,7 @@ export { SchedulingOption } from "./lib/entities/SchedulingOption.js";
 export { ScheduledJob } from "./lib/entities/ScheduledJob.js";
 export { OnboardingQuestionAnswer } from "./lib/entities/OnboardingQuestionAnswer.js";
 export { OrganizationInvite } from "./lib/entities/OrganizationInvite.js";
-export { ClientFacebookAdAccount } from "./lib/entities/ClientFacebookAdAccount.js";
+export { ClientAdAccount } from "./lib/entities/ClientAdAccount.js";
 export { Report } from "./lib/entities/Report.js";
 export { ClientToken } from "./lib/entities/ClientToken.js";
 export { ChangeEmailToken } from "./lib/entities/ChangeEmailToken.js";

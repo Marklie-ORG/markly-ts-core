@@ -3,10 +3,16 @@ import { BaseEntity } from "./BaseEntity.js";
 import { OrganizationClient } from "./OrganizationClient.js";
 
 @Entity()
-export class ClientFacebookAdAccount extends BaseEntity {
-  @ManyToOne(() => OrganizationClient)
-  client!: OrganizationClient;
+export class ClientAdAccount extends BaseEntity {
+  @Property({ default: 'facebook' })
+  provider!: string;
 
   @Property()
   adAccountId!: string;
+
+  @Property()
+  adAccountName!: string;
+
+  @ManyToOne(() => OrganizationClient)
+  client!: OrganizationClient;
 }

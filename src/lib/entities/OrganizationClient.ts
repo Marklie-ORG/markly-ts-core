@@ -8,7 +8,7 @@ import {
 import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
 import { SchedulingOption } from "./SchedulingOption.js";
-import { ClientFacebookAdAccount } from "./ClientFacebookAdAccount.js";
+import { ClientAdAccount } from "./ClientAdAccount.js";
 import { CommunicationChannel } from "./ClientCommunicationChannel.js";
 
 @Entity()
@@ -20,10 +20,10 @@ export class OrganizationClient extends BaseEntity {
   organization!: Organization;
 
   @OneToMany(
-    () => ClientFacebookAdAccount,
-    (adAccounts: ClientFacebookAdAccount) => adAccounts.client,
+    () => ClientAdAccount,
+    (adAccounts: ClientAdAccount) => adAccounts.client,
   )
-  adAccounts? = new Collection<ClientFacebookAdAccount>(this);
+  adAccounts? = new Collection<ClientAdAccount>(this);
 
   @OneToMany(
     () => SchedulingOption,

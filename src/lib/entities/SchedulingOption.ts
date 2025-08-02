@@ -27,8 +27,8 @@ export class SchedulingOption extends BaseEntity {
   @Property({ nullable: true })
   reportName?: string;
 
-  @Property({ default: "facebook" })
-  platform!: string;
+  @Property({ type: 'json', nullable: true })
+  providers?: string[];
 
   @Property({ type: "json", nullable: true })
   jobData?: Record<string, any>;

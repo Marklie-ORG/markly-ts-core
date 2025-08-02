@@ -14,7 +14,7 @@ import {
 import { OnboardingQuestionAnswer } from "../../entities/OnboardingQuestionAnswer.js";
 import { Report } from "../../entities/Report.js";
 import { OrganizationInvite } from "../../entities/OrganizationInvite.js";
-import { ClientFacebookAdAccount } from "../../entities/ClientFacebookAdAccount.js";
+import { ClientAdAccount } from "../../entities/ClientAdAccount.js";
 import { ClientToken } from "../../entities/ClientToken.js";
 import { ChangeEmailToken } from "../../entities/ChangeEmailToken.js";
 import { Migrator, TSMigrationGenerator } from "@mikro-orm/migrations";
@@ -55,7 +55,7 @@ export default defineConfig({
     OnboardingQuestionAnswer,
     Report,
     OrganizationInvite,
-    ClientFacebookAdAccount,
+    ClientAdAccount,
     ClientToken,
     ChangeEmailToken,
     PasswordRecoveryToken,
