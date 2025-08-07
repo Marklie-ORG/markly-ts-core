@@ -91,19 +91,18 @@ export interface ScheduledAdAccountConfig {
     graphs: ScheduledMetricGroup<AvailableGraphMetric>;
     ads: ScheduledMetricGroup<AvailableAdMetric>;
     campaigns: ScheduledMetricGroup<AvailableCampaignMetric>;
-    customMetrics?: CustomMetric[];
 }
 
 export interface ScheduledMetricGroup<T extends string> {
     order: number;
     metrics: OrderedMetric<T>[];
+    customMetrics?: CustomMetric[];
 }
 
 export interface OrderedMetric<T extends string> {
     name: T;
     order: number;
 }
-
 
 export const AVAILABLE_KPI_METRICS: Record<string, string[]> = {
     spend: ["spend"],
@@ -222,32 +221,32 @@ export interface AvailableMetrics {
 }
 
 
-type SchedulingOptionKpiMetric = SchedulingOptionMetric<AvailableKpiMetric>;
-type SchedulingOptionGraphMetric = SchedulingOptionMetric<AvailableGraphMetric>;
-type SchedulingOptionAdMetric = SchedulingOptionMetric<AvailableAdMetric>;
-type SchedulingOptionCampaignMetric =
-    SchedulingOptionMetric<AvailableCampaignMetric>;
+// type SchedulingOptionKpiMetric = SchedulingOptionMetric<AvailableKpiMetric>;
+// type SchedulingOptionGraphMetric = SchedulingOptionMetric<AvailableGraphMetric>;
+// type SchedulingOptionAdMetric = SchedulingOptionMetric<AvailableAdMetric>;
+// type SchedulingOptionCampaignMetric =
+//     SchedulingOptionMetric<AvailableCampaignMetric>;
 
 export interface SchedulingOptionMetrics {
-    kpis: {
-        order: number;
-        metrics: SchedulingOptionKpiMetric[];
-    };
-    graphs: {
-        order: number;
-        metrics: SchedulingOptionGraphMetric[];
-    };
-    ads: {
-        order: number;
-        metrics: SchedulingOptionAdMetric[];
-    };
-    campaigns: {
-        order: number;
-        metrics: SchedulingOptionCampaignMetric[];
-    };
-    customMetrics: CustomMetric[];
+    kpis?: SectionConfiguration;
+    graphs?: SectionConfiguration;
+    ads?: SectionConfiguration;
+    campaigns?: SectionConfiguration;
 }
 
+export interface SectionConfiguration {
+    adAccounts: AdAccountConfiguration[];
+    order: number
+}
+
+export interface AdAccountConfiguration {
+    adAccountId: string;
+    adAccountName: string;
+    provider: 'facebook' | 'tiktok' | 'google';
+    order: number;
+    metrics: string[];
+    customMetrics?: CustomMetric[];
+}
 
 export interface ISchedulingOption {
     uuid: string;
