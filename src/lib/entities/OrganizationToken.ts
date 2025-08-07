@@ -17,16 +17,16 @@ export class OrganizationToken extends BaseEntity {
   @Enum()
   type!: OrganizationTokenType;
 
-  @Property({ type: 'text' })
+  @Property({ type: "text" })
   encryptedToken!: string;
 
   @ManyToOne(() => Organization)
   organization!: Organization;
 
-  @Property({ type: 'varchar', length: 32 })
+  @Property({ type: "varchar", length: 32 })
   iv!: string;
 
-  @Property({ type: 'varchar', length: 32 })
+  @Property({ type: "varchar", length: 32 })
   tag!: string;
 
   @BeforeCreate()
@@ -55,7 +55,12 @@ export class OrganizationToken extends BaseEntity {
 }
 
 const ALGORITHM = "aes-256-gcm";
-const KEY = Buffer.from(process.env.ORG_TOKEN_SECRET_KEY!, "hex");
+function getKey(): Buffer {
+  if (!process.env.ORG_TOKEN_SECRET_KEY) {
+    throw new Error("Missing ORG_TOKEN_SECRET_KEY");
+  }
+  return Buffer.from(process.env.ORG_TOKEN_SECRET_KEY, "hex");
+}
 
 export function encrypt(text: string): {
   value: string;
@@ -63,7 +68,7 @@ export function encrypt(text: string): {
   tag: string;
 } {
   const iv = crypto.randomBytes(12);
-  const cipher = crypto.createCipheriv(ALGORITHM, KEY, iv);
+  const cipher = crypto.createCipheriv(ALGORITHM, getKey(), iv);
 
   const encrypted = Buffer.concat([
     cipher.update(text, "utf8"),
@@ -89,7 +94,7 @@ export function decrypt({
 }): string {
   const decipher = crypto.createDecipheriv(
     ALGORITHM,
-    KEY,
+    getKey(),
     Buffer.from(iv, "hex"),
   );
   decipher.setAuthTag(Buffer.from(tag, "hex"));

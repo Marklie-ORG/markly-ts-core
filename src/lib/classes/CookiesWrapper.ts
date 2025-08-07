@@ -25,17 +25,10 @@ export class CookiesWrapper {
   public static defaultRefreshCookieOptions(): CookieOptions {
     return {
       httpOnly: true,
-
-      secure: process.env.NODE_ENV === "production",
-
+      secure: process.env.ENVIRONMENT === "production",
       sameSite: "lax",
-
       maxAge: 7 * 24 * 60 * 60 * 1000,
-
       path: "/",
-
-      domain:
-        process.env.NODE_ENV === "production" ? "https://sass.com" : undefined,
     };
   }
 }

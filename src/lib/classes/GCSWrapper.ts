@@ -1,4 +1,4 @@
-import { Storage } from "@google-cloud/storage";
+import { Storage, File } from "@google-cloud/storage";
 
 export class GCSWrapper {
   private static instance: GCSWrapper;
@@ -48,6 +48,32 @@ export class GCSWrapper {
     return `gs://${this.bucketName}/${destination}`;
   }
 
+  public async uploadImage(fileData: any, buffer: Buffer, destination: string) {
+    const file = this.storage.bucket(this.bucketName).file(destination);
+
+    const stream = file.createWriteStream({
+      resumable: false,
+      contentType: fileData.mimetype,
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      stream.on("error", reject);
+      stream.on("finish", resolve);
+      stream.end(buffer);
+    });
+
+    return `gs://${this.bucketName}/${destination}`;
+  }
+
+  public async getSignedUrl(gsUri: string) {
+    const file = File.from(gsUri, this.storage);
+    const [url] = await file.getSignedUrl({
+      action: "read",
+      expires: Date.now() + 3600 * 1000,
+    });
+    return url;
+  }
+
   public async deleteFile(destination: string): Promise<void> {
     await this.storage.bucket(this.bucketName).file(destination).delete();
   }
@@ -60,14 +86,25 @@ export class GCSWrapper {
     return exists;
   }
 
-    public async getReport(publicUrlOrPath: string) {
-        const pathMatch = publicUrlOrPath.match(/\/([^/]+\/[^/?]+)/);
-        const filePathInBucket = pathMatch ? decodeURIComponent(pathMatch[1]) : publicUrlOrPath;
+  public async getReport(publicUrlOrPath: string) {
+    let filePathInBucket: string;
 
-        const bucket = this.storage.bucket(this.bucketName);
-        const file = bucket.file(filePathInBucket);
+    const cleanedUrl = publicUrlOrPath.split("?")[0];
 
-        const [fileBuffer] = await file.download();
-        return fileBuffer.toString('base64');
+    if (cleanedUrl.startsWith("https://storage.googleapis.com/")) {
+      filePathInBucket = cleanedUrl.replace(
+        `https://storage.googleapis.com/${this.bucketName}/`,
+        "",
+      );
+    } else if (cleanedUrl.startsWith("gs://")) {
+      filePathInBucket = cleanedUrl.replace(`gs://${this.bucketName}/`, "");
+    } else {
+      filePathInBucket = cleanedUrl;
     }
+
+    const file = this.storage.bucket(this.bucketName).file(filePathInBucket);
+
+    const [fileBuffer] = await file.download();
+    return fileBuffer.toString("base64");
+  }
 }

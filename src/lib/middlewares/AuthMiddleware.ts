@@ -1,20 +1,38 @@
 import type Application from "koa";
-import type { Context, Middleware, Next } from "koa";
+import type { Context, Next } from "koa";
 import jwt from "jsonwebtoken";
 import { AuthenticationUtil } from "../utils/AuthenticationUtil.js";
 import type { User } from "../entities/User.js";
 
-export const AuthMiddleware: () => Application.Middleware<
+type ExcludedEndpoint = string | RegExp;
+
+export const AuthMiddleware = (
+  excludedEndpoints: ExcludedEndpoint[] = [
+    "/login",
+    "/register",
+    "/refresh",
+    "/send-password-recovery-email",
+    "/verify-password-recovery",
+    /^\/api\/reports\/[0-9a-fA-F-]{36}$/,
+  ],
+): Application.Middleware<
   Application.DefaultState,
   Application.DefaultContext
-> = (): Middleware => {
+> => {
   return async (ctx: Context, next: Next) => {
-    const excludedEndpoints: string[] = ["/login", "/register", "/refresh"];
-    if (excludedEndpoints.some((endpoint) => ctx.path.includes(endpoint))) {
-      await next();
-      return;
+    const isExcluded = excludedEndpoints.some((endpoint) => {
+      if (endpoint instanceof RegExp) {
+        return endpoint.test(ctx.path) && ctx.method === "GET";
+      }
+      return ctx.path === endpoint || ctx.path.startsWith(`${endpoint}/`);
+    });
+
+    if (isExcluded) {
+      return next();
     }
-    const token: string = ctx.get("Authorization").split(" ")[1];
+
+    const authHeader = ctx.get("Authorization");
+    const token: string | undefined = authHeader?.split(" ")[1];
 
     if (!token) {
       ctx.throw(401, "No token provided");
@@ -23,7 +41,7 @@ export const AuthMiddleware: () => Application.Middleware<
     try {
       const user: User | null =
         await AuthenticationUtil.fetchUserWithTokenInfo(token);
-      if (!token || !user) {
+      if (!user) {
         ctx.throw(401, "Unauthorized");
       } else {
         ctx.state.user = user;
@@ -31,7 +49,9 @@ export const AuthMiddleware: () => Application.Middleware<
       }
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
-        ctx.throw(401, "Token expired.");
+        ctx.throw(401, "Token expired");
+      } else {
+        ctx.throw(401, "Invalid token");
       }
     }
   };

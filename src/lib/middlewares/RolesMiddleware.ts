@@ -10,8 +10,6 @@ const RoleHierarchy: Record<OrganizationRole, OrganizationRole[]> = {
   [OrganizationRole.READER]: [],
 };
 
-const database: Database = await Database.getInstance();
-
 export const RoleMiddleware = (requiredRole: OrganizationRole) => {
   return async (ctx: Context, next: Next) => {
     const user = ctx.state.user as User;
@@ -21,6 +19,8 @@ export const RoleMiddleware = (requiredRole: OrganizationRole) => {
       ctx.body = { message: "Unauthorized: No user in the state" };
       return;
     }
+
+    const database: Database = await Database.getInstance();
 
     const organizationMember = await database.em.findOne(OrganizationMember, {
       user: user,

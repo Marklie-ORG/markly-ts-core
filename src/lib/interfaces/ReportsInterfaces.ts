@@ -1,78 +1,93 @@
 import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
+import type { OrganizationClient } from "../entities/OrganizationClient.js";
+import type {SchedulingOption} from "../entities/SchedulingOption.js";
+import type { Organization } from "lib/entities/Organization.js";
+import type {
+  Ad,
+  AvailableAdMetric,
+  AvailableCampaignMetric,
+  AvailableGraphMetric,
+  AvailableKpiMetric, Campaign, Graph, KPIs, Messages, ScheduledProviderConfig, SchedulingOptionMetric
+} from "./SchedulesInterfaces.js";
 
-export type ScheduleFrequency =
-  | "weekly"
-  | "biweekly"
-  | "monthly"
-  | "custom"
-  | "cron";
-
-interface BaseSchedule {
-  frequency: string;
-  clientUuid: string;
-  reviewNeeded: boolean;
-  datePreset: FACEBOOK_DATE_PRESETS;
-  organizationUuid: string;
+export interface IReport {
+  organization: Organization;
+  client: OrganizationClient;
+  reportType: string;
+  reviewRequired: boolean;
+  reviewedAt?: Date;
+  gcsUrl: string;
+  schedulingOption?: SchedulingOption;
+  data: Record<string, any>;
+  metadata?: Record<string, any>;
 }
 
-interface TimeBasedSchedule extends BaseSchedule {
-  time: string;
+export interface AdAccountMetricConfig {
+  adAccountId: string;
+  kpis: AdAccountMetricGroup<AvailableKpiMetric>;
+  graphs: AdAccountMetricGroup<AvailableGraphMetric>;
+  ads: AdAccountMetricGroup<AvailableAdMetric>;
+  campaigns: AdAccountMetricGroup<AvailableCampaignMetric>;
+  customMetrics?: CustomMetric[];
 }
 
-interface ScheduleModifiers {
-  startDate?: string;
-  conditions?: string;
+interface AdAccountMetricGroup<T extends string> {
+  order: number;
+  metrics: SchedulingOptionMetric<T>[];
 }
-
-interface WeekdaySchedule extends TimeBasedSchedule {
-  dayOfWeek:
-    | "Monday"
-    | "Tuesday"
-    | "Wednesday"
-    | "Thursday"
-    | "Friday"
-    | "Saturday"
-    | "Sunday";
-}
-
-export interface WeeklySchedule extends WeekdaySchedule {
-  frequency: "weekly";
-}
-
-export interface BiweeklySchedule extends WeekdaySchedule {
-  frequency: "biweekly";
-}
-
-export interface MonthlySchedule extends TimeBasedSchedule {
-  frequency: "monthly";
-  dayOfMonth: number;
-}
-
-export interface CustomSchedule extends TimeBasedSchedule, ScheduleModifiers {
-  frequency: "custom";
-  intervalDays: number;
-}
-
-export interface CronSchedule extends ScheduleModifiers {
-  frequency: "cron";
-  cronExpression: string;
-  clientUuid: string;
-  reviewNeeded: boolean;
-  datePreset: FACEBOOK_DATE_PRESETS;
-  organizationUuid: string;
-}
-
-export type ReportScheduleRequest =
-  | WeeklySchedule
-  | BiweeklySchedule
-  | MonthlySchedule
-  | CustomSchedule
-  | CronSchedule;
 
 export interface ReportJobData {
   clientUuid: string;
   organizationUuid: string;
-  reviewNeeded: boolean;
-  accountId: string;
-  dataPreset: FACEBOOK_DATE_PRESETS;
+  scheduleUuid: string;
+  reviewRequired: boolean;
+  datePreset: FACEBOOK_DATE_PRESETS;
+  timeZone: string;
+  data: ScheduledProviderConfig[];
+  messages: Messages;
+  images?: ReportImages;
+  reportName?: string;
+}
+
+export interface SendAfterReviewRequest {
+  reportUuid: string;
+  sendAt?: string;
+}
+
+export interface ReportWithImages extends IReport {
+  images?: ReportImages;
+}
+
+export interface ReportImages {
+  clientLogo: string;
+  organizationLogo: string;
+}
+
+export interface CustomMetric {
+  id: string;
+  name: string;
+  order: number;
+}
+
+export interface ScheduleBulkActionRequest {
+  uuids: string[];
+}
+
+export interface MetricWithValue {
+  name: string;
+  value: number | null;
+}
+
+export interface RuntimeAdAccountData {
+  adAccountId: string;
+  adAccountName: string;
+  kpis: KPIs;
+  ads: Ad[];
+  graphs: Graph[];
+  campaigns: Campaign[];
+}
+
+export interface ProvidersData {
+  name: 'facebook' | 'tiktok' | 'google';
+  adAccounts: RuntimeAdAccountData[];
 }

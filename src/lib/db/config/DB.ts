@@ -1,19 +1,6 @@
 import { MikroORM, EntityManager } from "@mikro-orm/postgresql";
-import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
-import {User} from "../../entities/User.js";
-import {Organization} from "../../entities/Organization.js";
-import {OrganizationClient} from "../../entities/OrganizationClient.js";
-import {OrganizationMember} from "../../entities/OrganizationMember.js";
-import {SchedulingOption} from "../../entities/SchedulingOption.js";
-import {
-  CommunicationChannel,
-  EmailChannel,
-  SlackChannel,
-  WhatsAppChannel
-} from "../../entities/ClientCommunicationChannel.js";
-import {OrganizationToken} from "../../entities/OrganizationToken.js";
-import { OnboardingQuestionAnswer } from "lib/entities/OnboardingQuestionAnswer.js";
-import { OrganizationInvite } from "lib/entities/OrganizationInvite.js";
+import config from "../config/mikro-orm.config.js";
+
 export class Database {
   private static instance: Database;
   public orm: MikroORM;
@@ -27,26 +14,7 @@ export class Database {
   public static async getInstance(): Promise<Database> {
     if (!Database.instance) {
       const orm = await MikroORM.init({
-        metadataProvider: TsMorphMetadataProvider,
-        entities: [
-            User,
-          Organization,
-          OrganizationClient,
-          OrganizationMember,
-          OrganizationToken,
-          SchedulingOption,
-          CommunicationChannel,
-          EmailChannel,
-          SlackChannel,
-          WhatsAppChannel,
-          OnboardingQuestionAnswer,
-          OrganizationInvite
-        ],
-        dbName: process.env.DATABASE_NAME || "saas",
-        host: process.env.DATABASE_HOST || "localhost",
-        port: Number(process.env.DATABASE_PORT) || 5432,
-        user: process.env.DATABASE_USER || "postgres",
-        password: process.env.DATABASE_PASSWORD || "password",
+        ...config,
       });
       Database.instance = new Database(orm);
     }

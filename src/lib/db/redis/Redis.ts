@@ -11,12 +11,15 @@ export class RedisClient {
 
   public static getInstance(): Redis {
     if (!RedisClient.instance) {
-      const REDIS_HOST = process.env.REDISHOST || "localhost";
-      const REDIS_PORT = process.env.REDISPORT || 6379;
+      const REDIS_HOST = process.env.REDIS_HOST;
+      const REDIS_PORT = process.env.REDIS_PORT || 6379;
       const options: RedisOptions = {
         host: REDIS_HOST,
         port: Number(REDIS_PORT),
         maxRetriesPerRequest: null,
+        enableAutoPipelining: true,
+        connectTimeout: 5000,
+        lazyConnect: false,
       };
       RedisClient.instance = new Redis(options);
 
@@ -53,4 +56,3 @@ export class RedisClient {
     return client.del(key);
   }
 }
-

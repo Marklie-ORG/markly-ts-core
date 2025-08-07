@@ -21,6 +21,7 @@ export interface Daum2 {
   account_status: number;
   currency: string;
   timezone_name: string;
+  business: Business;
 }
 
 export interface Paging {
@@ -44,6 +45,12 @@ export interface Daum3 {
   account_status: number;
   currency: string;
   timezone_name: string;
+  business: Business;
+}
+
+export interface Business {
+  id: string;
+  name: string;
 }
 
 export interface Paging2 {
@@ -69,12 +76,12 @@ export interface Cursors3 {
 export interface AccountHierarchy {
   id: string;
   name: string;
-  owned_ad_accounts: {
+  ad_accounts: {
     id: string;
     name: string;
   }[];
-  client_ad_accounts: {
-    id: string;
-    name: string;
-  }[];
+  // client_ad_accounts: {
+  //   id: string;
+  //   name: string;
+  // }[];
 }

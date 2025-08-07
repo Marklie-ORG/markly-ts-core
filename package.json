@@ -1,6 +1,6 @@
 {
-  "name": "markly-ts-core",
-  "version": "1.1.5",
+  "name": "marklie-ts-core",
+  "version": "1.4.23",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,28 +14,40 @@
     "prettier:format": "pnpm exec prettier . --write",
     "prettier:check": "npx prettier . --check\n",
     "docker:up": "docker compose -f ../docker/compose.yaml up -d",
-    "start": "node --env-file .env --experimental-specifier-resolution=node dist/index.js",
+    "start": "node --experimental-specifier-resolution=node dist/index.js",
     "watch": "pnpm docker:up & npx nodemon --config ./nodemon.json",
     "start:dev": "npm run watch",
-    "publish:build": "pnpm build:all && pnpm publish"
+    "publish:build": "pnpm build && pnpm publish --no-git-checks",
+    "migration:create": "node --loader ts-node/esm ./node_modules/.bin/mikro-orm migration:create",
+    "migration:up": "node --loader ts-node/esm ./node_modules/.bin/mikro-orm migration:up",
+    "migration:down": "node --loader ts-node/esm ./node_modules/.bin/mikro-orm migration:down"
+  },
+  "mikro-orm": {
+    "configPaths": [
+      "./src/db/config/mikro-orm.config.ts"
+    ]
   },
   "dependencies": {
     "@google-cloud/pubsub": "^4.11.0",
     "@google-cloud/secret-manager": "^6.0.1",
     "@google-cloud/storage": "^7.16.0",
-    "@mikro-orm/core": "^6.4.3",
-    "@mikro-orm/postgresql": "^6.4.3",
-    "@mikro-orm/reflection": "^6.4.3",
+    "@mikro-orm/core": "^6.4.15",
+    "@mikro-orm/migrations": "^6.4.15",
+    "@mikro-orm/postgresql": "^6.4.15",
+    "@mikro-orm/reflection": "^6.4.15",
+    "@sendgrid/mail": "^8.1.5",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "bullmq": "^5.48.1",
     "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
+    "path-to-regexp": "^8.2.0",
     "uuid": "^11.0.5",
     "winston": "^3.17.0",
-    "zod": "^3.24.2"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@mikro-orm/cli": "^6.4.15",
     "@swc/cli": "^0.6.0",
     "@swc/core": "^1.10.7",
     "@types/bcrypt": "^5.0.2",

@@ -18,8 +18,8 @@ export interface TokenSet {
 export interface CleanedUser {
   uuid: string;
   email: string;
-  firstName?: string;
-  lastName?: string;
+  firstName?: string | undefined;
+  lastName?: string | undefined;
   roles: OrganizationRoles[];
 }
 

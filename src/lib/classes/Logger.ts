@@ -1,5 +1,4 @@
 import { isAxiosError } from "axios";
-import * as crypto from "crypto";
 import { createLogger, format, transports, Logger } from "winston";
 
 export class Log {
@@ -9,24 +8,38 @@ export class Log {
 
   private constructor(baseName: string) {
     this.baseName = baseName;
+    const isProduction = process.env.ENVIRONMENT === "production";
 
-    const logFormat = format.printf(({ level, message }) => {
-      const coloredNamespace = this.baseName
-        ? level === "error"
-          ? `\x1b[31m${this.baseName}\x1b[39m`
-          : `\x1b[35m${this.baseName}\x1b[39m`
-        : "";
-      return `${coloredNamespace} ${message}`;
-    });
+    const logFormat = format.printf(
+      ({ level, message, timestamp, ...meta }) => {
+        const namespace = isProduction
+          ? this.baseName
+          : level === "error"
+            ? `\x1b[31m${this.baseName}\x1b[39m`
+            : `\x1b[35m${this.baseName}\x1b[39m`;
+
+        const {
+          namespace: _,
+          level: __,
+          message: ___,
+          timestamp: ____,
+          ...rest
+        } = meta;
+
+        const metaString =
+          Object.keys(rest).length > 0 ? ` ${JSON.stringify(rest)}` : "";
+
+        return `${timestamp ? `[${timestamp}] ` : ""}${namespace} ${message}${metaString}`;
+      },
+    );
 
     this.logger = createLogger({
       level: "debug",
-      format: format.combine(logFormat),
-      transports: [
-        new transports.Console({
-          format: format.combine(logFormat),
-        }),
-      ],
+      format: format.combine(
+        format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+        logFormat,
+      ),
+      transports: [new transports.Console()],
     });
   }
 
@@ -48,56 +61,82 @@ export class Log {
     this.logger.debug(message, { namespace: this.baseName });
   }
 
-  public info(message: string): void {
-    this.logger.info(message, { namespace: this.baseName });
+  public info(message: string, metadata?: any): void {
+    this.logger.info(message, {
+      namespace: this.baseName,
+      ...metadata,
+    });
   }
 
-  public warn(message: string): void {
-    this.logger.warn(message, { namespace: `${this.baseName}:warning` });
+  public warn(message: string, metadata?: any): void {
+    this.logger.warn(message, {
+      namespace: `${this.baseName}:warning`,
+      ...metadata,
+    });
   }
 
-  public error(message: unknown, error?: unknown): void {
+  public error(message: unknown, errorContext?: any): void {
     const logNamespace = `${this.baseName}:error`;
 
-    if (typeof message === "string") {
-      this.logger.error(message, { namespace: logNamespace });
+    let logMessage: string;
+    let errorMeta: any = {
+      namespace: logNamespace,
+      ...errorContext,
+    };
+
+    if (message instanceof Error) {
+      logMessage = message.message;
+      errorMeta.stack = message.stack;
+      errorMeta.name = message.name;
     } else {
-      this.logger.error(JSON.stringify(message), { namespace: logNamespace });
+      logMessage =
+        typeof message === "string" ? message : JSON.stringify(message);
     }
 
-    if (error) {
-      if (error instanceof Error) {
-        this.logger.error(error.stack || error.message, { namespace: logNamespace });
-      } else if (typeof error === "object") {
-        this.logger.error(JSON.stringify(error, null, 2), { namespace: logNamespace });
-      } else {
-        this.logger.error(String(error), { namespace: logNamespace });
-      }
-    }
+    this.logger.error(logMessage, errorMeta);
   }
 
-  public catchError(error: unknown): void {
-    if (!error) return;
-
+  public catchError(error: unknown, context?: any): void {
     const logNamespace = `${this.baseName}:error`;
+
+    let errorDetails: any = {
+      namespace: logNamespace,
+      ...context,
+    };
 
     if (isAxiosError(error)) {
-      this.logger.error(JSON.stringify(error.toJSON(), null, 2), { namespace: logNamespace });
+      errorDetails = {
+        ...errorDetails,
+        type: "AxiosError",
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        code: error.code,
+        message: error.message,
+      };
     } else if (error instanceof Error) {
-      this.logger.error(error.stack || error.message, { namespace: logNamespace });
+      errorDetails = {
+        ...errorDetails,
+        type: error.constructor.name,
+        message: error.message,
+        stack: error.stack,
+        ...((error as any).code && { code: (error as any).code }),
+        ...((error as any).statusCode && {
+          statusCode: (error as any).statusCode,
+        }),
+        ...((error as any).context && { context: (error as any).context }),
+      };
     } else if (typeof error === "string") {
-      this.logger.error(error, { namespace: logNamespace });
+      errorDetails.message = error;
+      errorDetails.type = "String";
     } else {
-      this.logger.error(JSON.stringify(error, null, 2), { namespace: logNamespace });
+      errorDetails.message = JSON.stringify(error, null, 2);
+      errorDetails.type = "Unknown";
     }
-  }
 
-
-  public catchErrorAndLogUuid(error: unknown): string {
-    const uuid: string = crypto.randomUUID();
-    this.error(`ERROR UUID: ${uuid}`);
-    this.catchError(error);
-    return uuid;
+    this.logger.error("Caught error", errorDetails);
   }
 
   public extend(extensionName: string): Log {

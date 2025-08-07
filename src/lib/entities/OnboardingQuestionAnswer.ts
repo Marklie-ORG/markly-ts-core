@@ -4,12 +4,12 @@ import { User } from "./User.js";
 
 @Entity()
 export class OnboardingQuestionAnswer extends BaseEntity {
-    @ManyToOne(() => User)
-    user!: User;
+  @ManyToOne(() => User)
+  user!: User;
 
-    @Property()
-    question!: string;
+  @Property()
+  question!: string;
 
-    @Property()
-    answer!: string;
+  @Property()
+  answer!: string;
 }
