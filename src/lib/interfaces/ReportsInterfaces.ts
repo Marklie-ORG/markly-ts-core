@@ -89,5 +89,5 @@ export interface RuntimeAdAccountData {
 
 export interface ProvidersData {
   name: 'facebook' | 'tiktok' | 'google';
-  adAccounts: RuntimeAdAccountData[];
+  sections: RuntimeAdAccountData[];
 }
