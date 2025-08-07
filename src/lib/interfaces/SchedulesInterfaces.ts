@@ -280,7 +280,7 @@ export interface ISchedulingOption {
     platform: string;
     jobData?: Record<string, any>;
     timezone?: string;
-    reviewNeeded: boolean;
+    reviewRequired: boolean;
     lastRun?: Date;
     nextRun?: Date;
     reports?: Report[];

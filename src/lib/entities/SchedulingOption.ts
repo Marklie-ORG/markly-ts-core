@@ -37,7 +37,7 @@ export class SchedulingOption extends BaseEntity {
   timezone?: string;
 
   @Property()
-  reviewNeeded: boolean = false;
+  reviewRequired: boolean = false;
 
   @Property({ nullable: true })
   lastRun?: Date;
