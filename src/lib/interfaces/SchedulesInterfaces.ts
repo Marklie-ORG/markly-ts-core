@@ -82,7 +82,20 @@ export interface CronSchedule
 
 export interface ScheduledProviderConfig {
     provider: 'facebook' | 'tiktok' | 'google';
-    adAccounts: ScheduledAdAccountConfig[];
+    sections: SectionConfig[];
+}
+
+export interface SectionConfig {
+    name: 'kpis' | 'graphs' | 'ads' | 'campaigns';
+    order: number;
+    adAccounts: SectionAdAccount[];
+}
+
+export interface SectionAdAccount {
+    adAccountId: string;
+    order: number;
+    metrics: OrderedMetric<string>[];
+    customMetrics?: CustomMetric[];
 }
 
 export interface ScheduledAdAccountConfig {
@@ -91,6 +104,14 @@ export interface ScheduledAdAccountConfig {
     graphs: ScheduledMetricGroup<AvailableGraphMetric>;
     ads: ScheduledMetricGroup<AvailableAdMetric>;
     campaigns: ScheduledMetricGroup<AvailableCampaignMetric>;
+}
+
+export type SectionName = 'kpis' | 'graphs' | 'ads' | 'campaigns';
+
+export interface SectionConfig {
+    name: SectionName;
+    order: number;
+    adAccounts: SectionAdAccount[];
 }
 
 export interface ScheduledMetricGroup<T extends string> {
