@@ -31,6 +31,7 @@ export { ClientToken } from "./lib/entities/ClientToken.js";
 export { ChangeEmailToken } from "./lib/entities/ChangeEmailToken.js";
 export { ActivityLog } from "./lib/entities/ActivityLog.js";
 export { Image } from "./lib/entities/Image.js";
+export { Feedback } from "./lib/entities/Feedback.js";
 
 //middlewares
 export { AuthMiddleware } from "./lib/middlewares/AuthMiddleware.js";

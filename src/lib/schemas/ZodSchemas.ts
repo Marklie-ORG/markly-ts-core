@@ -120,7 +120,15 @@ export const HandleFacebookLoginRequestSchema = z.object({
 
 export const CreateClientRequestSchema = z.object({
   name: z.string(),
-  facebookAdAccounts: z.array(z.string()),
+  facebookAdAccounts: z.array(
+    z.object({
+      adAccountId: z.string(),
+      adAccountName: z.string(),
+      businessId: z.string(),
+    })
+  ),
+  emails: z.array(z.string()),
+  phoneNumbers: z.array(z.string()),
 });
 
 export const CreateClientFacebookAdAccountRequestSchema = z.object({
@@ -200,5 +208,9 @@ export const DeleteImageRequestSchema = z.object({});
 
 export const UpdateReportImagesRequestSchema = z.object({
   clientLogo: z.string(),
-  agencyLogo: z.string(),
+  organizationLogo: z.string(),
+});
+
+export const SendFeedbackRequestSchema = z.object({
+  message: z.string().min(1, { message: "Message cannot be empty" }),
 });

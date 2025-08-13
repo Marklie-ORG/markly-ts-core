@@ -93,6 +93,7 @@ export interface SectionConfig {
 
 export interface SectionAdAccount {
     adAccountId: string;
+    adAccountName: string;
     order: number;
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];

@@ -1,13 +1,15 @@
 export interface CreateClientRequest {
   name: string;
-  facebookAdAccounts: string[];
-  // tiktokAdAccounts: string[];
+  facebookAdAccounts: {adAccountId: string, adAccountName: string, businessId: string}[];
+  emails: string[];
+  phoneNumbers: string[];
 }
 
 export interface UpdateClientRequest {
   name?: string;
   emails?: string[];
   phoneNumbers?: string[];
+  facebookAdAccounts?: string[];
 }
 
 export interface CreateClientFacebookAdAccountRequest {

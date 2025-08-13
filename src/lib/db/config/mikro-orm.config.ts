@@ -23,6 +23,7 @@ import { PasswordRecoveryToken } from "lib/entities/PasswordRecoveryToken.js";
 import { ActivityLog } from "../../entities/ActivityLog.js";
 import { ScheduledJob } from "../../entities/ScheduledJob.js";
 import { Image } from "lib/entities/Image.js";
+import { Feedback } from "../../entities/Feedback.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -62,6 +63,7 @@ export default defineConfig({
     ActivityLog,
     ScheduledJob,
     Image,
+    Feedback,
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,

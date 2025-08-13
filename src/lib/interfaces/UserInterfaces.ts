@@ -40,3 +40,7 @@ export interface VerifyPasswordRecoveryRequest {
   token: string;
   newPassword: string;
 }
+
+export interface SendFeedbackRequest {
+  message: string;
+}

@@ -15,4 +15,7 @@ export class ClientAdAccount extends BaseEntity {
 
   @ManyToOne(() => OrganizationClient)
   client!: OrganizationClient;
+
+  @Property()
+  businessId!: string;
 }
