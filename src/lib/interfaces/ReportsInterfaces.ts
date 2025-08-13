@@ -43,7 +43,7 @@ export interface ReportJobData {
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
-  data: ScheduledProviderConfig[];
+  providers: ScheduledProviderConfig[];
   messages: Messages;
   images?: ReportImages;
   reportName?: string;
