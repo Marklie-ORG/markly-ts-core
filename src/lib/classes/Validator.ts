@@ -34,7 +34,12 @@ import {
   SendReportAfterReview,
   UploadImageRequestSchema,
   DeleteImageRequestSchema,
-  UpdateReportImagesRequestSchema, ScheduleBulkActionSchema, SendFeedbackRequestSchema,
+  UpdateReportImagesRequestSchema,
+  ScheduleBulkActionSchema,
+  SendFeedbackRequestSchema,
+  CreateFeatureSuggestionRequestSchema,
+  CreateFeatureCommentRequestSchema,
+  ToggleFeatureUpvoteRequestSchema,
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -265,6 +270,21 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/reports/report-images/:uuid",
     matcher: match("/api/reports/report-images/:uuid", { decode: decodeURIComponent }),
     schema: UpdateReportImagesRequestSchema,
+  },
+  {
+    pattern: "/api/feature-suggestions",
+    matcher: match("/api/feature-suggestions", { decode: decodeURIComponent }),
+    schema: CreateFeatureSuggestionRequestSchema,
+  },
+  {
+    pattern: "/api/feature-suggestions/comment",
+    matcher: match("/api/feature-suggestions/comment", { decode: decodeURIComponent }),
+    schema: CreateFeatureCommentRequestSchema,
+  },
+  {
+    pattern: "/api/feature-suggestions/upvote",
+    matcher: match("/api/feature-suggestions/upvote", { decode: decodeURIComponent }),
+    schema: ToggleFeatureUpvoteRequestSchema,
   },
 ];
 

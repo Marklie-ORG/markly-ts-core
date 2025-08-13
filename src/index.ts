@@ -32,6 +32,9 @@ export { ChangeEmailToken } from "./lib/entities/ChangeEmailToken.js";
 export { ActivityLog } from "./lib/entities/ActivityLog.js";
 export { Image } from "./lib/entities/Image.js";
 export { Feedback } from "./lib/entities/Feedback.js";
+export { FeatureSuggestion } from "./lib/entities/FeatureSuggestion.js";
+export { FeatureComment } from "./lib/entities/FeatureComment.js";
+export { FeatureUpvote } from "./lib/entities/FeatureUpvote.js";
 
 //middlewares
 export { AuthMiddleware } from "./lib/middlewares/AuthMiddleware.js";
@@ -51,6 +54,7 @@ export * from "./lib/interfaces/PubSubInterfaces.js";
 export * from "./lib/interfaces/SlackInterfaces.js";
 
 export * from "./lib/interfaces/ClientInterfaces.js";
+export * from "./lib/interfaces/FeatureSuggestionInterfaces.js";
 //schemas
 export * from "./lib/schemas/ZodSchemas.js";
 
