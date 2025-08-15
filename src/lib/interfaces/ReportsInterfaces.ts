@@ -7,7 +7,10 @@ import type {
   AvailableAdMetric,
   AvailableCampaignMetric,
   AvailableGraphMetric,
-  AvailableKpiMetric, Campaign, Graph, KPIs, Messages, ScheduledProviderConfig, SchedulingOptionMetric
+  AvailableKpiMetric, Campaign, Graph,
+  KPIs,
+  Messages, Metric,
+  SchedulingOptionMetric,
 } from "./SchedulesInterfaces.js";
 
 export interface IReport {
@@ -43,11 +46,53 @@ export interface ReportJobData {
   reviewRequired: boolean;
   datePreset: FACEBOOK_DATE_PRESETS;
   timeZone: string;
-  providers: ScheduledProviderConfig[];
+  data: ReportData[];
   messages: Messages;
   images?: ReportImages;
   reportName?: string;
 }
+
+export interface ReportData {
+  provider: 'facebook' | 'tiktok' | 'google';
+  sections: ReportDataSection[];
+}
+
+export interface ReportDataSection {
+  name: 'kpis' | 'graphs' | 'ads' | 'campaigns';
+  order: number;
+  adAccounts: ReportDataSectionAdAccount[];
+}
+
+export interface ReportDataSectionAdAccount {
+  adAccountId: string;
+  order: number;
+  adAccountName: string
+  data: Metric[] | ReportDataAd[] | ReportDataCampaign[] | ReportDataGraph[]
+}
+
+export interface ReportDataAd {
+  adId: string;
+  adCreativeId: string;
+  thumbnailUrl: string;
+  sourceUrl: string;
+  data: Metric[]
+  ad_name: string;
+
+}
+
+export interface ReportDataCampaign {
+  index: number;
+  campaign_name: string;
+  data: Metric[]
+}
+
+
+export interface ReportDataGraph {
+  data: Metric[]
+  date_start: string;
+  date_stop: string;
+}
+
 
 export interface SendAfterReviewRequest {
   reportUuid: string;

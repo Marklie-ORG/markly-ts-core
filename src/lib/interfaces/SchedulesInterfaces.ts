@@ -93,8 +93,8 @@ export interface SectionConfig {
 
 export interface SectionAdAccount {
     adAccountId: string;
-    adAccountName: string;
     order: number;
+    adAccountName?: string;
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
 }
@@ -366,3 +366,8 @@ export interface SchedulingOptionMetric<T extends string> {
     order: number;
 }
 
+export interface Metric {
+    name: string;
+    value: number;
+    order: number;
+}
