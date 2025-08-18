@@ -214,3 +214,19 @@ export const UpdateReportImagesRequestSchema = z.object({
 export const SendFeedbackRequestSchema = z.object({
   message: z.string().min(1, { message: "Message cannot be empty" }),
 });
+
+export const CreateFeatureSuggestionRequestSchema = z.object({
+  title: z.string().min(3, { message: "Title must be at least 3 characters" }),
+  description: z
+    .string()
+    .min(10, { message: "Description must be at least 10 characters" }),
+});
+
+export const CreateFeatureCommentRequestSchema = z.object({
+  suggestionUuid: z.uuid({ message: "Invalid suggestion UUID" }),
+  comment: z.string().min(1, { message: "Comment cannot be empty" }),
+});
+
+export const ToggleFeatureUpvoteRequestSchema = z.object({
+  suggestionUuid: z.uuid({ message: "Invalid suggestion UUID" }),
+});
