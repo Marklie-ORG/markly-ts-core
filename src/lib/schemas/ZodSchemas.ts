@@ -195,9 +195,7 @@ export const VerifyPasswordRecoveryRequestSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
-export const UpdateReportDataRequestSchema = z.object({
-  providers: z.array(z.any()),
-});
+export const UpdateReportDataRequestSchema = z.array(z.any());
 
 export const UploadImageRequestSchema = z.any();
 

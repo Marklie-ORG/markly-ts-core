@@ -1,6 +1,6 @@
 {
   "name": "marklie-ts-core",
-  "version": "1.4.35",
+  "version": "1.4.36",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
