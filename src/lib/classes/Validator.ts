@@ -41,6 +41,7 @@ import {
   CreateFeatureCommentRequestSchema,
   ToggleFeatureUpvoteRequestSchema,
   UpdateReportDataRequestSchema,
+  UpdateReportMessagesRequestSchema,
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -276,6 +277,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/reports/report-title/:uuid",
     matcher: match("/api/reports/report-title/:uuid", { decode: decodeURIComponent }),
     schema: UpdateReportTitleRequestSchema,
+  },
+  {
+    pattern: "/api/reports/report-messages/:uuid",
+    matcher: match("/api/reports/report-messages/:uuid", { decode: decodeURIComponent }),
+    schema: UpdateReportMessagesRequestSchema,
   },
   {
     pattern: "/api/feature-suggestions",

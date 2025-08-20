@@ -206,6 +206,15 @@ export const UpdateReportImagesRequestSchema = z.object({
   organizationLogo: z.string(),
 });
 
+export const UpdateReportMessagesRequestSchema = z.object({
+  whatsapp: z.string(),
+  slack: z.string(),
+  email: z.object({
+    title: z.string(),
+    body: z.string(),
+  }),
+});
+
 export const UpdateReportTitleRequestSchema = z.object({
   reportName: z.string(),
 });
