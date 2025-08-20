@@ -206,6 +206,10 @@ export const UpdateReportImagesRequestSchema = z.object({
   organizationLogo: z.string(),
 });
 
+export const UpdateReportTitleRequestSchema = z.object({
+  reportName: z.string(),
+});
+
 export const SendFeedbackRequestSchema = z.object({
   message: z.string().min(1, { message: "Message cannot be empty" }),
 });

@@ -34,6 +34,7 @@ import {
   UploadImageRequestSchema,
   DeleteImageRequestSchema,
   UpdateReportImagesRequestSchema,
+  UpdateReportTitleRequestSchema,
   ScheduleBulkActionSchema,
   SendFeedbackRequestSchema,
   CreateFeatureSuggestionRequestSchema,
@@ -270,6 +271,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/reports/report-images/:uuid",
     matcher: match("/api/reports/report-images/:uuid", { decode: decodeURIComponent }),
     schema: UpdateReportImagesRequestSchema,
+  },
+  {
+    pattern: "/api/reports/report-title/:uuid",
+    matcher: match("/api/reports/report-title/:uuid", { decode: decodeURIComponent }),
+    schema: UpdateReportTitleRequestSchema,
   },
   {
     pattern: "/api/feature-suggestions",
