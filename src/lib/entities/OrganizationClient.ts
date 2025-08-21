@@ -3,7 +3,7 @@ import {
   Property,
   ManyToOne,
   OneToMany,
-  Collection,
+  Collection, Filter,
 } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
@@ -11,6 +11,7 @@ import { SchedulingOption } from "./SchedulingOption.js";
 import { ClientAdAccount } from "./ClientAdAccount.js";
 import { CommunicationChannel } from "./ClientCommunicationChannel.js";
 
+@Filter({ name: 'softDelete', cond: { deletedAt: null } })
 @Entity()
 export class OrganizationClient extends BaseEntity {
   @Property()
