@@ -171,6 +171,12 @@ export const SendMessageWithFileToSlackRequestSchema = z.object({
 export const UpdateClientRequestSchema = z.object({
   name: z.string().optional(),
   emails: z.array(z.string()).optional(),
+  phoneNumbers: z.array(z.string()).optional(),
+  facebookAdAccounts: z.array(z.object({
+    adAccountId: z.string(),
+    adAccountName: z.string(),
+    businessId: z.string(),
+  })).optional(),
 });
 
 export const ChangeEmailRequestSchema = z.object({

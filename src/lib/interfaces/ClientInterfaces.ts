@@ -9,7 +9,7 @@ export interface UpdateClientRequest {
   name?: string;
   emails?: string[];
   phoneNumbers?: string[];
-  facebookAdAccounts?: string[];
+  facebookAdAccounts?: {adAccountId: string, adAccountName: string, businessId: string}[];
 }
 
 export interface CreateClientFacebookAdAccountRequest {
