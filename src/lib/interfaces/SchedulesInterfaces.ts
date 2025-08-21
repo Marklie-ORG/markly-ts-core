@@ -97,6 +97,7 @@ export interface SectionAdAccount {
     adAccountName?: string;
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
+    currency: string
 }
 
 export interface ScheduledAdAccountConfig {

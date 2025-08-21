@@ -68,6 +68,7 @@ export interface ReportDataSectionAdAccount {
   order: number;
   adAccountName: string
   data: Metric[] | ReportDataAd[] | ReportDataCampaign[] | ReportDataGraph[]
+  currency: string
 }
 
 export interface ReportDataAd {
