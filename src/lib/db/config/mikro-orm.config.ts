@@ -45,6 +45,12 @@ export default defineConfig({
     emit: "ts", // migration generation mode
     generator: TSMigrationGenerator, // migration genera
   },
+  filters: {
+    softDelete: {
+      cond: { deletedAt: null },
+      default: true,
+    },
+  },
   entities: [
     User,
     Organization,
