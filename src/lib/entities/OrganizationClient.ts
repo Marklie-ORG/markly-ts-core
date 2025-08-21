@@ -36,4 +36,7 @@ export class OrganizationClient extends BaseEntity {
     (channel: CommunicationChannel) => channel.client,
   )
   communicationChannels? = new Collection<CommunicationChannel>(this);
+
+  @Property({ nullable: true })
+  deletedAt?: Date;
 }
