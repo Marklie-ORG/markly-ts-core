@@ -11,7 +11,7 @@ import { SchedulingOption } from "./SchedulingOption.js";
 import { ClientAdAccount } from "./ClientAdAccount.js";
 import { CommunicationChannel } from "./ClientCommunicationChannel.js";
 
-@Filter({ name: 'softDelete', cond: { deletedAt: null } })
+@Filter({ name: 'softDelete', cond: { deletedAt: null }, default: true })
 @Entity()
 export class OrganizationClient extends BaseEntity {
   @Property()
