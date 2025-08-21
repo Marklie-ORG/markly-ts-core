@@ -95,6 +95,15 @@ export const AdAccountsBusinessesRequestSchema = z.object({
     .min(1, { message: "organizationName is required" }),
 });
 
+export const AdAccountsCurrencyRequestSchema = z.object({
+  organizationUuid: z
+      .string()
+      .min(1, { message: "organizationName is required" }),
+  adAccountId: z
+      .string()
+      .min(1, { message: "organizationName is required" }),
+});
+
 export const UpdateNameRequestSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),

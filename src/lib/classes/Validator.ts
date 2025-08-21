@@ -41,7 +41,7 @@ import {
   CreateFeatureCommentRequestSchema,
   ToggleFeatureUpvoteRequestSchema,
   UpdateReportDataRequestSchema,
-  UpdateReportMessagesRequestSchema,
+  UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -124,6 +124,13 @@ const schemaMap: SchemaEntry[] = [
       decode: decodeURIComponent,
     }),
     schema: AdAccountsBusinessesRequestSchema,
+  },
+  {
+    pattern: "/api/ad-accounts/currency",
+    matcher: match("/api/ad-accounts/currency", {
+      decode: decodeURIComponent,
+    }),
+    schema: AdAccountsCurrencyRequestSchema,
   },
   {
     pattern: "/api/user/active-organization",
