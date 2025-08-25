@@ -38,20 +38,31 @@ export class EmailChannel extends CommunicationChannel {
   emailAddress!: string;
 
   async send(
-    report: string,
-    context: { reportUuid: string; organizationUuid: string },
-    dbReport: Report,
+      report: string,
+      context: { reportUuid: string; organizationUuid: string },
+      dbReport: Report,
   ): Promise<void> {
-    await sendGridService.sendReportEmail(
-      {
-        to: this.emailAddress,
-        subject: dbReport!.metadata!.messages.email.title,
-        text: dbReport!.metadata!.messages.email.body,
-      },
-      report,
-    );
-
     const db = await Database.getInstance();
+    const original = Buffer.isBuffer(report) ? report : Buffer.from(report, "base64");
+    const compressed = await sendGridService.compressForSendgrid(original, 19);
+
+    const b64 = compressed.toString("base64");
+    await sendGridService.sendReportEmail(
+        {
+          to: this.emailAddress,
+          subject: dbReport!.metadata!.messages.email.title,
+          text: dbReport!.metadata!.messages.email.body,
+          attachments: [
+            {
+              content: b64,
+              filename: "report.pdf",
+              type: "application/pdf",
+              disposition: "attachment",
+            },
+          ],
+        },
+        b64
+    );
 
     const log = db.em.create(ActivityLog, {
       organization: context.organizationUuid,
@@ -62,7 +73,6 @@ export class EmailChannel extends CommunicationChannel {
       actor: "system",
       metadata: { email: this.emailAddress, reportName: dbReport!.metadata!.reportName },
     });
-
     await db.em.persistAndFlush(log);
   }
 }
