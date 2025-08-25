@@ -26,7 +26,7 @@ export class WhapiService {
       const media = `data:application/pdf;name=file.pdf;base64,${reportBase64}`;
 
       await this.sendDocument({
-        to: phoneNumber,
+        to: phoneNumber.replace("+", ""),
         media: media,
         mime_type: "application/pdf",
         filename: "report.pdf",

@@ -96,9 +96,6 @@ export const AdAccountsBusinessesRequestSchema = z.object({
 });
 
 export const AdAccountsCurrencyRequestSchema = z.object({
-  organizationUuid: z
-      .string()
-      .min(1, { message: "organizationName is required" }),
   adAccountId: z
       .string()
       .min(1, { message: "organizationName is required" }),
