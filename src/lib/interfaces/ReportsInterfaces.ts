@@ -60,6 +60,7 @@ export interface ReportData {
 export interface ReportDataSection {
   name: 'kpis' | 'graphs' | 'ads' | 'campaigns';
   order: number;
+  enabled: boolean;
   adAccounts: ReportDataSectionAdAccount[];
 }
 
@@ -67,6 +68,7 @@ export interface ReportDataSectionAdAccount {
   adAccountId: string;
   order: number;
   adAccountName: string
+  enabled: boolean;
   data: Metric[] | ReportDataAd[] | ReportDataCampaign[] | ReportDataGraph[]
   currency: string
 }
