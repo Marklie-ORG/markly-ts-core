@@ -88,6 +88,7 @@ export interface ScheduledProviderConfig {
 export interface SectionConfig {
     name: 'kpis' | 'graphs' | 'ads' | 'campaigns';
     order: number;
+    enabled: boolean;
     adAccounts: SectionAdAccount[];
 }
 
@@ -95,6 +96,7 @@ export interface SectionAdAccount {
     adAccountId: string;
     order: number;
     adAccountName?: string;
+    enabled: boolean;
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
     currency: string
