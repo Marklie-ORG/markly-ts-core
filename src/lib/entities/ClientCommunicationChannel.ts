@@ -128,7 +128,12 @@ export class WhatsAppChannel extends CommunicationChannel {
   ): Promise<void> {
     const whapi = new WhapiService();
 
-    await whapi.sendReportWhatsapp(report, this.phoneNumber, dbReport!.metadata!.messages.whatsapp);
+    const original = Buffer.isBuffer(report) ? report : Buffer.from(report, "base64");
+    const compressed = await sendGridService.compressForSendgrid(original, 19);
+
+    const b64 = compressed.toString("base64");
+
+    await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.metadata!.messages.whatsapp);
 
     const db = await Database.getInstance();
 
