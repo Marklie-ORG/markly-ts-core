@@ -59,6 +59,8 @@ const authEnvSchema = baseEnvSchema.extend({
   RATE_LIMIT_WINDOW_MS: z.coerce.number().int().min(1000).default(15 * 60 * 1000), // 15 minutes
   RATE_LIMIT_MAX_REQUESTS: z.coerce.number().int().min(1).default(100),
 
+  VETSOCIAL_TOKEN: z.string().optional(),
+
   MAX_IMAGE_SIZE_MB: z.coerce.number().min(1).max(50).default(10),
   ALLOWED_IMAGE_TYPES: z
       .string()
