@@ -28,7 +28,14 @@ const baseEnvSchema = z.object({
 
   ALLOWED_ORIGINS: z.string()
       .transform(str => str.split(",").map(origin => origin.trim()))
-      .pipe(z.array(z.string().url()).min(1))
+      .pipe(z.array(z.string()).min(1)),
+
+  SENTRY_DSN: z.string().optional(),
+  APP_VERSION: z.string().optional(),
+  SENTRY_ENVIRONMENT: z.string().optional(),
+  SENTRY_TRACES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.1),
+  SENTRY_PROFILES_SAMPLE_RATE: z.coerce.number().min(0).max(1).default(0.1),
+  SENTRY_DEBUG: z.coerce.boolean().default(false),
 });
 
 const reportsEnvSchema = baseEnvSchema.extend({
@@ -44,7 +51,7 @@ const reportsEnvSchema = baseEnvSchema.extend({
 
   GCS_REPORTS_BUCKET: z.string().min(1),
 
-  BULLMQ_REDIS_URL: z.string().url().optional(),
+  BULLMQ_REDIS_URL: z.string().optional(),
   QUEUE_CONCURRENCY: z.coerce.number().int().min(1).max(20).default(3),
   QUEUE_MAX_ATTEMPTS: z.coerce.number().int().min(1).max(10).default(3),
   QUEUE_BACKOFF_DELAY: z.coerce.number().int().min(1000).max(300000).default(30000),
@@ -120,6 +127,21 @@ export abstract class ConfigService<T> {
 
   public isProduction(): boolean {
     return (this.config as any).NODE_ENV === "production";
+  }
+
+  public getSentryConfig() {
+    return {
+      dsn: (this.config as any).SENTRY_DSN,
+      environment: (this.config as any).SENTRY_ENVIRONMENT || (this.config as any).NODE_ENV,
+      version: (this.config as any).APP_VERSION,
+      tracesSampleRate: (this.config as any).SENTRY_TRACES_SAMPLE_RATE,
+      profilesSampleRate: (this.config as any).SENTRY_PROFILES_SAMPLE_RATE,
+      debug: (this.config as any).SENTRY_DEBUG,
+    };
+  }
+
+  public isSentryEnabled(): boolean {
+    return !!(this.config as any).SENTRY_DSN;
   }
 }
 
@@ -242,8 +264,38 @@ export class NotificationConfigService extends ConfigService<NotificationEnviron
       from: this.get("EMAIL_FROM"),
     };
   }
+
+
 }
 
+
+
+export class SentryConfigService extends ConfigService<z.infer<typeof baseEnvSchema>> {
+  private static instance: SentryConfigService;
+
+  private constructor() {
+    super(baseEnvSchema, "sentry-service");
+  }
+
+  public static getInstance(): SentryConfigService {
+    if (!SentryConfigService.instance) {
+      SentryConfigService.instance = new SentryConfigService();
+    }
+    return SentryConfigService.instance;
+  }
+
+  public getSentryMiddlewareConfig() {
+    return {
+      dsn: this.get("SENTRY_DSN"),
+      environment: this.get("SENTRY_ENVIRONMENT") || this.get("NODE_ENV"),
+      release: this.get("APP_VERSION"),
+      tracesSampleRate: this.get("SENTRY_TRACES_SAMPLE_RATE"),
+      profilesSampleRate: this.get("SENTRY_PROFILES_SAMPLE_RATE"),
+      debug: this.get("SENTRY_DEBUG"),
+
+    };
+  }
+}
 
 
 export {
