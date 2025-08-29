@@ -43,6 +43,7 @@ export { ErrorMiddleware } from "./lib/middlewares/ErrorMiddleware.js";
 export { ValidationMiddleware } from "./lib/middlewares/ValidationMiddleware.js";
 export { CookiesMiddleware } from "./lib/middlewares/CookiesMiddleware.js";
 export { ActivityLogMiddleware } from "./lib/middlewares/LogsMiddleware.js";
+export { SentryMiddleware } from "./lib/middlewares/SentryMiddleware.js";
 
 //interfaces
 export * from "./lib/interfaces/AuthInterfaces.js";
