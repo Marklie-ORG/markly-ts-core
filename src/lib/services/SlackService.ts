@@ -2,6 +2,7 @@ import { SlackApi } from "../apis/SlackApi.js";
 import { Database } from "../db/config/DB.js";
 import { OrganizationClient } from "../entities/OrganizationClient.js";
 import { SlackChannel } from "../entities/ClientCommunicationChannel.js";
+import {logger} from "@sentry/node";
 
 export class SlackService {
   private static database: Database;
@@ -49,6 +50,8 @@ export class SlackService {
     ]);
 
     await slackApi.sendMessage(conversationId, message, uploadMeta.file_id);
+
+    logger.info(`Report sent to slack conversation ${conversationId}`)
   }
 
   async setSlackConversation(clientId: string, conversationId: string) {
