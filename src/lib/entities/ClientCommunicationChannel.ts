@@ -55,7 +55,7 @@ export class EmailChannel extends CommunicationChannel {
           attachments: [
             {
               content: b64,
-              filename: "report.pdf",
+              filename: `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`,
               type: "application/pdf",
               disposition: "attachment",
             },
@@ -97,7 +97,7 @@ export class SlackChannel extends CommunicationChannel {
       this.conversationId,
         dbReport!.metadata!.messages.slack,
       Buffer.from(report, "base64"),
-      "report.pdf",
+      `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`,
     );
 
     const db = await Database.getInstance();
@@ -133,7 +133,7 @@ export class WhatsAppChannel extends CommunicationChannel {
 
     const b64 = compressed.toString("base64");
 
-    await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.metadata!.messages.whatsapp);
+    await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.metadata!.messages.whatsapp, `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`);
 
     const db = await Database.getInstance();
 

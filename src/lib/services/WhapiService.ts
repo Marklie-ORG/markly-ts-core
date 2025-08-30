@@ -21,15 +21,17 @@ export class WhapiService {
     reportBase64: string,
     phoneNumber: string,
     message: string,
+    fileName: string = "report.pdf",
   ): Promise<void> {
     try {
-      const media = `data:application/pdf;name=file.pdf;base64,${reportBase64}`;
+      const safeName = encodeURIComponent(fileName || 'report.pdf');
+      const media = `data:application/pdf;name=${safeName};base64,${reportBase64}`;
 
       await this.sendDocument({
         to: phoneNumber.replace("+", ""),
         media: media,
         mime_type: "application/pdf",
-        filename: "report.pdf",
+        filename: fileName,
         caption: message,
       });
 

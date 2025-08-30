@@ -50,7 +50,7 @@ export class SendGridService {
     pdfBuffer: string,
   ): Promise<void> {
     try {
-      await sgMail.send({
+      const mail: MailDataRequired = {
         to: options.to,
         from: options.from || this.defaultFrom,
         subject: options.subject || "Your report.",
@@ -58,15 +58,19 @@ export class SendGridService {
         replyTo: options.replyTo,
         cc: options.cc,
         bcc: options.bcc,
-        attachments: [
-          {
-            content: pdfBuffer,
-            filename: "facebook-report.pdf",
-            type: "application/pdf",
-            disposition: "attachment",
-          },
-        ],
-      } as MailDataRequired);
+        attachments: options.attachments && options.attachments.length > 0
+          ? options.attachments
+          : [
+              {
+                content: pdfBuffer,
+                filename: "report.pdf",
+                type: "application/pdf",
+                disposition: "attachment",
+              },
+            ],
+      } as MailDataRequired;
+
+      await sgMail.send(mail);
 
       logger.info(
         `Report email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,

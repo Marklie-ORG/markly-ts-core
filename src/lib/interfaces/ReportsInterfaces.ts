@@ -50,6 +50,7 @@ export interface ReportJobData {
   messages: Messages;
   images?: ReportImages;
   reportName?: string;
+  pdfFilename?: string;
 }
 
 export interface ReportData {
