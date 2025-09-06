@@ -7,7 +7,7 @@ import type {
   AvailableAdMetric,
   AvailableCampaignMetric,
   AvailableGraphMetric,
-  AvailableKpiMetric, Campaign, Graph,
+  AvailableKpiMetric, Campaign, Colors, Graph,
   KPIs,
   Messages, Metric,
   SchedulingOptionMetric,
@@ -51,6 +51,7 @@ export interface ReportJobData {
   images?: ReportImages;
   reportName?: string;
   pdfFilename?: string;
+  colors?: Colors;
 }
 
 export interface ReportData {
@@ -137,4 +138,14 @@ export interface RuntimeAdAccountData {
 export interface ProvidersData {
   name: 'facebook' | 'tiktok' | 'google';
   sections: RuntimeAdAccountData[];
+}
+
+export interface UpdateReportMetadataRequest {
+  reportName?: string
+  images?: {
+    clientLogoGsUri: string
+    organizationLogoGsUri: string
+  }
+  messages?: Messages
+  colors?: Colors
 }

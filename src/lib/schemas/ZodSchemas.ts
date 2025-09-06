@@ -250,3 +250,19 @@ export const CreateFeatureCommentRequestSchema = z.object({
 export const ToggleFeatureUpvoteRequestSchema = z.object({
   suggestionUuid: z.uuid({ message: "Invalid suggestion UUID" }),
 });
+
+export const UpdateReportMetadataRequestSchema = z.object({
+  reportName: z.string().optional(),
+  images: z.object({
+    clientLogoGsUri: z.string(),
+    organizationLogoGsUri: z.string(),
+  }).optional(),
+  messages: z.object({
+    whatsapp: z.string(),
+    slack: z.string(),
+  }).optional(),
+  colors: z.object({
+    headerBackgroundColor: z.string(),
+    reportBackgroundColor: z.string(),
+  }).optional(),
+});

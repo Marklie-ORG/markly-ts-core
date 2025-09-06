@@ -41,7 +41,8 @@ import {
   CreateFeatureCommentRequestSchema,
   ToggleFeatureUpvoteRequestSchema,
   UpdateReportDataRequestSchema,
-  UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema
+  UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema,
+  UpdateReportMetadataRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -274,6 +275,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/images/:uuid",
     matcher: match("/api/images/:uuid", { decode: decodeURIComponent }),
     schema: DeleteImageRequestSchema,
+  },
+  {
+    pattern: "/api/reports/report-metadata/:uuid",
+    matcher: match("/api/reports/report-metadata/:uuid", { decode: decodeURIComponent }),
+    schema: UpdateReportMetadataRequestSchema,
   },
   {
     pattern: "/api/reports/report-images/:uuid",

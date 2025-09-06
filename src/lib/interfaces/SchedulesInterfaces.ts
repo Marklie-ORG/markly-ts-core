@@ -15,8 +15,14 @@ export interface ScheduleBaseConfig {
     reviewRequired: boolean;
     datePreset: FACEBOOK_DATE_PRESETS;
     messages: Messages;
+    colors: Colors;
     images?: ReportImages;
     providers?: ScheduledProviderConfig[];
+}
+
+export interface Colors {
+    headerBackgroundColor: string;
+    reportBackgroundColor: string;
 }
 
 interface TimeSettings {
