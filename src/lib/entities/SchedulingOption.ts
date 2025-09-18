@@ -45,7 +45,7 @@ export class SchedulingOption extends BaseEntity {
   @Property({ nullable: true })
   nextRun?: Date;
 
-  @OneToMany(() => Report, (report) => report.schedulingOption)
+  @OneToMany(() => Report, r => r.schedulingOption)
   reports = new Collection<Report>(this);
 
   @OneToOne(() => ScheduledJob, (job) => job.schedulingOption, {

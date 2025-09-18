@@ -50,12 +50,12 @@ export class EmailChannel extends CommunicationChannel {
     await sendGridService.sendReportEmail(
         {
           to: this.emailAddress,
-          subject: dbReport!.metadata!.messages.email.title,
-          text: dbReport!.metadata!.messages.email.body,
+          subject: dbReport!.messaging?.email?.title ?? "Marklie Report",
+          text: dbReport!.messaging?.email?.body,
           attachments: [
             {
               content: b64,
-              filename: `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`,
+              filename: `${dbReport!.messaging!.pdfFilename || 'report'}.pdf`,
               type: "application/pdf",
               disposition: "attachment",
             },
@@ -71,7 +71,7 @@ export class EmailChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { email: this.emailAddress, reportName: dbReport!.metadata!.reportName },
+      metadata: { email: this.emailAddress, reportName: dbReport!.messaging!.pdfFilename },
     });
     await db.em.persistAndFlush(log);
   }
@@ -95,9 +95,9 @@ export class SlackChannel extends CommunicationChannel {
     await slackService.sendSlackMessageWithFile(
       token,
       this.conversationId,
-        dbReport!.metadata!.messages.slack,
+        dbReport!.messaging?.slack ?? "Here is your report",
       Buffer.from(report, "base64"),
-      `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`,
+      `${dbReport!.messaging!.pdfFilename || 'report'}.pdf`,
     );
 
     const db = await Database.getInstance();
@@ -109,7 +109,7 @@ export class SlackChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { slackConversationId: this.conversationId, reportName: dbReport!.metadata!.reportName },
+      metadata: { slackConversationId: this.conversationId, reportName: dbReport!.messaging!.pdfFilename },
     });
 
     await db.em.persistAndFlush(log);
@@ -133,7 +133,7 @@ export class WhatsAppChannel extends CommunicationChannel {
 
     const b64 = compressed.toString("base64");
 
-    await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.metadata!.messages.whatsapp, `${dbReport!.metadata!.pdfFilename || 'report'}.pdf`);
+    await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.messaging?.whatsapp ?? "Your report is ready", `${dbReport!.messaging!.pdfFilename || 'report'}.pdf`);
 
     const db = await Database.getInstance();
 
@@ -144,7 +144,7 @@ export class WhatsAppChannel extends CommunicationChannel {
       targetUuid: context.reportUuid,
       client: this.client.uuid,
       actor: "system",
-      metadata: { phoneNumber: this.phoneNumber, reportName: dbReport!.metadata!.reportName },
+      metadata: { phoneNumber: this.phoneNumber, reportName: dbReport!.messaging!.pdfFilename },
     });
 
     await db.em.persistAndFlush(log);
