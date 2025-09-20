@@ -44,3 +44,7 @@ export interface VerifyPasswordRecoveryRequest {
 export interface SendFeedbackRequest {
   message: string;
 }
+
+export interface ImpersonateUserRequest {
+  email: string;
+}

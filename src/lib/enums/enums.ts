@@ -22,6 +22,11 @@ export enum OrganizationRole {
   READER = "reader",
 }
 
+export enum UserRole {
+  ADMIN = "admin",
+  USER = "user",
+}
+
 export enum OrganizationTokenType {
   FACEBOOK = "facebook",
   TIKTOK = "tiktok",

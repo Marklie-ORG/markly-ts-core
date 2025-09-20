@@ -42,6 +42,7 @@ import {
   ToggleFeatureUpvoteRequestSchema,
   UpdateReportDataRequestSchema,
   UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema,
+  ImpersonateUserRequestSchema,
   UpdateReportMetadataRequestSchema
 } from "../schemas/ZodSchemas.js";
 
@@ -246,6 +247,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/user/change-password",
     matcher: match("/api/user/change-password", { decode: decodeURIComponent }),
     schema: ChangePasswordRequestSchema,
+  },
+  {
+    pattern: "/api/user/impersonate",
+    matcher: match("/api/user/impersonate", { decode: decodeURIComponent }),
+    schema: ImpersonateUserRequestSchema,
   },
   {
     pattern: "/api/user/send-password-recovery-email",

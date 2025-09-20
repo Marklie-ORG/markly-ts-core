@@ -21,6 +21,7 @@ export interface CleanedUser {
   firstName?: string | undefined;
   lastName?: string | undefined;
   roles: OrganizationRoles[];
+  isAdmin?: boolean;
 }
 
 export interface OrganizationRoles {

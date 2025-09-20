@@ -60,12 +60,14 @@ export class AuthenticationUtil {
           return;
         }
 
+        const { UserRole } = await import("../enums/enums.js");
         const newAccessToken = this.signAccessToken({
           uuid: decoded.uuid,
           email: user.email,
           firstName: user.firstName,
-          lastName: user.firstName,
+          lastName: user.lastName,
           roles: decoded.roles,
+          isAdmin: user.role === UserRole.ADMIN,
         });
 
         resolve(newAccessToken);
@@ -168,7 +170,10 @@ export class AuthenticationUtil {
     return {
       uuid: user.uuid,
       email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
       roles: await this.getUserRoleInOrganization(user),
+      isAdmin: user.role === (await import("../enums/enums.js")).UserRole.ADMIN,
     };
   }
 
@@ -225,8 +230,9 @@ export class AuthenticationUtil {
       uuid: user.uuid,
       email: user.email,
       firstName: user.firstName,
-      lastName: user.firstName,
+      lastName: user.lastName,
       roles: await this.getUserRoleInOrganization(user),
+      isAdmin: user.role === (await import("../enums/enums.js")).UserRole.ADMIN,
     };
 
     return {

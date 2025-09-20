@@ -196,6 +196,10 @@ export const ChangePasswordRequestSchema = z.object({
     .min(8, { message: "Password must be at least 8 characters long" }),
 });
 
+export const ImpersonateUserRequestSchema = z.object({
+  email: z.email({ message: "Invalid email address" }),
+});
+
 export const SendPasswordRecoveryEmailRequestSchema = z.object({
   email: z.email({ message: "Invalid email address" }),
 });

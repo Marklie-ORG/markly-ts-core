@@ -9,6 +9,7 @@ import {
 import bcrypt from "bcryptjs";
 import { BaseEntity } from "./BaseEntity.js";
 import { Organization } from "./Organization.js";
+import { UserRole } from "../enums/enums.js";
 
 @Entity()
 export class User extends BaseEntity {
@@ -23,6 +24,9 @@ export class User extends BaseEntity {
 
   @Property()
   password!: string;
+
+  @Property()
+  role: UserRole = UserRole.USER;
 
   @ManyToOne(() => Organization, { nullable: true })
   activeOrganization?: Organization;
