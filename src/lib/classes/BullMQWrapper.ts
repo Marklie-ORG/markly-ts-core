@@ -32,7 +32,7 @@ export class BullMQWrapper {
     this.worker = new Worker(
       queueName,
       async (job: Job) => this.processJob(job),
-      { connection: this.connection, concurrency: 1, lockDuration: 360000 },
+      { connection: this.connection, concurrency: 10, lockDuration: 360000 },
     );
 
     this.worker.on("completed", (job) => {
@@ -60,28 +60,31 @@ export class BullMQWrapper {
   }
 
   async addScheduledJob(
-    name: string,
-    data: any,
-    cron: string,
+      name: string,
+      data: any,
+      cron: string,
+      schedulerId: string,
+      tz?: string
   ): Promise<Job | undefined> {
     try {
-      const jobId = `cron:${name}:${Buffer.from(cron).toString("base64")}`;
+      const jobSchedulerId = `sched:${name}:${schedulerId}${tz ? `:${tz}` : ""}`;
+
       return await this.queue.upsertJobScheduler(
-        jobId,
-        { pattern: cron, tz: data.timeZone },
-        {
-          name: name,
-          data: data,
-          opts: {
-            backoff: 3,
-            attempts: 5,
-            removeOnFail: 1000,
+          jobSchedulerId,
+          { pattern: cron, tz: tz ?? data.timeZone },
+          {
+            name,
+            data,
+            opts: {
+              backoff: 3,
+              attempts: 5,
+              removeOnFail: 1000,
+            },
           },
-        },
       );
     } catch (error: any) {
       logger.error(
-        `Error adding scheduled job "${name}" with cron "${cron}": ${error.message}`,
+          `Error adding scheduled job "${name}" with cron "${cron}": ${error.message}`,
       );
       return undefined;
     }
