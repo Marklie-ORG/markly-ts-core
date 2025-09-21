@@ -11,8 +11,9 @@ export class RedisClient {
 
   public static getInstance(): Redis {
     if (!RedisClient.instance) {
-      const REDIS_HOST = process.env.REDIS_HOST;
+      const REDIS_HOST = process.env.REDIS_HOST || "127.0.0.1";
       const REDIS_PORT = process.env.REDIS_PORT || 6379;
+
       const options: RedisOptions = {
         host: REDIS_HOST,
         port: Number(REDIS_PORT),
@@ -21,6 +22,7 @@ export class RedisClient {
         connectTimeout: 5000,
         lazyConnect: false,
       };
+
       RedisClient.instance = new Redis(options);
 
       RedisClient.instance.on("connect", () => {
@@ -40,9 +42,9 @@ export class RedisClient {
   }
 
   public static async set(
-    key: string,
-    value: string,
-    expirySeconds?: number,
+      key: string,
+      value: string,
+      expirySeconds?: number,
   ): Promise<string> {
     const client = this.getInstance();
     if (expirySeconds) {
@@ -54,5 +56,33 @@ export class RedisClient {
   public static async del(key: string): Promise<number> {
     const client = this.getInstance();
     return client.del(key);
+  }
+
+  public static async getJSON<T>(key: string): Promise<T | null> {
+    const raw = await this.get(key);
+    return raw ? (JSON.parse(raw) as T) : null;
+  }
+
+  public static async setJSON(
+      key: string,
+      value: any,
+      expirySeconds?: number,
+  ): Promise<string> {
+    return this.set(key, JSON.stringify(value), expirySeconds);
+  }
+
+
+  public static async waitForFill<T>(
+      key: string,
+      timeoutMs = 8000,
+      pollMs = 150,
+  ): Promise<T | null> {
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+      const v = await this.getJSON<T>(key);
+      if (v) return v;
+      await new Promise((r) => setTimeout(r, pollMs));
+    }
+    return null;
   }
 }
