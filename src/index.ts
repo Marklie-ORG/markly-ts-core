@@ -35,6 +35,11 @@ export { Feedback } from "./lib/entities/Feedback.js";
 export { FeatureSuggestion } from "./lib/entities/FeatureSuggestion.js";
 export { FeatureComment } from "./lib/entities/FeatureComment.js";
 export { FeatureUpvote } from "./lib/entities/FeatureUpvote.js";
+export { SubscriptionPlan } from "./lib/entities/subscription/SubscriptionPlan.js";
+export { FreeTrialUsage } from "./lib/entities/subscription/FreeTrialUsage.js";
+export { OrganizationSubscription } from "./lib/entities/subscription/OrganizationSubscription.js";
+export { UsageRecord } from "./lib/entities/subscription/UsageRecord.js";
+export { PaymentMethod } from "./lib/entities/subscription/PaymentMethod.js";
 
 //middlewares
 export { AuthMiddleware } from "./lib/middlewares/AuthMiddleware.js";
@@ -44,6 +49,7 @@ export { ValidationMiddleware } from "./lib/middlewares/ValidationMiddleware.js"
 export { CookiesMiddleware } from "./lib/middlewares/CookiesMiddleware.js";
 export { ActivityLogMiddleware } from "./lib/middlewares/LogsMiddleware.js";
 export { SentryMiddleware } from "./lib/middlewares/SentryMiddleware.js";
+export { SubscriptionMiddleware } from "./lib/middlewares/SubscriptionMiddleware.js";
 
 //interfaces
 export * from "./lib/interfaces/AuthInterfaces.js";
@@ -53,9 +59,10 @@ export * from "./lib/interfaces/UserInterfaces.js";
 export * from "./lib/interfaces/OnboardingInterfaces.js";
 export * from "./lib/interfaces/PubSubInterfaces.js";
 export * from "./lib/interfaces/SlackInterfaces.js";
-
 export * from "./lib/interfaces/ClientInterfaces.js";
 export * from "./lib/interfaces/FeatureSuggestionInterfaces.js";
+export * from "./lib/interfaces/SubscriptionInterfaces.js";
+
 //schemas
 export * from "./lib/schemas/ZodSchemas.js";
 
@@ -73,6 +80,7 @@ export { TokenService } from "./lib/services/TokenService.js";
 export { SlackService } from "./lib/services/SlackService.js";
 export { SendGridService } from "./lib/services/SendgridService.js";
 export { WhapiService } from "./lib/services/WhapiService.js";
+export { StripeService } from "./lib/services/StripeService.js";
 
 //Configuration management
 export {

@@ -27,6 +27,11 @@ import { Feedback } from "../../entities/Feedback.js";
 import { FeatureSuggestion } from "../../entities/FeatureSuggestion.js";
 import { FeatureComment } from "../../entities/FeatureComment.js";
 import { FeatureUpvote } from "../../entities/FeatureUpvote.js";
+import {FreeTrialUsage} from "../../entities/subscription/FreeTrialUsage.js";
+import {OrganizationSubscription} from "../../entities/subscription/OrganizationSubscription.js";
+import {SubscriptionPlan} from "../../entities/subscription/SubscriptionPlan.js";
+import {UsageRecord} from "../../entities/subscription/UsageRecord.js";
+import {PaymentMethod} from "../../entities/subscription/PaymentMethod.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -70,6 +75,11 @@ export default defineConfig({
     FeatureSuggestion,
     FeatureComment,
     FeatureUpvote,
+      FreeTrialUsage,
+      OrganizationSubscription,
+      PaymentMethod,
+      SubscriptionPlan,
+      UsageRecord
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,

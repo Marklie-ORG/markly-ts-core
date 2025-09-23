@@ -18,7 +18,6 @@ class StorageInfo {
 
 @Embeddable()
 class ScheduleInfo {
-  @Property({ nullable: true }) schedulingOptionUuid?: string;
   @Property() timezone!: string;
   @Property({ nullable: true }) lastRun?: Date;
   @Property({ nullable: true }) nextRun?: Date;

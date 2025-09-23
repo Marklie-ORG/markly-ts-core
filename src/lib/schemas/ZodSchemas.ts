@@ -270,3 +270,26 @@ export const UpdateReportMetadataRequestSchema = z.object({
     reportBackgroundColor: z.string(),
   }).optional(),
 });
+
+export const SubscribeRequestSchema = z.object({
+  planId: z.string().min(1, "planId is required"),
+  paymentMethodId: z.string().min(1).optional(),
+  trialDays: z.number().int().positive().max(365).optional(),
+});
+
+export const UpdateSubscriptionRequestSchema = z.object({
+  planId: z.string().min(1, "planId is required"),
+  prorationBehavior: z.enum(["create_prorations", "none"]).optional(),
+});
+
+export const CancelSubscriptionRequestSchema = z.object({
+  immediately: z.boolean().optional(), // defaults to false in handler
+});
+
+export const FinalizeCheckoutParamsSchema = z.object({
+  session_id: z.string().min(1, "session_id is required"),
+});
+
+export const StripeWebhookHeadersSchema = z.object({
+  "stripe-signature": z.string().min(1, "Missing Stripe signature"),
+});

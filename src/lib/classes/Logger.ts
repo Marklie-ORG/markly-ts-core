@@ -17,33 +17,51 @@ export class Log {
 
     const isProduction = process.env.ENVIRONMENT === "production";
 
-    const logFormat = format.printf(
-        ({ level, message, timestamp, ...meta }) => {
-          const namespace = isProduction
-              ? this.baseName
-              : level === "error"
-                  ? `\x1b[31m${this.baseName}\x1b[39m`
-                  : `\x1b[35m${this.baseName}\x1b[39m`;
+    // Enhanced log format that properly handles errors and stack traces
+    const logFormat = format.printf(({ level, message, timestamp, stack, ...meta }) => {
+      const namespace = isProduction
+          ? this.baseName
+          : level === "error"
+              ? `\x1b[31m${this.baseName}\x1b[39m`
+              : `\x1b[35m${this.baseName}\x1b[39m`;
 
-          const {
-            namespace: _,
-            level: __,
-            message: ___,
-            timestamp: ____,
-            ...rest
-          } = meta;
+      const {
+        namespace: _,
+        level: __,
+        message: ___,
+        timestamp: ____,
+        stack: _____,
+        ...rest
+      } = meta;
 
-          const metaString =
-              Object.keys(rest).length > 0 ? ` ${JSON.stringify(rest)}` : "";
+      let output = `${timestamp ? `[${timestamp}] ` : ""}${namespace} ${message}`;
 
-          return `${timestamp ? `[${timestamp}] ` : ""}${namespace} ${message}${metaString}`;
-        },
-    );
+      // Add metadata if present (but not stack trace here)
+      if (Object.keys(rest).length > 0) {
+        const cleanMeta = { ...rest };
+        // Remove common error properties that are handled separately
+        delete cleanMeta.name;
+        delete cleanMeta.code;
+        delete cleanMeta.statusCode;
+
+        if (Object.keys(cleanMeta).length > 0) {
+          output += ` ${JSON.stringify(cleanMeta, null, 2)}`;
+        }
+      }
+
+      // Add stack trace on new lines for better readability
+      if (stack) {
+        output += `\n${stack}`;
+      }
+
+      return output;
+    });
 
     this.logger = createLogger({
       level: "debug",
       format: format.combine(
           format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+          format.errors({ stack: true }), // This ensures stack traces are captured
           logFormat,
       ),
       transports: [new transports.Console()],
@@ -98,8 +116,11 @@ export class Log {
     return this.getInstance().extend(name);
   }
 
-  public debug(message: string): void {
-    this.logger.debug(message, { namespace: this.baseName });
+  public debug(message: string, metadata?: any): void {
+    this.logger.debug(message, {
+      namespace: this.baseName,
+      ...metadata,
+    });
   }
 
   public info(message: string, metadata?: any): void {
@@ -141,22 +162,24 @@ export class Log {
   public error(message: unknown, errorContext?: any): void {
     const logNamespace = `${this.baseName}:error`;
 
-    let logMessage: string;
-    let errorMeta: any = {
-      namespace: logNamespace,
-      ...errorContext,
-    };
-
     if (message instanceof Error) {
-      logMessage = message.message;
-      errorMeta.stack = message.stack;
-      errorMeta.name = message.name;
+      // For Error objects, pass them directly to winston with proper formatting
+      this.logger.error(message.message, {
+        namespace: logNamespace,
+        stack: message.stack,
+        name: message.name,
+        ...((message as any).code && { code: (message as any).code }),
+        ...((message as any).statusCode && { statusCode: (message as any).statusCode }),
+        ...errorContext,
+      });
     } else {
-      logMessage =
-          typeof message === "string" ? message : JSON.stringify(message);
+      // For non-Error objects, convert to string
+      const logMessage = typeof message === "string" ? message : JSON.stringify(message, null, 2);
+      this.logger.error(logMessage, {
+        namespace: logNamespace,
+        ...errorContext,
+      });
     }
-
-    this.logger.error(logMessage, errorMeta);
 
     if (Log.sentryInitialized) {
       Sentry.withScope((scope) => {
@@ -173,6 +196,7 @@ export class Log {
         if (message instanceof Error) {
           Sentry.captureException(message);
         } else {
+          const logMessage = typeof message === "string" ? message : JSON.stringify(message);
           Sentry.captureMessage(logMessage, "error");
         }
       });
@@ -182,45 +206,62 @@ export class Log {
   public catchError(error: unknown, context?: any): void {
     const logNamespace = `${this.baseName}:error`;
 
-    let errorDetails: any = {
-      namespace: logNamespace,
-      ...context,
-    };
-
     if (isAxiosError(error)) {
-      errorDetails = {
-        ...errorDetails,
+      // Enhanced Axios error logging with readable format
+      const errorMessage = `Axios Error: ${error.message}`;
+      const errorDetails = {
+        namespace: logNamespace,
         type: "AxiosError",
         url: error.config?.url,
-        method: error.config?.method,
+        method: error.config?.method?.toUpperCase(),
         status: error.response?.status,
         statusText: error.response?.statusText,
-        data: error.response?.data,
         code: error.code,
-        message: error.message,
+        stack: error.stack,
+        responseData: error.response?.data,
+        requestHeaders: error.config?.headers,
+        ...context,
       };
+
+      this.logger.error(errorMessage, errorDetails);
+
     } else if (error instanceof Error) {
-      errorDetails = {
-        ...errorDetails,
+      // Enhanced Error object logging with readable stack trace
+      const errorDetails = {
+        namespace: logNamespace,
         type: error.constructor.name,
-        message: error.message,
+        name: error.name,
         stack: error.stack,
         ...((error as any).code && { code: (error as any).code }),
-        ...((error as any).statusCode && {
-          statusCode: (error as any).statusCode,
-        }),
-        ...((error as any).context && { context: (error as any).context }),
+        ...((error as any).statusCode && { statusCode: (error as any).statusCode }),
+        ...((error as any).context && { errorContext: (error as any).context }),
+        ...context,
       };
+
+      this.logger.error(error.message, errorDetails);
+
     } else if (typeof error === "string") {
-      errorDetails.message = error;
-      errorDetails.type = "String";
+      // String error
+      this.logger.error(error, {
+        namespace: logNamespace,
+        type: "String",
+        ...context,
+      });
+
     } else {
-      errorDetails.message = JSON.stringify(error, null, 2);
-      errorDetails.type = "Unknown";
+      // Unknown error type
+      const errorMessage = "Unknown error occurred";
+      const serializedError = this.safeStringify(error);
+
+      this.logger.error(errorMessage, {
+        namespace: logNamespace,
+        type: "Unknown",
+        originalError: serializedError,
+        ...context,
+      });
     }
 
-    this.logger.error("Caught error", errorDetails);
-
+    // Sentry reporting
     if (Log.sentryInitialized) {
       Sentry.withScope((scope) => {
         scope.setTag("component", this.baseName);
@@ -256,10 +297,32 @@ export class Log {
         if (error instanceof Error) {
           Sentry.captureException(error);
         } else {
-          Sentry.captureMessage(`Caught error: ${errorDetails.message}`, "error");
+          const errorMessage = typeof error === "string" ? error : this.safeStringify(error);
+          Sentry.captureMessage(`Caught error: ${errorMessage}`, "error");
         }
       });
     }
+  }
+
+  private safeStringify(obj: unknown): string {
+    try {
+      return JSON.stringify(obj, this.getCircularReplacer(), 2);
+    } catch (error) {
+      return `[Unable to stringify: ${String(obj)}]`;
+    }
+  }
+
+  private getCircularReplacer() {
+    const seen = new WeakSet();
+    return (_key: string, value: any) => {
+      if (typeof value === "object" && value !== null) {
+        if (seen.has(value)) {
+          return "[Circular]";
+        }
+        seen.add(value);
+      }
+      return value;
+    };
   }
 
   public extend(extensionName: string): Log {

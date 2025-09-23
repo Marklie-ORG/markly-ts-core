@@ -41,6 +41,9 @@ import {
   CreateFeatureCommentRequestSchema,
   ToggleFeatureUpvoteRequestSchema,
   UpdateReportDataRequestSchema,
+  SubscribeRequestSchema,
+  UpdateSubscriptionRequestSchema,
+  CancelSubscriptionRequestSchema,
   UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema,
   ImpersonateUserRequestSchema,
   UpdateReportMetadataRequestSchema
@@ -316,6 +319,36 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/feature-suggestions/upvote",
     matcher: match("/api/feature-suggestions/upvote", { decode: decodeURIComponent }),
     schema: ToggleFeatureUpvoteRequestSchema,
+  },
+  {
+    pattern: "/api/subscriptions/subscribe",
+    matcher: match("/api/subscriptions/subscribe", { decode: decodeURIComponent }),
+    schema: SubscribeRequestSchema,
+  },
+  {
+    pattern: "/api/subscriptions/update",
+    matcher: match("/api/subscriptions/update", { decode: decodeURIComponent }),
+    schema: UpdateSubscriptionRequestSchema,
+  },
+  {
+    pattern: "/api/subscriptions/cancel",
+    matcher: match("/api/subscriptions/cancel", { decode: decodeURIComponent }),
+    schema: CancelSubscriptionRequestSchema,
+  },
+  {
+    pattern: "/api/subscriptions/setup-intent",
+    matcher: match("/api/subscriptions/setup-intent", { decode: decodeURIComponent }),
+    schema: z.object({}),
+  },
+  {
+    pattern: "/api/subscriptions/webhook",
+    matcher: match("/api/subscriptions/webhook", { decode: decodeURIComponent }),
+    schema: z.object({}),
+  },
+  {
+    pattern: "/api/subscriptions/finalize/:session_id",
+    matcher: match("/api/subscriptions/finalize/:session_id", { decode: decodeURIComponent }),
+    schema: z.object({}),
   },
 ];
 

@@ -1,6 +1,6 @@
 {
   "name": "marklie-ts-core",
-  "version": "1.5.9",
+  "version": "1.6.0",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -44,6 +44,7 @@
     "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
     "path-to-regexp": "^8.2.0",
+    "stripe": "^18.5.0",
     "uuid": "^11.0.5",
     "winston": "^3.17.0",
     "zod": "^4.0.5"

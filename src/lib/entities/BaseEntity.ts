@@ -2,7 +2,7 @@ import { OptionalProps, PrimaryKey, Property } from "@mikro-orm/core";
 import { v4 } from "uuid";
 
 export abstract class BaseEntity {
-  [OptionalProps]?: "createdAt" | "updatedAt";
+  [OptionalProps]?: "createdAt" | "updatedAt" | undefined;
 
   @PrimaryKey()
   uuid: string = v4();
