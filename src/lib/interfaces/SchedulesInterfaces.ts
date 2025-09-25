@@ -128,6 +128,10 @@ export interface ScheduledMetricGroup<T extends string> {
     order: number;
     metrics: OrderedMetric<T>[];
     customMetrics?: CustomMetric[];
+    adsSettings: {
+        numberOfAds: number;
+        sortAdsBy: string
+    }
 }
 
 export interface OrderedMetric<T extends string> {
