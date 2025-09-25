@@ -106,6 +106,10 @@ export interface SectionAdAccount {
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
     currency: string
+    adsSettings?: {
+        numberOfAds: number;
+        sortAdsBy: string
+    }
 }
 
 export interface ScheduledAdAccountConfig {
@@ -128,7 +132,7 @@ export interface ScheduledMetricGroup<T extends string> {
     order: number;
     metrics: OrderedMetric<T>[];
     customMetrics?: CustomMetric[];
-    adsSettings: {
+    adsSettings?: {
         numberOfAds: number;
         sortAdsBy: string
     }
