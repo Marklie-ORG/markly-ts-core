@@ -414,11 +414,44 @@ export class StripeService {
         }, { populate: ['plan'] });
     }
 
+    async resumeSubscription(
+        organization: Organization,
+        opts?: { subscriptionScheduleId?: string }
+    ): Promise<OrganizationSubscription> {
+        await this.initialize();
+
+        const active = await this.getActiveSubscription(organization);
+        if (!active) {
+            throw new Error('No active or trialing subscription to resume');
+        }
+
+        const stripeSub = await this.stripe.subscriptions.retrieve(active.stripeSubscriptionId);
+        if (stripeSub.cancel_at_period_end) {
+            const updated = await this.stripe.subscriptions.update(active.stripeSubscriptionId, {
+                cancel_at_period_end: false,
+            });
+
+            active.cancelAtPeriodEnd = false;
+            active.status = updated.status as SubscriptionStatus;
+            await this.database.em.persist(active).flush();
+        }
+
+        if (opts?.subscriptionScheduleId) {
+            await this.stripe.subscriptionSchedules.cancel(opts.subscriptionScheduleId);
+
+            const refreshed = await this.stripe.subscriptions.retrieve(active.stripeSubscriptionId);
+            active.status = refreshed.status as SubscriptionStatus;
+            await this.database.em.persist(active).flush();
+        }
+
+        logger.info(`Resumed subscription for organization ${organization.uuid}`);
+        return active;
+    }
+
     async getDataRefreshInterval(organization: Organization): Promise<number | undefined> {
         const activeSubscription = await this.getActiveSubscription(organization);
 
         if (!activeSubscription) {
-            // Free trial gets 4 hour refresh
             return 4;
         }
 
