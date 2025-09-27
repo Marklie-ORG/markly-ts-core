@@ -2,58 +2,82 @@ import {
   Entity,
   Property,
   ManyToOne,
-  Enum,
-  Collection,
   OneToMany,
-  OneToOne,
+  Enum,
+  Embeddable,
+  Embedded,
+  Collection,
 } from "@mikro-orm/core";
 import { BaseEntity } from "./BaseEntity.js";
 import { OrganizationClient } from "./OrganizationClient.js";
-import { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import { Report } from "./Report.js";
-import { ScheduledJob } from "./ScheduledJob.js";
+import { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
+import type { ScheduledProviderConfig } from "../interfaces/SchedulesInterfaces.js";
+
+@Embeddable()
+class SchedulingReview {
+  @Property({ default: false }) required!: boolean;
+}
+
+@Embeddable()
+class SchedulingScheduleInfo {
+  @Property() timezone!: string;
+  @Property({ nullable: true }) lastRun?: Date;
+  @Property({ nullable: true }) nextRun?: Date;
+  @Property({ nullable: true }) jobId?: string;
+
+  @Enum(() => FACEBOOK_DATE_PRESETS) datePreset!: FACEBOOK_DATE_PRESETS;
+
+  @Property() cronExpression!: string;
+}
+
+@Embeddable()
+class Customization {
+  @Property({ type: "json", nullable: true })
+  colors?: { headerBg?: string; reportBg?: string };
+
+  @Property({ type: "json", nullable: true })
+  logos?: {
+    client?: { url?: string; gcsUri?: string };
+    org?: { url?: string; gcsUri?: string };
+  };
+
+  @Property({ nullable: true })
+  title?: string;
+}
+
+@Embeddable()
+class Messaging {
+  @Property({ type: "json", nullable: true }) email?: { title?: string; body?: string };
+  @Property({ nullable: true }) slack?: string;
+  @Property({ nullable: true }) whatsapp?: string;
+
+  @Property({ nullable: true }) pdfFilename?: string;
+}
 
 @Entity()
 export class SchedulingOption extends BaseEntity {
-  @Property()
-  cronExpression!: string;
-
-  @Enum(() => FACEBOOK_DATE_PRESETS)
-  datePreset!: FACEBOOK_DATE_PRESETS;
-
   @Property({ default: true })
   isActive: boolean = true;
 
-  @Property({ nullable: true })
-  reportName?: string;
-
-  @Property({ type: 'json', nullable: true })
-  providers?: string[];
-
   @Property({ type: "json", nullable: true })
-  jobData?: Record<string, any>;
+  providers?: ScheduledProviderConfig[];
 
-  @Property({ nullable: true })
-  timezone?: string;
+  @Embedded(() => SchedulingReview)
+  review!: SchedulingReview;
 
-  @Property()
-  reviewRequired: boolean = false;
+  @Embedded(() => SchedulingScheduleInfo)
+  schedule!: SchedulingScheduleInfo;
 
-  @Property({ nullable: true })
-  lastRun?: Date;
+  @Embedded(() => Customization, { nullable: true })
+  customization?: Customization;
 
-  @Property({ nullable: true })
-  nextRun?: Date;
-
-  @OneToMany(() => Report, r => r.schedulingOption)
-  reports = new Collection<Report>(this);
-
-  @OneToOne(() => ScheduledJob, (job) => job.schedulingOption, {
-    owner: true,
-    nullable: true,
-  })
-  scheduledJob?: ScheduledJob;
+  @Embedded(() => Messaging, { nullable: true })
+  messaging?: Messaging;
 
   @ManyToOne(() => OrganizationClient)
   client!: OrganizationClient;
+
+  @OneToMany(() => Report, (r) => r.schedulingOption)
+  reports = new Collection<Report>(this);
 }

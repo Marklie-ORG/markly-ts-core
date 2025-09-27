@@ -4,9 +4,7 @@ import type {
     ReportImages,
 } from "./ReportsInterfaces.js";
 import type {Report} from "../entities/Report.js";
-import type {ScheduledJob} from "../entities/ScheduledJob.js";
 import type {OrganizationClient} from "../entities/OrganizationClient.js";
-import type {SchedulingOption} from "../entities/SchedulingOption.js";
 
 export interface ScheduleBaseConfig {
     clientUuid: string;
@@ -291,27 +289,26 @@ export interface ISchedulingOption {
     uuid: string;
     createdAt: Date;
     updatedAt: Date;
-    cronExpression: string;
-    datePreset: FACEBOOK_DATE_PRESETS;
     isActive: boolean;
     reportName?: string;
-    platform: string;
-    jobData?: Record<string, any>;
-    timezone?: string;
-    reviewRequired: boolean;
-    lastRun?: Date;
-    nextRun?: Date;
-    reports?: Report[];
-    scheduledJob?: ScheduledJob;
+    providers?: ScheduledProviderConfig[];
+    review: Review;
+    schedule: ScheduleInfo;
+    customization?: Customization;
+    messaging?: Messaging;
     client: OrganizationClient;
+    reports?: Report[];
 }
 
 
-export type SchedulingOptionWithExtras = Omit<SchedulingOption, 'nextRun' | 'lastRun'> & {
-    nextRun: string;
-    lastRun: string;
+export type SchedulingOptionWithExtras =
+    Omit<ISchedulingOption, "schedule"> & {
+    schedule: Omit<ScheduleInfo, "nextRun" | "lastRun"> & {
+        nextRun: string;
+        lastRun: string;
+    };
     frequency: string;
-    images?: ReportImages;
+    images?: { clientLogo?: string; organizationLogo?: string };
 };
 
 export interface SchedulingOptionWithImages extends ISchedulingOption {
@@ -387,4 +384,34 @@ export interface Metric {
     name: string;
     value: number;
     order: number;
+}
+
+export interface Review {
+    required: boolean;
+    reviewedAt?: Date;
+    loomUrl?: string;
+}
+
+export interface ScheduleInfo {
+    timezone: string;
+    lastRun?: Date;
+    nextRun?: Date;
+    jobId?: string;
+    datePreset: FACEBOOK_DATE_PRESETS;
+    cronExpression: string;
+}
+
+export interface Customization {
+    colors: { headerBg: string; reportBg: string };
+    logos: {
+        client?: { url?: string; gcsUri?: string };
+        org?: { url?: string; gcsUri?: string };
+    };
+    title: string;
+}
+
+export interface Messaging {
+    email?: { title?: string; body?: string };
+    slack?: string;
+    whatsapp?: string;
 }

@@ -21,7 +21,6 @@ import { Migrator, TSMigrationGenerator } from "@mikro-orm/migrations";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 import { PasswordRecoveryToken } from "lib/entities/PasswordRecoveryToken.js";
 import { ActivityLog } from "../../entities/ActivityLog.js";
-import { ScheduledJob } from "../../entities/ScheduledJob.js";
 import { Image } from "lib/entities/Image.js";
 import { Feedback } from "../../entities/Feedback.js";
 import { FeatureSuggestion } from "../../entities/FeatureSuggestion.js";
@@ -32,6 +31,7 @@ import {OrganizationSubscription} from "../../entities/subscription/Organization
 import {SubscriptionPlan} from "../../entities/subscription/SubscriptionPlan.js";
 import {UsageRecord} from "../../entities/subscription/UsageRecord.js";
 import {PaymentMethod} from "../../entities/subscription/PaymentMethod.js";
+import {SchedulingTemplate} from "../../entities/SchedulingTemplate.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -69,17 +69,17 @@ export default defineConfig({
     ChangeEmailToken,
     PasswordRecoveryToken,
     ActivityLog,
-    ScheduledJob,
     Image,
     Feedback,
     FeatureSuggestion,
     FeatureComment,
     FeatureUpvote,
-      FreeTrialUsage,
-      OrganizationSubscription,
-      PaymentMethod,
-      SubscriptionPlan,
-      UsageRecord
+    FreeTrialUsage,
+    OrganizationSubscription,
+    PaymentMethod,
+    SubscriptionPlan,
+    UsageRecord,
+    SchedulingTemplate
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,
