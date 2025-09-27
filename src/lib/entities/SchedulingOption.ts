@@ -25,6 +25,8 @@ class SchedulingScheduleInfo {
   @Property({ nullable: true }) lastRun?: Date;
   @Property({ nullable: true }) nextRun?: Date;
   @Property({ nullable: true }) jobId?: string;
+  @Property({ nullable: true }) frequency?: string;
+  @Property({ nullable: true }) time?: string;
 
   @Enum(() => FACEBOOK_DATE_PRESETS) datePreset!: FACEBOOK_DATE_PRESETS;
 
