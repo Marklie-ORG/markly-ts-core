@@ -22,7 +22,7 @@ export { OrganizationClient } from "./lib/entities/OrganizationClient.js";
 export { OrganizationToken } from "./lib/entities/OrganizationToken.js";
 export { OrganizationMember } from "./lib/entities/OrganizationMember.js";
 export { SchedulingOption } from "./lib/entities/SchedulingOption.js";
-export { ScheduledJob } from "./lib/entities/ScheduledJob.js";
+export { SchedulingTemplate } from "./lib/entities/SchedulingTemplate.js";
 export { OnboardingQuestionAnswer } from "./lib/entities/OnboardingQuestionAnswer.js";
 export { OrganizationInvite } from "./lib/entities/OrganizationInvite.js";
 export { ClientAdAccount } from "./lib/entities/ClientAdAccount.js";
