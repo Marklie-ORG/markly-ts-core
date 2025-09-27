@@ -283,12 +283,9 @@ export const UpdateSubscriptionRequestSchema = z.object({
 });
 
 export const CancelSubscriptionRequestSchema = z.object({
-  immediately: z.boolean().optional(), // defaults to false in handler
+  immediately: z.boolean().optional(),
 });
 
-export const FinalizeCheckoutParamsSchema = z.object({
-  session_id: z.string().min(1, "session_id is required"),
-});
 
 export const StripeWebhookHeadersSchema = z.object({
   "stripe-signature": z.string().min(1, "Missing Stripe signature"),

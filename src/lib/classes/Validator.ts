@@ -336,6 +336,11 @@ const schemaMap: SchemaEntry[] = [
     schema: CancelSubscriptionRequestSchema,
   },
   {
+    pattern: "/api/subscriptions/resume",
+    matcher: match("/api/subscriptions/resume", { decode: decodeURIComponent }),
+    schema: z.object({}),
+  },
+  {
     pattern: "/api/subscriptions/setup-intent",
     matcher: match("/api/subscriptions/setup-intent", { decode: decodeURIComponent }),
     schema: z.object({}),
