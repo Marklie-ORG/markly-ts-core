@@ -1,13 +1,20 @@
-import type { SendEmailOptions } from "../interfaces/MailInterfaces.js";
-import { Log } from "../classes/Logger.js";
-import sgMail, { type MailDataRequired } from "@sendgrid/mail";
+import type {SendEmailOptions} from "../interfaces/MailInterfaces.js";
+import {Log} from "../classes/Logger.js";
+import sgMail, {type MailDataRequired} from "@sendgrid/mail";
 import {spawn} from "node:child_process";
+import {tmpdir} from "node:os";
+import {join} from "node:path";
+import { promises as fs } from "node:fs";
 
 const logger: Log = Log.getInstance().extend("sendgrid-service");
 
 export class SendGridService {
   private static instance: SendGridService;
   private readonly defaultFrom: string;
+
+  private GS_BIN = process.platform === "win32" ? "gswin64c" : "gs";
+  private SENDGRID_MAX_B64_MB = 19;
+  private GS_TIMEOUT_MS = 60_000;
 
   private constructor(defaultFrom: string) {
     this.defaultFrom = defaultFrom;
@@ -47,7 +54,7 @@ export class SendGridService {
 
   public async sendReportEmail(
     options: SendEmailOptions,
-    pdfBuffer: string,
+    pdfBuffer?: string,
   ): Promise<void> {
     try {
       const mail: MailDataRequired = {
@@ -84,13 +91,17 @@ export class SendGridService {
     }
   }
 
-  private async compressPdfWithGs(
-      pdf: Buffer,
+  public bytesToMB(n: number) { return n / (1024 * 1024); }
+  public estBase64SizeMBFromBytes(n: number) { return this.bytesToMB(Math.ceil(n * 4 / 3)); }
+
+  public async compressPdfWithGsToFile(
+      inputPath: string,
+      outPath: string,
       opts: { quality?: "/screen"|"/ebook"|"/printer"|"/prepress"; colorDpi?: number } = {}
-  ): Promise<Buffer> {
+  ): Promise<void> {
     const quality = opts.quality ?? "/printer";
     const colorDpi = opts.colorDpi ?? 150;
-    const binary = process.platform === "win32" ? "gswin64c" : "gs";
+
     const args = [
       "-sDEVICE=pdfwrite",
       "-dCompatibilityLevel=1.4",
@@ -98,47 +109,75 @@ export class SendGridService {
       "-dDetectDuplicateImages=true",
       "-dDownsampleColorImages=true",
       `-dColorImageResolution=${colorDpi}`,
-      "-dNOPAUSE", "-dQUIET", "-dBATCH",
-      "-sOutputFile=-",
-      "-"
+      "-dNOPAUSE","-dQUIET","-dBATCH",
+      `-sOutputFile=${outPath}`,
+      inputPath,
     ];
-    return new Promise<Buffer>((resolve, reject) => {
-      const gs = spawn(binary, args, { stdio: ["pipe", "pipe", "pipe"] });
-      const chunks: Buffer[] = [];
+
+    await new Promise<void>((resolve, reject) => {
+      const ps = spawn(this.GS_BIN, args, { stdio: ["ignore", "ignore", "pipe"] });
       let stderr = "";
-      gs.stdout.on("data", d => chunks.push(d as Buffer));
-      gs.stderr.on("data", d => { stderr += d.toString(); });
-      gs.on("error", reject);
-      gs.on("close", code => {
-        if (code === 0) return resolve(Buffer.concat(chunks));
-        reject(new Error(`Ghostscript exited with code ${code}: ${stderr}`));
+      const timer = setTimeout(() => { ps.kill("SIGKILL"); }, this.GS_TIMEOUT_MS);
+
+      ps.stderr.on("data", d => { stderr += d.toString(); });
+      ps.on("error", (e) => { clearTimeout(timer); reject(e); });
+      ps.on("close", (code) => {
+        clearTimeout(timer);
+        if (code === 0) return resolve();
+        reject(new Error(`Ghostscript exited ${code}: ${stderr}`));
       });
-      gs.stdin.write(pdf, () => gs.stdin.end());
     });
   }
 
-  public async compressForSendgrid(pdf: Buffer, maxPayloadMB = 19): Promise<Buffer> {
-    if (this.estBase64SizeMB(pdf) <= maxPayloadMB) return pdf;
-    const candidates: Array<Promise<Buffer>> = [
-      this.compressPdfWithGs(pdf, { quality: "/printer", colorDpi: 150 }),
-      this.compressPdfWithGs(pdf, { quality: "/ebook",   colorDpi: 120 }),
-      this.compressPdfWithGs(pdf, { quality: "/screen",  colorDpi: 96  }),
+  public async compressForSendgrid(pdf: Buffer, maxPayloadMB = this.SENDGRID_MAX_B64_MB) {
+    if (this.estBase64SizeMBFromBytes(pdf.length) <= maxPayloadMB) return pdf;
+
+    const inPath = join(tmpdir(), `in-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`);
+    await fs.writeFile(inPath, pdf);
+
+    const attempts: Array<{quality: "/printer"|"/ebook"|"/screen", dpi: number}> = [
+      { quality: "/printer", dpi: 150 },
+      { quality: "/ebook",   dpi: 120 },
+      { quality: "/screen",  dpi: 96  },
     ];
-    for (const p of candidates) {
-      try {
-        const cand = await p;
-        if (this.estBase64SizeMB(cand) <= maxPayloadMB) return cand;
-        pdf = cand;
-      } catch { /* continue */ }
+
+    let bestPath = inPath;
+    let bestSize = (await fs.stat(bestPath)).size;
+
+    try {
+      for (const { quality, dpi } of attempts) {
+        const outPath = join(tmpdir(), `out-${quality.slice(1)}-${Date.now()}-${Math.random().toString(36).slice(2)}.pdf`);
+        try {
+          await this.compressPdfWithGsToFile(bestPath, outPath, { quality, colorDpi: dpi });
+          const s = await fs.stat(outPath);
+
+          if (s.size < bestSize) {
+            bestSize = s.size;
+            if (bestPath !== inPath) { try { await fs.unlink(bestPath); } catch {} }
+            bestPath = outPath;
+          } else {
+            try { await fs.unlink(outPath); } catch {}
+          }
+
+          if (this.estBase64SizeMBFromBytes(bestSize) <= maxPayloadMB) break;
+        } catch {
+          try { await fs.unlink(outPath); } catch {}
+        }
+      }
+
+      if (this.estBase64SizeMBFromBytes(bestSize) > maxPayloadMB) {
+        return await fs.readFile(bestPath);
+      }
+
+      return await fs.readFile(bestPath);
+    } finally {
+      if (bestPath !== inPath) { try { await fs.unlink(inPath); } catch {} }
+      try { await fs.unlink(bestPath); } catch {}
     }
-    return pdf;
   }
 
-  private bytesToMB(n: number) { return n / (1024 * 1024); }
-  private estBase64SizeMB(buf: Buffer) { return this.bytesToMB(Math.ceil(buf.length * 4 / 3)); }
 
-
-  public async sendTemplateEmail({
+public async sendTemplateEmail({
     to,
     templateId,
     dynamicTemplateData,
