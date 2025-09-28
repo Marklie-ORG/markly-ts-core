@@ -46,30 +46,23 @@ export class EmailChannel extends CommunicationChannel {
     const original = Buffer.isBuffer(report) ? report : Buffer.from(report, "base64");
     const compressed = await sendGridService.compressForSendgrid(original, 19);
 
-    const b64SizeMB = Math.ceil(compressed.length * 4 / 3) / (1024*1024);
-    if (b64SizeMB > 19) {
-
-      await sendGridService.sendReportEmail({
-        to: this.emailAddress,
-        subject: dbReport?.messaging?.email?.title ?? "Marklie Report",
-        text: (dbReport?.messaging?.email?.body ?? "") + `\n\nOpen: https://marklie.com/view-report/${context.reportUuid}`,
-      });
-      return;
-    }
-
-    await sendGridService.sendReportEmail({
-      to: this.emailAddress,
-      subject: dbReport?.messaging?.email?.title ?? "Marklie Report",
-      text: dbReport?.messaging?.email?.body,
-      attachments: [{
-        content: compressed.toString("base64"),
-        filename: `${dbReport?.messaging?.pdfFilename || "report"}.pdf`,
-        type: "application/pdf",
-        disposition: "attachment",
-      }],
-    }, compressed.toString("base64")
+    const b64 = compressed.toString("base64");
+    await sendGridService.sendReportEmail(
+        {
+          to: this.emailAddress,
+          subject: dbReport!.messaging?.email?.title ?? "Marklie Report",
+          text: dbReport!.messaging?.email?.body,
+          attachments: [
+            {
+              content: b64,
+              filename: `${dbReport!.messaging!.pdfFilename || 'report'}.pdf`,
+              type: "application/pdf",
+              disposition: "attachment",
+            },
+          ],
+        },
+        b64
     );
-
 
     const log = db.em.create(ActivityLog, {
       organization: context.organizationUuid,

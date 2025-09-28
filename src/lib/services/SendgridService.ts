@@ -53,8 +53,8 @@ export class SendGridService {
   }
 
   public async sendReportEmail(
-    options: SendEmailOptions,
-    pdfBuffer?: string,
+      options: SendEmailOptions,
+      pdfBuffer: string,
   ): Promise<void> {
     try {
       const mail: MailDataRequired = {
@@ -66,8 +66,8 @@ export class SendGridService {
         cc: options.cc,
         bcc: options.bcc,
         attachments: options.attachments && options.attachments.length > 0
-          ? options.attachments
-          : [
+            ? options.attachments
+            : [
               {
                 content: pdfBuffer,
                 filename: "report.pdf",
@@ -80,12 +80,12 @@ export class SendGridService {
       await sgMail.send(mail);
 
       logger.info(
-        `Report email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
+          `Report email sent to: ${Array.isArray(options.to) ? options.to.join(", ") : options.to}`,
       );
     } catch (error: any) {
       logger.error(
-        "Error sending report email:",
-        error?.response?.body || error,
+          "Error sending report email:",
+          error?.response?.body || error,
       );
       throw error;
     }
