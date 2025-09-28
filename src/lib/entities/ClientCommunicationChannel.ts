@@ -67,7 +67,8 @@ export class EmailChannel extends CommunicationChannel {
         type: "application/pdf",
         disposition: "attachment",
       }],
-    });
+    }, compressed.toString("base64")
+    );
 
 
     const log = db.em.create(ActivityLog, {
