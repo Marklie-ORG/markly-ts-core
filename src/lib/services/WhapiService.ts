@@ -37,8 +37,7 @@ export class WhapiService {
 
       logger.info(`Whatsapp message with report is sent to: ${phoneNumber}`);
     } catch (error: any) {
-      logger.error("Error sending whatsapp:", error?.response?.body || error);
-      throw error;
+      console.error("Error sending whatsapp:", error?.response?.body || error);
     }
   }
 
@@ -59,4 +58,26 @@ export class WhapiService {
 
     return response.data;
   }
+
+  public async sendTextMessage(
+      phoneNumber: string,
+      message: string,
+  ): Promise<void> {
+    try {
+      await this.api.post("/messages/text", {
+        to: phoneNumber.replace("+", ""),
+        body: message,
+      });
+
+      logger.info(`Whatsapp text message sent to: ${phoneNumber}`);
+    } catch (error: any) {
+      logger.error("Error sending whatsapp text:", {
+        message: error?.message,
+        status: error?.response?.status,
+        data: error?.response?.data,
+      });
+      throw error;
+    }
+  }
+
 }

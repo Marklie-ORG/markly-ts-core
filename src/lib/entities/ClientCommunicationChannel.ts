@@ -47,6 +47,19 @@ export class EmailChannel extends CommunicationChannel {
     const compressed = await sendGridService.compressForSendgrid(original, 19);
 
     const b64 = compressed.toString("base64");
+
+    const b64SizeMB = Math.ceil(compressed.length * 4 / 3) / (1024*1024);
+    console.log(`EMAIL FILE SIZE: ${b64SizeMB}`)
+    if (b64SizeMB > 19) {
+
+      await sendGridService.sendReportEmail({
+        to: this.emailAddress,
+        subject: dbReport?.messaging?.email?.title ?? "Marklie Report",
+        text: (dbReport?.messaging?.email?.body ?? "") + `\n\nOpen: https://marklie.com/view-report/${context.reportUuid}`,
+    }, b64);
+      return;
+    }
+
     await sendGridService.sendReportEmail(
         {
           to: this.emailAddress,
@@ -132,6 +145,15 @@ export class WhatsAppChannel extends CommunicationChannel {
     const compressed = await sendGridService.compressForSendgrid(original, 19);
 
     const b64 = compressed.toString("base64");
+
+    const b64SizeMB = Math.ceil(compressed.length * 4 / 3) / (1024*1024);
+
+    console.log(`WHATASPP FILE SIZE: ${b64SizeMB}`)
+
+    if (b64SizeMB > 19) {
+      await whapi.sendTextMessage(this.phoneNumber, ( dbReport?.messaging?.email?.body ?? "") + `\n\nOpen: https://marklie.com/view-report/${context.reportUuid}`)
+      return;
+    }
 
     await whapi.sendReportWhatsapp(b64, this.phoneNumber, dbReport!.messaging?.whatsapp ?? "Your report is ready", `${dbReport!.messaging!.pdfFilename || 'report'}.pdf`);
 
