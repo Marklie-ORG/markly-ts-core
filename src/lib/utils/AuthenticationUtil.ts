@@ -23,6 +23,9 @@ export class AuthenticationUtil {
 
   public static readonly PASSWORD_RECOVERY_SECRET = process.env
     .PASSWORD_RECOVERY_TOKEN_SECRET as string;
+    
+  public static readonly CLIENT_ACCESS_SECRET = process.env
+    .CLIENT_ACCESS_TOKEN_SECRET as string;
 
   public static async register(body: RegistrationRequestBody) {
     const db = await Database.getInstance();
@@ -49,6 +52,12 @@ export class AuthenticationUtil {
       jwt.verify(refreshToken, this.REFRESH_SECRET, async (err, decoded) => {
         if (err || !decoded || typeof decoded === "string") {
           reject(err || "Invalid token");
+          return;
+        }
+
+        if (decoded.isClientAccessToken) {
+          const newAccessToken = this.signClientAccessAccessToken(decoded.clientUuid);
+          resolve(newAccessToken);
           return;
         }
 
@@ -283,4 +292,63 @@ export class AuthenticationUtil {
       });
     });
   }
+
+  public static signClientAccessToken(clientUuid: string) {
+    const payload = {
+      isClientAccessToken: true,
+      clientUuid: clientUuid,
+      iat: Math.floor(Date.now() / 1000),
+    };
+    return jwt.sign(payload, this.CLIENT_ACCESS_SECRET, {
+      expiresIn: TokenExpiration.CLIENT_ACCESS,
+    });
+  }
+
+  public static signClientAccessAccessToken(clientUuid: string) {
+    const payload = {
+      isClientAccessToken: true,
+      clientUuid: clientUuid,
+      iat: Math.floor(Date.now() / 1000),
+    };
+    return jwt.sign(payload, this.ACCESS_SECRET, { expiresIn: "6h" });
+  }
+
+  public static signClientAccessRefreshToken(clientUuid: string) {
+    const payload = {
+      isClientAccessToken: true,
+      clientUuid: clientUuid,
+      iat: Math.floor(Date.now() / 1000),
+    };
+    return jwt.sign(payload, this.REFRESH_SECRET, {
+      expiresIn: TokenExpiration.REFRESH,
+    });
+  }
+
+  public static verifyClientAccessToken(clientAccessToken: string) {
+    return new Promise<{
+      clientUuid: string;
+      isExpired: boolean;
+      isClientAccessToken: string;
+    } | null>((resolve, reject) => {
+      jwt.verify(
+        clientAccessToken,
+        this.CLIENT_ACCESS_SECRET,
+        (err, decoded) => {
+          if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
+            reject(err || "Invalid token");
+            return;
+          }
+
+          const isExpired = Date.now() / 1000 > decoded.exp;
+
+          resolve({
+            clientUuid: decoded.clientUuid,
+            isExpired,
+            isClientAccessToken: decoded.isClientAccessToken
+          });
+        },
+      );
+    });
+  }
+
 }

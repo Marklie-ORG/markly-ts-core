@@ -17,6 +17,7 @@ import { OrganizationInvite } from "../../entities/OrganizationInvite.js";
 import { ClientAdAccount } from "../../entities/ClientAdAccount.js";
 import { ClientToken } from "../../entities/ClientToken.js";
 import { ChangeEmailToken } from "../../entities/ChangeEmailToken.js";
+import { ClientAccessToken } from "../../entities/ClientAccessToken.js";
 import { Migrator, TSMigrationGenerator } from "@mikro-orm/migrations";
 import { TsMorphMetadataProvider } from "@mikro-orm/reflection";
 import { PasswordRecoveryToken } from "lib/entities/PasswordRecoveryToken.js";
@@ -67,6 +68,7 @@ export default defineConfig({
     ClientAdAccount,
     ClientToken,
     ChangeEmailToken,
+    ClientAccessToken,
     PasswordRecoveryToken,
     ActivityLog,
     Image,

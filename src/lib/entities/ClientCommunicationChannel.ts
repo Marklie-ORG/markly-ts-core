@@ -151,7 +151,7 @@ export class WhatsAppChannel extends CommunicationChannel {
     console.log(`WHATASPP FILE SIZE: ${b64SizeMB}`)
 
     if (b64SizeMB > 19) {
-      await whapi.sendTextMessage(this.phoneNumber, ( dbReport?.messaging?.email?.body ?? "") + `\n\nOpen: https://marklie.com/view-report/${context.reportUuid}`)
+      await whapi.sendTextMessage(this.phoneNumber, ( dbReport!.messaging?.whatsapp ?? "") + `\n\nReport: https://marklie.com/view-report/${context.reportUuid}`)
       return;
     }
 

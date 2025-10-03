@@ -36,11 +36,12 @@ export class SendGridService {
         to: options.to,
         from: options.from || this.defaultFrom,
         subject: options.subject,
-        text: options.text || "",
         replyTo: options.replyTo,
         cc: options.cc,
         bcc: options.bcc,
         attachments: options.attachments,
+        ...(options.text && {text: options.text}),
+        ...(options.html && {html: options.html}),
       } as MailDataRequired);
 
       logger.info(

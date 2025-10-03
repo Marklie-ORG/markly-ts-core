@@ -27,3 +27,12 @@ export interface IM {
 export interface ImageWithUrl extends Image {
   imageUrl: string;
 }
+
+export interface ShareClientDatabaseRequest {
+  clientUuid: string;
+  emails: string[];
+}
+
+export interface VerifyClientAccessRequest {
+  token: string;
+}

@@ -27,3 +27,8 @@ export interface NotifyPasswordRecoveryMessage extends NotificationDataMessage {
   email: string;
   token: string;
 }
+
+export interface NotifyClientAccessTokenMessage {
+  email: string;
+  token: string;
+}

@@ -46,7 +46,9 @@ import {
   CancelSubscriptionRequestSchema,
   UpdateReportMessagesRequestSchema, AdAccountsCurrencyRequestSchema,
   ImpersonateUserRequestSchema,
-  UpdateReportMetadataRequestSchema
+  UpdateReportMetadataRequestSchema,
+  ShareClientDatabaseRequestSchema,
+  VerifyClientAccessRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -179,6 +181,16 @@ const schemaMap: SchemaEntry[] = [
       decode: decodeURIComponent,
     }),
     schema: UseInviteCodeRequestSchema,
+  },
+  {
+    pattern: "/api/organizations/share-client-database",
+    matcher: match("/api/organizations/share-client-database", { decode: decodeURIComponent }),
+    schema: ShareClientDatabaseRequestSchema,
+  },
+  {
+    pattern: "/api/organizations/verify-client-access",
+    matcher: match("/api/organizations/verify-client-access", { decode: decodeURIComponent }),
+    schema: VerifyClientAccessRequestSchema,
   },
   {
     pattern: "/api/clients",

@@ -290,3 +290,12 @@ export const CancelSubscriptionRequestSchema = z.object({
 export const StripeWebhookHeadersSchema = z.object({
   "stripe-signature": z.string().min(1, "Missing Stripe signature"),
 });
+
+export const ShareClientDatabaseRequestSchema = z.object({
+  clientUuid: z.uuid({ message: "Invalid client UUID" }),
+  emails: z.array(z.string()),
+});
+
+export const VerifyClientAccessRequestSchema = z.object({
+  token: z.string(),
+});
