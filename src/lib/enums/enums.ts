@@ -42,6 +42,8 @@ export enum TokenExpiration {
   EMAIL_CHANGE = 60 * 5,
   PASSWORD_RECOVERY = 60 * 5,
   CLIENT_ACCESS = 60 * 60,
+  CLIENT_ACCESS_REFRESH = 356 * 24 * 60 * 60,
+  SYSTEM_ACCESS = 60 * 60,
 }
 
 export enum CommunicationChannelType {

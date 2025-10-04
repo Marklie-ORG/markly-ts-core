@@ -3,9 +3,6 @@ import type { Context, Next } from "koa";
 import jwt from "jsonwebtoken";
 import { AuthenticationUtil } from "../utils/AuthenticationUtil.js";
 import type { User } from "../entities/User.js";
-import { Log } from "lib/classes/Logger.js";
-
-const logger = Log.getInstance().extend("auth-middleware");
 
 type ExcludedEndpoint = string | RegExp;
 
@@ -16,8 +13,7 @@ export const AuthMiddleware = (
     "/refresh",
     "/send-password-recovery-email",
     "/verify-password-recovery",
-    "/verify-client-access",
-    /^\/api\/reports\/[0-9a-fA-F-]{36}$/
+    "/verify-client-access"
   ],
 ): Application.Middleware<
   Application.DefaultState,
@@ -45,21 +41,49 @@ export const AuthMiddleware = (
 
     const tokenPayload = jwt.decode(token);
 
-    logger.info("tokenPayload", tokenPayload);
-
     if (!tokenPayload || typeof tokenPayload === "string") {
       ctx.throw(401, "Invalid token");
     }
 
     if (tokenPayload.isClientAccessToken) {
       if (isClientAccessEndpoint(ctx)) {
-        ctx.state.isClientAccessToken = true;
-        return next();
+        try {
+          const clientAccessAccessTokenVerification = await AuthenticationUtil.verifyClientAccessAccessToken(token);
+          if (!clientAccessAccessTokenVerification) {
+            ctx.throw(401, "Unauthorized");
+          } else {
+            ctx.state.isClientAccessToken = true;
+            return next();
+          }
+        } catch(error) {
+          if (error instanceof jwt.TokenExpiredError) {
+            ctx.throw(401, "Token expired");
+          } else {
+            ctx.throw(401, "Invalid token");
+          }
+        }
       }
       else {
         ctx.throw(403, "Forbidden");
       }
-      
+    }
+
+    if (tokenPayload.isSystemToken) {
+      try {
+        const systemAccessTokenVerification = await AuthenticationUtil.verifySystemAccessToken(token);
+        if (!systemAccessTokenVerification) {
+          ctx.throw(401, "Unauthorized");
+        } else {
+          ctx.state.isSystemToken = true;
+          return next();
+        }
+      } catch(error) {
+        if (error instanceof jwt.TokenExpiredError) {
+          ctx.throw(401, "Token expired");
+        } else {
+          ctx.throw(401, "Invalid token");
+        }
+      }
     }
 
     try {
@@ -84,5 +108,4 @@ export const AuthMiddleware = (
 const isClientAccessEndpoint = (ctx: Context) => {
   return (ctx.path.includes("/api/reports/client/") && ctx.method === "GET") ||
     (ctx.path.includes("/pdf") && ctx.method === "GET")
-  // || (ctx.path.includes("/api/reports/client/") && ctx.method === "POST");
 }

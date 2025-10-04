@@ -27,6 +27,9 @@ export class AuthenticationUtil {
   public static readonly CLIENT_ACCESS_SECRET = process.env
     .CLIENT_ACCESS_TOKEN_SECRET as string;
 
+  public static readonly SYSTEM_ACCESS_SECRET = process.env
+    .SYSTEM_ACCESS_TOKEN_SECRET as string;
+
   public static async register(body: RegistrationRequestBody) {
     const db = await Database.getInstance();
 
@@ -52,6 +55,12 @@ export class AuthenticationUtil {
       jwt.verify(refreshToken, this.REFRESH_SECRET, async (err, decoded) => {
         if (err || !decoded || typeof decoded === "string") {
           reject(err || "Invalid token");
+          return;
+        }
+
+        if (decoded.isSystemToken) {
+          const newAccessToken = this.signSystemAccessToken();
+          resolve(newAccessToken);
           return;
         }
 
@@ -313,6 +322,29 @@ export class AuthenticationUtil {
     return jwt.sign(payload, this.ACCESS_SECRET, { expiresIn: "6h" });
   }
 
+  public static verifyClientAccessAccessToken(clientAccessToken: string) {
+    return new Promise<{
+      isExpired: boolean;
+    } | null>((resolve, reject) => {
+      jwt.verify(
+        clientAccessToken,
+        this.ACCESS_SECRET,
+        (err, decoded) => {
+          if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
+            reject(err || "Invalid token");
+            return;
+          }
+
+          const isExpired = Date.now() / 1000 > decoded.exp;
+
+          resolve({
+            isExpired
+          });
+        },
+      );
+    });
+  }
+
   public static signClientAccessRefreshToken(clientUuid: string) {
     const payload = {
       isClientAccessToken: true,
@@ -320,7 +352,38 @@ export class AuthenticationUtil {
       iat: Math.floor(Date.now() / 1000),
     };
     return jwt.sign(payload, this.REFRESH_SECRET, {
-      expiresIn: TokenExpiration.REFRESH,
+      expiresIn: TokenExpiration.CLIENT_ACCESS_REFRESH,
+    });
+  }
+
+  public static signSystemAccessToken() {
+    const payload = {
+      isSystemToken: true,
+      iat: Math.floor(Date.now() / 1000),
+    };
+    return jwt.sign(payload, this.SYSTEM_ACCESS_SECRET, { expiresIn: "6h" });
+  }
+
+  public static verifySystemAccessToken(systemAccessToken: string) {
+    return new Promise<{
+      isExpired: boolean;
+    } | null>((resolve, reject) => {
+      jwt.verify(
+        systemAccessToken,
+        this.SYSTEM_ACCESS_SECRET,
+        (err, decoded) => {
+          if (err || !decoded || typeof decoded === "string" || !decoded.exp) {
+            reject(err || "Invalid token");
+            return;
+          }
+
+          const isExpired = Date.now() / 1000 > decoded.exp;
+
+          resolve({
+            isExpired
+          });
+        },
+      );
     });
   }
 
