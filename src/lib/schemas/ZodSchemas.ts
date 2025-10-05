@@ -299,3 +299,9 @@ export const ShareClientDatabaseRequestSchema = z.object({
 export const VerifyClientAccessRequestSchema = z.object({
   token: z.string(),
 });
+
+export const RequestClientAccessRequestSchema = z.object({
+  email: z.email({ message: "Invalid email address" }),
+  reportUuid: z.uuid({ message: "Invalid report UUID" }).optional(),
+  clientUuid: z.uuid({ message: "Invalid client UUID" }).optional(),
+});

@@ -36,3 +36,9 @@ export interface ShareClientDatabaseRequest {
 export interface VerifyClientAccessRequest {
   token: string;
 }
+
+export interface RequestClientAccessRequest {
+  email: string;
+  reportUuid?: string;
+  clientUuid?: string;
+}

@@ -33,6 +33,7 @@ import {SubscriptionPlan} from "../../entities/subscription/SubscriptionPlan.js"
 import {UsageRecord} from "../../entities/subscription/UsageRecord.js";
 import {PaymentMethod} from "../../entities/subscription/PaymentMethod.js";
 import {SchedulingTemplate} from "../../entities/SchedulingTemplate.js";
+import { ClientAccessRequest } from "lib/entities/ClientAccessRequest.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -69,6 +70,7 @@ export default defineConfig({
     ClientToken,
     ChangeEmailToken,
     ClientAccessToken,
+    ClientAccessRequest,
     PasswordRecoveryToken,
     ActivityLog,
     Image,

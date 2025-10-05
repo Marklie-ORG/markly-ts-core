@@ -30,6 +30,7 @@ export { Report } from "./lib/entities/Report.js";
 export { ClientToken } from "./lib/entities/ClientToken.js";
 export { ChangeEmailToken } from "./lib/entities/ChangeEmailToken.js";
 export { ClientAccessToken } from "./lib/entities/ClientAccessToken.js";
+export { ClientAccessRequest } from "./lib/entities/ClientAccessRequest.js";
 export { ActivityLog } from "./lib/entities/ActivityLog.js";
 export { Image } from "./lib/entities/Image.js";
 export { Feedback } from "./lib/entities/Feedback.js";

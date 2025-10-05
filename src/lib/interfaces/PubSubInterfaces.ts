@@ -32,3 +32,10 @@ export interface NotifyClientAccessTokenMessage {
   email: string;
   token: string;
 }
+
+export interface NotifyClientAccessRequestedMessage {
+  recipientEmail: string;
+  requesterEmail: string;
+  clientName: string;
+  organizationUuid: string;
+}

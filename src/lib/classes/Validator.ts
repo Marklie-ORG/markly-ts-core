@@ -48,7 +48,8 @@ import {
   ImpersonateUserRequestSchema,
   UpdateReportMetadataRequestSchema,
   ShareClientDatabaseRequestSchema,
-  VerifyClientAccessRequestSchema
+  VerifyClientAccessRequestSchema,
+  RequestClientAccessRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -191,6 +192,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/organizations/verify-client-access",
     matcher: match("/api/organizations/verify-client-access", { decode: decodeURIComponent }),
     schema: VerifyClientAccessRequestSchema,
+  },
+  {
+    pattern: "/api/organizations/request-client-access",
+    matcher: match("/api/organizations/request-client-access", { decode: decodeURIComponent }),
+    schema: RequestClientAccessRequestSchema,
   },
   {
     pattern: "/api/clients",
