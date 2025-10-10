@@ -107,5 +107,6 @@ export const AuthMiddleware = (
 
 const isClientAccessEndpoint = (ctx: Context) => {
   return (ctx.path.includes("/api/reports/client/") && ctx.method === "GET") ||
+    (ctx.path.includes("/api/reports/") && ctx.method === "GET") ||
     (ctx.path.includes("/pdf") && ctx.method === "GET")
 }
