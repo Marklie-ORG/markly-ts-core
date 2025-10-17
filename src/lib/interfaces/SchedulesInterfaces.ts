@@ -104,9 +104,16 @@ export interface SectionAdAccount {
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
     currency: string
-    adsSettings?: {
-        numberOfAds: number;
-        sortAdsBy: string
+    settings?: {
+        ads: {
+            maxAds: number;
+            sortBy: string
+        },
+        campaigns: {
+            maxCampaigns: number;
+            sortBy: string
+        }
+
     }
 }
 
