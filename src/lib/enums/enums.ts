@@ -16,6 +16,12 @@ export enum FACEBOOK_DATE_PRESETS {
   MAXIMUM = "maximum",
 }
 
+export enum CustomFormulaFormat {
+  NUMBER = "number",
+  PERCENTAGE = "percentage",
+  CURRENCY = "currency",
+}
+
 export enum OrganizationRole {
   OWNER = "owner",
   EDITOR = "editor",

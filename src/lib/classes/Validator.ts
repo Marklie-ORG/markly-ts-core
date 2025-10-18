@@ -49,7 +49,9 @@ import {
   UpdateReportMetadataRequestSchema,
   ShareClientDatabaseRequestSchema,
   VerifyClientAccessRequestSchema,
-  RequestClientAccessRequestSchema
+  RequestClientAccessRequestSchema,
+  UpdateAdAccountCustomFormulaRequestSchema,
+  CreateAdAccountCustomFormulaRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -372,6 +374,16 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/subscriptions/finalize/:session_id",
     matcher: match("/api/subscriptions/finalize/:session_id", { decode: decodeURIComponent }),
     schema: z.object({}),
+  },
+  {
+    pattern: "/api/custom-formulas",
+    matcher: match("/api/custom-formulas", { decode: decodeURIComponent }),
+    schema: CreateAdAccountCustomFormulaRequestSchema,
+  },
+  {
+    pattern: "/api/custom-formulas/:uuid",
+    matcher: match("/api/custom-formulas/:uuid", { decode: decodeURIComponent }),
+    schema: UpdateAdAccountCustomFormulaRequestSchema,
   },
 ];
 

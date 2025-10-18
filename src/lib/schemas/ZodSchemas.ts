@@ -305,3 +305,18 @@ export const RequestClientAccessRequestSchema = z.object({
   reportUuid: z.uuid({ message: "Invalid report UUID" }).optional(),
   clientUuid: z.uuid({ message: "Invalid client UUID" }).optional(),
 });
+
+export const CreateAdAccountCustomFormulaRequestSchema = z.object({
+  name: z.string(),
+  formula: z.string(),
+  format: z.string(),
+  description: z.string(),
+  adAccountId: z.string(),
+});
+
+export const UpdateAdAccountCustomFormulaRequestSchema = z.object({
+  name: z.string(),
+  formula: z.string(),
+  format: z.string(),
+  description: z.string(),
+});

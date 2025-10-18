@@ -1,5 +1,6 @@
 import type {FACEBOOK_DATE_PRESETS} from "../enums/enums.js";
 import type {
+    CustomFormula,
     CustomMetric,
     ReportImages,
 } from "./ReportsInterfaces.js";
@@ -103,6 +104,7 @@ export interface SectionAdAccount {
     enabled: boolean;
     metrics: OrderedMetric<string>[];
     customMetrics?: CustomMetric[];
+    customFormulas?: CustomFormula[];
     currency: string
     adsSettings?: {
         numberOfAds: number;
@@ -130,6 +132,7 @@ export interface ScheduledMetricGroup<T extends string> {
     order: number;
     metrics: OrderedMetric<T>[];
     customMetrics?: CustomMetric[];
+    customFormulas?: CustomFormula[];
     adsSettings?: {
         numberOfAds: number;
         sortAdsBy: string

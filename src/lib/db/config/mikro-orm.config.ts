@@ -34,6 +34,7 @@ import {UsageRecord} from "../../entities/subscription/UsageRecord.js";
 import {PaymentMethod} from "../../entities/subscription/PaymentMethod.js";
 import {SchedulingTemplate} from "../../entities/SchedulingTemplate.js";
 import { ClientAccessRequest } from "lib/entities/ClientAccessRequest.js";
+import { AdAccountCustomFormula } from "../../entities/AdAccountCustomFormula.js";
 
 export default defineConfig({
   metadataProvider: TsMorphMetadataProvider,
@@ -83,7 +84,8 @@ export default defineConfig({
     PaymentMethod,
     SubscriptionPlan,
     UsageRecord,
-    SchedulingTemplate
+    SchedulingTemplate,
+    AdAccountCustomFormula
   ],
   dbName: process.env.DATABASE_NAME || "saas",
   port: Number(process.env.DATABASE_PORT) || 5432,

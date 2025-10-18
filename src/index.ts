@@ -42,6 +42,7 @@ export { FreeTrialUsage } from "./lib/entities/subscription/FreeTrialUsage.js";
 export { OrganizationSubscription } from "./lib/entities/subscription/OrganizationSubscription.js";
 export { UsageRecord } from "./lib/entities/subscription/UsageRecord.js";
 export { PaymentMethod } from "./lib/entities/subscription/PaymentMethod.js";
+export { AdAccountCustomFormula } from "./lib/entities/AdAccountCustomFormula.js";
 
 //middlewares
 export { AuthMiddleware } from "./lib/middlewares/AuthMiddleware.js";

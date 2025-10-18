@@ -1,4 +1,4 @@
-import type { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
+import type { CustomFormulaFormat, FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
 import type { OrganizationClient } from "../entities/OrganizationClient.js";
 import type {SchedulingOption} from "../entities/SchedulingOption.js";
 import type { Organization } from "lib/entities/Organization.js";
@@ -115,6 +115,18 @@ export interface CustomMetric {
   id: string;
   name: string;
   order: number;
+}
+
+export interface CustomFormula {
+  uuid: string;
+  name: string;
+  order: number;
+}
+
+export interface ExtendedCustomFormula extends CustomFormula {
+  formula: string;
+  format: CustomFormulaFormat;
+  description: string;
 }
 
 export interface ScheduleBulkActionRequest {
