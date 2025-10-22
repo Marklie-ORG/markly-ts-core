@@ -12,7 +12,7 @@ import { BaseEntity } from "./BaseEntity.js";
 import { OrganizationClient } from "./OrganizationClient.js";
 import { Report } from "./Report.js";
 import { FACEBOOK_DATE_PRESETS } from "../enums/enums.js";
-import type { ScheduledProviderConfig } from "../interfaces/SchedulesInterfaces.js";
+import type {ProviderConfig} from "../interfaces/ReportsInterfaces.js";
 
 @Embeddable()
 class SchedulingReview {
@@ -61,7 +61,7 @@ export class SchedulingOption extends BaseEntity {
   isActive: boolean = true;
 
   @Property({ type: "json", nullable: true })
-  providers?: ScheduledProviderConfig[];
+  providers?: ProviderConfig[];
 
   @Embedded(() => SchedulingReview)
   review!: SchedulingReview;

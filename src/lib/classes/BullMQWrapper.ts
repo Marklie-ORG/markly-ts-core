@@ -1,12 +1,11 @@
 import { Queue, Worker, Job, JobScheduler, type JobsOptions } from "bullmq";
 import type { Redis } from "ioredis";
-import type { ReportJobData } from "../interfaces/ReportsInterfaces.js";
 import { Log } from "./Logger.js";
 
 const logger = Log.getInstance().extend("BullMQ");
 
 export type JobProcessorMap = {
-  [jobName: string]: (data: ReportJobData) => Promise<any>;
+  [jobName: string]: (data: {scheduleUuid: string}) => Promise<any>;
 };
 
 export interface BullMQConfig {

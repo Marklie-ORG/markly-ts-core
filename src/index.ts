@@ -26,6 +26,7 @@ export { SchedulingTemplate } from "./lib/entities/SchedulingTemplate.js";
 export { OnboardingQuestionAnswer } from "./lib/entities/OnboardingQuestionAnswer.js";
 export { OrganizationInvite } from "./lib/entities/OrganizationInvite.js";
 export { ClientAdAccount } from "./lib/entities/ClientAdAccount.js";
+export { AdAccountCustomFormula } from "./lib/entities/AdAccountCustomFormula.js";
 export { Report } from "./lib/entities/Report.js";
 export { ClientToken } from "./lib/entities/ClientToken.js";
 export { ChangeEmailToken } from "./lib/entities/ChangeEmailToken.js";
@@ -57,6 +58,7 @@ export { SubscriptionMiddleware } from "./lib/middlewares/SubscriptionMiddleware
 export * from "./lib/interfaces/AuthInterfaces.js";
 export * from "./lib/interfaces/FacebookInterfaces.js";
 export * from "./lib/interfaces/ReportsInterfaces.js";
+export * from "./lib/interfaces/CustomFormulasInterfaces.js";
 export * from "./lib/interfaces/UserInterfaces.js";
 export * from "./lib/interfaces/OnboardingInterfaces.js";
 export * from "./lib/interfaces/PubSubInterfaces.js";

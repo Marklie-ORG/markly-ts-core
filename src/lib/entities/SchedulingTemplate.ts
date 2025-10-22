@@ -1,7 +1,7 @@
 import {Entity, Enum, Property} from "@mikro-orm/core";
 import {BaseEntity} from "./BaseEntity.js";
 import {FACEBOOK_DATE_PRESETS} from "../enums/enums.js";
-import type {ScheduledProviderConfig} from "../interfaces/SchedulesInterfaces.js";
+import type {ProviderConfig} from "../interfaces/ReportsInterfaces.js";
 
 @Entity()
 export class SchedulingTemplate extends BaseEntity {
@@ -30,7 +30,7 @@ export class SchedulingTemplate extends BaseEntity {
     cronExpression?: string;
 
     @Property({ type: 'json', nullable: true })
-    providers?: ScheduledProviderConfig[];
+    providers?: ProviderConfig[];
 
     @Property({ type: 'json', nullable: true })
     defaultJobData?: Record<string, any>;
