@@ -305,3 +305,7 @@ export const RequestClientAccessRequestSchema = z.object({
   reportUuid: z.uuid({ message: "Invalid report UUID" }).optional(),
   clientUuid: z.uuid({ message: "Invalid client UUID" }).optional(),
 });
+
+export const GenerateReportRequestSchema = z.object({
+  scheduleUuid: z.uuid({ message: "Invalid schedule UUID" }),
+});

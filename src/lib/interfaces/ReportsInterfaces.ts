@@ -76,3 +76,7 @@ export interface ProviderConfig {
   provider: 'facebook' | 'tiktok' | 'google';
   sections: SectionConfig[];
 }
+
+export interface GenerateReportRequest {
+  scheduleUuid: string;
+}

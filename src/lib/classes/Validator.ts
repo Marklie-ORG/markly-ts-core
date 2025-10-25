@@ -49,7 +49,8 @@ import {
   UpdateReportMetadataRequestSchema,
   ShareClientDatabaseRequestSchema,
   VerifyClientAccessRequestSchema,
-  RequestClientAccessRequestSchema
+  RequestClientAccessRequestSchema,
+  GenerateReportRequestSchema
 } from "../schemas/ZodSchemas.js";
 
 type SchemaEntry = {
@@ -78,6 +79,11 @@ const schemaMap: SchemaEntry[] = [
     pattern: "/api/reports/schedule",
     matcher: match("/api/reports/schedule", { decode: decodeURIComponent }),
     schema: ScheduleReportsRequestSchema,
+  },
+  {
+    pattern: "/api/reports/generate",
+    matcher: match("/api/reports/generate", { decode: decodeURIComponent }),
+    schema: GenerateReportRequestSchema,
   },
   {
     pattern: "/api/scheduling-options/delete",
