@@ -89,15 +89,11 @@ export interface ScheduleModifiers {
 }
 
 interface WeekdaySchedule extends ScheduleBaseConfig, TimeSettings {
-    dayOfWeek:
-        | "Monday"
-        | "Tuesday"
-        | "Wednesday"
-        | "Thursday"
-        | "Friday"
-        | "Saturday"
-        | "Sunday";
+    dayOfWeek: DayOfWeek
 }
+
+export type DayOfWeek =
+    | "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
 
 export interface WeeklySchedule extends WeekdaySchedule {
     frequency: "weekly";
@@ -186,7 +182,7 @@ export interface AdAccountData {
  * Runtime data for a section
  */
 export interface SectionData {
-    key: SectionType;
+    name: SectionType;
     order: number;
     enabled: boolean;
     adAccounts: AdAccountData[];

@@ -32,16 +32,12 @@ export interface UpdateReportMetadataRequest {
   colors?: Colors
 }
 
-/**
- * Section types in reports
- */
+
 export type SectionType = 'kpis' | 'graphs' | 'ads' | 'campaigns';
 
-/**
- * Configuration for a report section (used in scheduling)
- */
+
 export interface SectionConfig {
-  key: SectionType;
+  name: SectionType;
   enabled: boolean;
   order: number;
   adAccounts: AdAccountConfig[];
@@ -51,9 +47,7 @@ export interface ReportJobData {
   scheduleUuid: string;
 }
 
-/**
- * Configuration for an ad account within a section
- */
+
 export interface AdAccountConfig {
   adAccountId: string;
   adAccountName?: string;
@@ -63,8 +57,12 @@ export interface AdAccountConfig {
   metrics: MetricConfig[];
   customMetrics?: CustomMetricConfig[];
   customFormulas?: CustomFormula[];
-  settings?: {
-    maxItems?: number;
+  adsSettings?: {
+    maxAds?: number;
+    sortBy?: string;
+  };
+  campaignsSettings?: {
+    maxCampaigns?: number;
     sortBy?: string;
   };
 }
