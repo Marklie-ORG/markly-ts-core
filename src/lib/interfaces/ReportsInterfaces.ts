@@ -67,9 +67,7 @@ export interface AdAccountConfig {
   };
 }
 
-/**
- * Provider configuration (Facebook, TikTok, Google)
- */
+
 export interface ProviderConfig {
   provider: 'facebook' | 'tiktok' | 'google';
   sections: SectionConfig[];

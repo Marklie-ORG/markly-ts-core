@@ -1,12 +1,16 @@
 //classes
-export { AuthenticationUtil } from "./lib/utils/AuthenticationUtil.js";
 export { BullMQWrapper } from "./lib/classes/BullMQWrapper.js";
 export { Log } from "./lib/classes/Logger.js";
-export { Validator } from "./lib/classes/Validator.js";
+export { Validator, type ValidationRule } from "./lib/classes/Validator.js";
 export { CookiesWrapper } from "./lib/classes/CookiesWrapper.js";
 export { GCPSecretsManager } from "./lib/classes/SecretsManager.js";
 export { GCSWrapper } from "./lib/classes/GCSWrapper.js";
 export { PubSubWrapper } from "./lib/classes/PubSub.js";
+
+//utils
+export { AuthenticationUtil } from "./lib/utils/AuthenticationUtil.js";
+export { MarklieRouter } from "./lib/utils/MarklieRouter.js";
+
 
 //database singleton
 export { Database } from "./lib/db/config/DB.js";

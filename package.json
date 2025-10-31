@@ -1,6 +1,6 @@
 {
   "name": "marklie-ts-core",
-  "version": "1.6.22",
+  "version": "1.6.23",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -38,11 +38,13 @@
     "@sendgrid/mail": "^8.1.5",
     "@sentry/node": "^10.7.0",
     "@sentry/profiling-node": "^10.7.0",
+    "@types/koa-compose": "3.2.9",
     "axios": "^1.8.4",
     "bcryptjs": "^3.0.2",
     "bullmq": "^5.48.1",
     "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
+    "koa-compose": "^4.1.0",
     "path-to-regexp": "^8.2.0",
     "stripe": "^18.5.0",
     "uuid": "^11.0.5",
@@ -50,6 +52,7 @@
     "zod": "^4.0.5"
   },
   "devDependencies": {
+    "@koa/router": "^14.0.0",
     "@mikro-orm/cli": "^6.5.3",
     "@sentry/types": "^10.7.0",
     "@swc/cli": "^0.6.0",
@@ -59,13 +62,13 @@
     "@types/koa": "^2.13.5",
     "@types/koa-bodyparser": "^4.3.12",
     "@types/koa-router": "^7.4.4",
+    "@types/koa__router": "^12.0.5",
     "@types/node": "^22.10.10",
     "bcrypt": "^5.1.1",
-    "koa": "3.0.1",
+    "koa": "3.0.3",
     "koa-body": "^6.0.1",
     "koa-bodyparser": "^4.3.0",
     "koa-json": "^2.0.2",
-    "koa-router": "^13.0.1",
     "prettier": "3.4.2",
     "typescript": "^5.7.3"
   }

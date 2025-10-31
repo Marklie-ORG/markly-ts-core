@@ -255,22 +255,6 @@ export const ToggleFeatureUpvoteRequestSchema = z.object({
   suggestionUuid: z.uuid({ message: "Invalid suggestion UUID" }),
 });
 
-export const UpdateReportMetadataRequestSchema = z.object({
-  reportName: z.string().optional(),
-  images: z.object({
-    clientLogoGsUri: z.string(),
-    organizationLogoGsUri: z.string(),
-  }).optional(),
-  messages: z.object({
-    whatsapp: z.string(),
-    slack: z.string(),
-  }).optional(),
-  colors: z.object({
-    headerBackgroundColor: z.string(),
-    reportBackgroundColor: z.string(),
-  }).optional(),
-});
-
 export const SubscribeRequestSchema = z.object({
   planId: z.string().min(1, "planId is required"),
   paymentMethodId: z.string().min(1).optional(),
@@ -306,6 +290,30 @@ export const RequestClientAccessRequestSchema = z.object({
   clientUuid: z.uuid({ message: "Invalid client UUID" }).optional(),
 });
 
-export const GenerateReportRequestSchema = z.object({
-  scheduleUuid: z.uuid({ message: "Invalid schedule UUID" }),
-});
+
+
+export const UuidSchema = z.uuid();
+
+export const DayOfWeekSchema = z.enum([
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+]);
+
+export const FrequencySchema = z.enum([
+  "weekly",
+  "biweekly",
+  "monthly",
+  "custom",
+  "cron",
+]);
+
+export const TimeSchema = z
+  .string()
+  .regex(/^\d{2}:\d{2}$/, "time must be in HH:mm format");
+
+export const DatePresetSchema = z.string();
